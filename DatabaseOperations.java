@@ -12,6 +12,6 @@ public interface DatabaseOperations {
     // Modifies a set of entries in the database
     public void modify();
 
-    // Updates a set of entries in the database
-    public void update();
+    // retrieves data from the database
+    public void retrieve();
 }
