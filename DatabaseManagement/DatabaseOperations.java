@@ -3,7 +3,7 @@ package DatabaseManagement;
 public interface DatabaseOperations {
     // Just a simple iterface for our database manager class
 
-    public void establishConnection();
+    public Boolean establishConnection(String URL, String username, String password);
 
     // Inserts an entry into the database
     public void insert();
