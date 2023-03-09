@@ -44,12 +44,6 @@ public class DatabaseManager implements DatabaseOperations {
 
     }
 
-    private void findConstraints() {
-        // Gets the list of constraints for a specific attribute
-        // TODO: Implement findConstraints
-
-    }
-
     private void validateConstraints() {
         // tells the constraintChecker class to validate an attibute against given list
         // of constraints

@@ -13,4 +13,10 @@ public class ConstraintChecker implements ConstraintChecks {
         // TODO implement Check function in ConstraintChecker
     }
 
+    private void findConstraints() {
+        // Gets the list of constraints for a specific attribute
+        // TODO: Implement findConstraints
+
+    }
+
 }
