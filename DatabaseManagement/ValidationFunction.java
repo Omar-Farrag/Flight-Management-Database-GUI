@@ -2,5 +2,5 @@ package DatabaseManagement;
 
 @FunctionalInterface
 public interface ValidationFunction {
-    public void validate();
+    public String validate(String additionalParameters);
 }
