@@ -5,13 +5,10 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-
-import javax.naming.spi.DirStateFactory.Result;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -27,6 +24,8 @@ public class DatabaseManager implements DatabaseOperations {
     private static DatabaseManager instance;
     private FileWriter fout;
     private JSONArray jsonTables;
+    private ResultSet constraintsTable;
+    private ResultSet tableDataTypes;
 
     public static void main(String[] args) {
         DatabaseManager db = DatabaseManager.getInstance();
@@ -40,6 +39,7 @@ public class DatabaseManager implements DatabaseOperations {
             currentApplicationTables = new ArrayList<>();
             for (Table t : Table.values())
                 currentApplicationTables.add(t.getTableName().toUpperCase());
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -61,6 +61,30 @@ public class DatabaseManager implements DatabaseOperations {
 
             conn = DriverManager.getConnection(URL, username, password);
 
+            Statement stmt1 = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            String formattedTableNames = "'" + String.join(",", currentApplicationTables).replace(",", "','") + "'";
+            constraintsTable = stmt1.executeQuery(
+                    " SELECT U.TABLE_NAME," +
+                            "U.COLUMN_NAME," +
+                            "CONSTRAINT_TYPE," +
+                            " SEARCH_CONDITION," +
+                            " R_CONSTRAINT_NAME" +
+                            " FROM USER_CONS_COLUMNS U" +
+                            " JOIN ALL_CONSTRAINTS A" +
+                            " ON ( U.TABLE_NAME = A.TABLE_NAME" +
+                            " AND U.CONSTRAINT_NAME = A.CONSTRAINT_NAME )" +
+                            " WHERE U.OWNER = 'B00087320'" +
+                            " AND A.OWNER = 'B00087320'" +
+                            " AND U.TABLE_NAME in (" + formattedTableNames + ")");
+
+            Statement stmt2 = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            tableDataTypes = stmt2.executeQuery(
+                    " select *" +
+                            " from user_tab_columns" +
+                            " order by TABLE_NAME,column_id"
+
+            );
+
             extractTables();
 
             fout.write(jsonTables.toJSONString());
@@ -73,6 +97,7 @@ public class DatabaseManager implements DatabaseOperations {
         }
         return false;
     }
+
     @Override
     public void insert() {
         // TODO Auto-generated method stub
@@ -97,7 +122,6 @@ public class DatabaseManager implements DatabaseOperations {
         throw new UnsupportedOperationException("Unimplemented method 'update'");
     }
 
-
     // Puts tables and their attributes into a metadata json file
     private void extractTables() {
 
@@ -105,16 +129,15 @@ public class DatabaseManager implements DatabaseOperations {
             DatabaseMetaData meta = conn.getMetaData();
 
             for (String tableName : currentApplicationTables) {
-                    JSONObject table = new JSONObject();
-                    table.put("TableName", tableName);
+                JSONObject table = new JSONObject();
+                table.put("TableName", tableName);
 
-                    JSONObject attributes = getAttributesForTable(tableName, meta);
+                JSONObject attributes = getAttributesForTable(tableName, meta);
 
-                    table.put("Attributes", attributes);
-                    jsonTables.add(table);
-                }
+                table.put("Attributes", attributes);
+                jsonTables.add(table);
             }
-            catch (SQLException e) {
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
@@ -152,21 +175,21 @@ public class DatabaseManager implements DatabaseOperations {
     private String getDataType(int rowNumber, String tableName) {
         try {
             Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-            ResultSet tableDataTypes = stmt.executeQuery(
-                        " select *" +
-                                " from user_tab_columns" +
-                            " where table_name = '" + tableName +
-                                "' order by column_id"
 
-                );
-                tableDataTypes.absolute(rowNumber);
-                String dataType = tableDataTypes.getString("DATA_TYPE");
-                        if (dataType.toLowerCase().equals("number"))
-                            dataType += getPrecisionAndScale(tableDataTypes);
-                        else if (dataType.toLowerCase().equals("varchar2") || dataType.toLowerCase().equals("char"))
-                            dataType += getMaxLength(tableDataTypes);
-                        return dataType;
+            tableDataTypes.beforeFirst();
+            while (tableDataTypes.next()) {
+                if (tableDataTypes.getString("TABLE_NAME").equals(tableName)) {
 
+                    tableDataTypes.absolute(tableDataTypes.getRow() + rowNumber - 1);
+                    String dataType = tableDataTypes.getString("DATA_TYPE");
+                    if (dataType.toLowerCase().equals("number"))
+                        dataType += getPrecisionAndScale(tableDataTypes);
+                    else if (dataType.toLowerCase().equals("varchar2") || dataType.toLowerCase().equals("char"))
+                        dataType += getMaxLength(tableDataTypes);
+                    return dataType;
+                }
+
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -183,36 +206,26 @@ public class DatabaseManager implements DatabaseOperations {
     }
 
     private ArrayList<String> getConstraints(String tableName, String columnName) throws SQLException {
-        // Statement stmt = conn.createStatement();
-        // ResultSet constraintsTable = stmt.executeQuery(
-        // " SELECT CONSTRAINT_TYPE," +
-        // " SEARCH_CONDITION," +
-        // " R_CONSTRAINT_NAME" +
-        // " FROM USER_CONS_COLUMNS U" +
-        // " JOIN ALL_CONSTRAINTS A" +
-        // " ON ( U.TABLE_NAME = A.TABLE_NAME" +
-        // " AND U.CONSTRAINT_NAME = A.CONSTRAINT_NAME )" +
-        // " WHERE U.OWNER = 'B00087320'" +
-        // " AND A.OWNER = 'B00087320'" +
-        // " AND U.TABLE_NAME = '" + tableName.toUpperCase() + "' AND U.COLUMN_NAME =
-        // '+"
-        // + columnName.toUpperCase() + "'");
 
-        // ArrayList<String> constraints = new ArrayList<>();
+        ArrayList<String> constraints = new ArrayList<>();
+        constraintsTable.first();
+        while (constraintsTable.next()) {
+            if (constraintsTable.getString("TABLE_NAME").equals(tableName)
+                    && constraintsTable.getString("COLUMN_NAME").equals(columnName)) {
 
-        // while (constraintsTable.next()) {
-        // String constraint =
-        // constraintsTable.getString("CONSTRAINT_TYPE").toUpperCase();
-        // if (constraint.equals("C"))
-        // constraint += "_" + constraintsTable.getString("SEARCH_CONDITION");
-        // else if (constraint.equals("R"))
-        // constraint += "_" + constraintsTable.getString("R_CONSTRAINT_NAME");
+                String constraint = constraintsTable.getString("CONSTRAINT_TYPE").toUpperCase();
 
-        // constraints.add(constraint);
-        // }
-        // return constraints;
-        return new ArrayList<>();
+                if (constraint.equals("C"))
+                    constraint += "_"
+                            + constraintsTable.getString("SEARCH_CONDITION").replace("\"", "").replace("\n", "")
+                                    .replace("   ", "");
+                else if (constraint.equals("R"))
+                    constraint += "_" + constraintsTable.getString("R_CONSTRAINT_NAME");
+
+                constraints.add(constraint);
+            }
+        }
+        return constraints;
     }
-
 
 }

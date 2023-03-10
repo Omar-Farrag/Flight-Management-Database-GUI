@@ -8,7 +8,23 @@ public enum Table {
      * the tables for our application and all other tables, we can
      * put the names of this application's tables here.
      */
-    BONUS("BONUS"),DEPT("DEPT"),EMP("EMP"),SALGRADE("SALGRADE");
+    // DEPT("DEPT"),BONUS("BONUS"),EMP("EMP"),SALGRADE("SALGRADE");
+    UTILITY_CONSUMPTION("UTILITY_CONSUMPTION"),
+    MAINTENANCE_REQUESTS("MAINTENANCE_REQUESTS"),
+    BILLS("BILLS"),
+    RECEIPTS("RECEIPTS"),
+    DISCOUNTS("DISCOUNTS"),
+    LEASES("LEASES"),
+    LEASE_REQUESTS("LEASE_REQUESTS"),
+    APPOINTMENT_SLOTS("APPOINTMENT_SLOTS"),
+    APPOINTMENTS("APPOINTMENTS"),
+    PROPERTIES("PROPERTIES"),
+    LOCS("LOCS"),
+    MALLS("MALLS"),
+    USERS("USERS"),
+    ROLES("ROLES"),
+    CREDENTIALS("CREDENTIALS"),
+    NOTIFICATIONS("NOTIFICATIONS");
 
     private String tableName;
 
