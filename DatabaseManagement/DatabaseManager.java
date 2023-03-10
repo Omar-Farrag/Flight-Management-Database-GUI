@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import org.json.simple.JSONArray;
@@ -21,23 +23,32 @@ public class DatabaseManager implements DatabaseOperations {
     private String constraintsFile = "Metadata.json";
     private ArrayList<String> currentApplicationTables;
     private static DatabaseManager instance;
+    private FileWriter fout;
+    private JSONArray jsonTables;
 
     public static void main(String[] args) {
-        DatabaseManager db = DatabaseManager.getInstance();
-        db.establishConnection("jdbc:oracle:thin:@coeoracle.aus.edu:1521:orcl", "b00087320", "b00087320");
+        try {
+
+            DatabaseManager db = DatabaseManager.getInstance();
+            db.establishConnection("jdbc:oracle:thin:@coeoracle.aus.edu:1521:orcl", "b00087320", "b00087320");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     private DatabaseManager() {
         try {
+            fout = new FileWriter(constraintsFile);
+            jsonTables = new JSONArray();
             currentApplicationTables = new ArrayList<>();
             for (Table t : Table.values())
-                currentApplicationTables.add(t.getTableName().toLowerCase());
-
-            Class.forName("oracle.jdbc.driver.OracleDriver");
-        } catch (ClassNotFoundException e) {
-            System.out.println(e.getMessage());
+                currentApplicationTables.add(t.getTableName().toUpperCase());
+        } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     public static DatabaseManager getInstance() {
@@ -46,18 +57,6 @@ public class DatabaseManager implements DatabaseOperations {
         return instance;
     }
 
-    /**
-     * 
-     * This function is used mainly to initialize the URL, username, and password of
-     * the database account.
-     * 
-     * @param URL:     String URL of the database to establish connection with
-     * @param username Username of the user who's account will be used to login to
-     *                 database
-     * @param password Password of the user's account.
-     * @return Boolean : True if the connection was established successfully and all
-     *         relevant data was extracted from Database Catalog
-     */
     @Override
     public Boolean establishConnection(String URL, String username, String password) {
         try {
@@ -65,9 +64,13 @@ public class DatabaseManager implements DatabaseOperations {
             this.username = username;
             this.password = password;
             conn = DriverManager.getConnection(URL, username, password);
+
             extractTables();
-            populateDataTypes();
             populateConstraints();
+
+            fout.write(jsonTables.toJSONString());
+            fout.flush();
+
             return true;
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -75,7 +78,6 @@ public class DatabaseManager implements DatabaseOperations {
         }
         return false;
     }
-
     @Override
     public void insert() {
         // TODO Auto-generated method stub
@@ -100,19 +102,17 @@ public class DatabaseManager implements DatabaseOperations {
         throw new UnsupportedOperationException("Unimplemented method 'update'");
     }
 
+
     // Puts tables and their attributes into a metadata json file
     private void extractTables() {
 
         try {
             DatabaseMetaData meta = conn.getMetaData();
-            FileWriter fout = new FileWriter(constraintsFile);
-
             ResultSet tables = meta.getTables(null, "B00087320", null, new String[] { "TABLE" });
-            JSONArray jsonTables = new JSONArray();
 
             while (tables.next()) {
                 String tableName = tables.getString("TABLE_NAME");
-                if (currentApplicationTables.contains(tableName.toLowerCase())) {
+                if (currentApplicationTables.contains(tableName.toUpperCase())) {
 
                     JSONObject table = new JSONObject();
                     table.put("TableName", tableName);
@@ -123,34 +123,10 @@ public class DatabaseManager implements DatabaseOperations {
                     jsonTables.add(table);
                 }
             }
-            fout.write(jsonTables.toJSONString());
-            fout.flush();
-            conn.close();
-
-        } catch (SQLException | IOException e) {
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
-    }
-
-    private JSONObject getAttributesForTable(String tableName, DatabaseMetaData meta) throws SQLException {
-        ResultSet columns = meta.getColumns(null, "B00087320", tableName, null);
-        JSONObject attributes = new JSONObject();
-
-        while (columns.next())
-            attributes.put(columns.getString("COLUMN_NAME"), new JSONArray());
-        return attributes;
-    }
-
-    private void populateDataTypes() {
-        // Adds the datatypes to the metadata.jsonfile.
-        // TODO: Implement ExtractTables
-    }
-
-    private void populateConstraints() {
-        // Reads the constraints json file and enters the constraints appropriately in
-        // metadata.json
-        // TODO: Implement populateConstraints
 
     }
 
@@ -160,5 +136,62 @@ public class DatabaseManager implements DatabaseOperations {
         // TODO: Implement validateConstraints
 
     }
+
+    private JSONObject getAttributesForTable(String tableName, DatabaseMetaData meta) throws SQLException {
+        ResultSet columns = meta.getColumns(null, "B00087320", tableName, null);
+        JSONObject attributes = new JSONObject();
+
+        while (columns.next()) {
+
+            String attributeName = columns.getString("COLUMN_NAME");
+            JSONArray constraints = new JSONArray();
+            constraints.add(getDataType(attributeName));
+            attributes.put(attributeName, constraints);
+        }
+
+        return attributes;
+    }
+
+    private String getDataType(String attributeName) {
+        try {
+            Statement stmt = conn.createStatement();
+            for (String table : currentApplicationTables) {
+                ResultSet tableDescription = stmt.executeQuery(
+                        " select *" +
+                                " from user_tab_columns" +
+                                " where table_name = '" + table +
+                                "' order by column_id"
+
+                );
+                while (tableDescription.next()) {
+                    if (tableDescription.getString("COLUMN_NAME").equals(attributeName)) {
+                        String dataType = tableDescription.getString("DATA_TYPE");
+                        if (dataType.toLowerCase().equals("number"))
+                            dataType += getPrecisionAndScale(tableDescription);
+                        else if (dataType.toLowerCase().equals("varchar2") || dataType.toLowerCase().equals("char"))
+                            dataType += getMaxLength(tableDescription);
+                        return dataType;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "";
+
+    }
+
+    private String getMaxLength(ResultSet tableDescription) throws SQLException {
+        return "_" + tableDescription.getString("CHAR_COL_DECL_LENGTH");
+    }
+
+    private String getPrecisionAndScale(ResultSet tableDescription) throws SQLException {
+        return "_" + tableDescription.getString("DATA_PRECISION") + "_" + tableDescription.getString("DATA_SCALE");
+    }
+
+    private void populateConstraints() {
+
+    }
+
 
 }

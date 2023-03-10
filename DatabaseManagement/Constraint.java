@@ -1,4 +1,4 @@
-package Validation;
+package DatabaseManagement;
 
 public enum Constraint {
     // Names of constraints come here.

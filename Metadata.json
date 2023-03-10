@@ -1,0 +1,21 @@
+[
+	{
+		"TableName": "BONUS",
+		"Attributes": { "ENAME": ["VARCHAR2_10"], "COMM": ["NUMBER_null_null"], "JOB": ["VARCHAR2_9"], "SAL": ["NUMBER_null_null"] }
+	},
+	{ "TableName": "DEPT", "Attributes": { "LOC": ["VARCHAR2_13"], "DEPTNO": ["NUMBER_2_0"], "DNAME": ["VARCHAR2_14"] } },
+	{
+		"TableName": "EMP",
+		"Attributes": {
+			"ENAME": ["VARCHAR2_10"],
+			"COMM": ["NUMBER_null_null"],
+			"HIREDATE": ["DATE"],
+			"EMPNO": ["NUMBER_4_0"],
+			"MGR": ["NUMBER_4_0"],
+			"JOB": ["VARCHAR2_9"],
+			"DEPTNO": ["NUMBER_2_0"],
+			"SAL": ["NUMBER_null_null"]
+		}
+	},
+	{ "TableName": "SALGRADE", "Attributes": { "HISAL": ["NUMBER_null_null"], "GRADE": ["NUMBER_null_null"], "LOSAL": ["NUMBER_null_null"] } }
+]
