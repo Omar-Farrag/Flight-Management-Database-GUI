@@ -8,13 +8,13 @@
 		"TableName": "EMP",
 		"Attributes": {
 			"ENAME": ["VARCHAR2_10"],
-			"COMM": ["NUMBER_null_null"],
+			"COMM": ["NUMBER_7_2"],
 			"HIREDATE": ["DATE"],
 			"EMPNO": ["NUMBER_4_0"],
 			"MGR": ["NUMBER_4_0"],
 			"JOB": ["VARCHAR2_9"],
 			"DEPTNO": ["NUMBER_2_0"],
-			"SAL": ["NUMBER_null_null"]
+			"SAL": ["NUMBER_7_2"]
 		}
 	},
 	{ "TableName": "SALGRADE", "Attributes": { "HISAL": ["NUMBER_null_null"], "GRADE": ["NUMBER_null_null"], "LOSAL": ["NUMBER_null_null"] } }
