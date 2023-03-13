@@ -17,11 +17,24 @@ public class ConstraintChecker implements ConstraintChecks {
 
     private String metaDataFile = "Metadata.json";
     public JSONArray metaData;
-    private HashMap<Constraint, ValidationFunction> constraint_to_validator;
+    private HashMap<Constraint, ValidationFunction> C_constraint_to_validator;
+    private HashMap<Constraint, ValidationFunction> dataType_to_validator;
+    private static ConstraintChecker instance;
 
-    public ConstraintChecker() {
-        constraint_to_validator = new HashMap<>();
+    public ConstraintChecker getInstance() {
+        return instance == null ? instance = new ConstraintChecker() : instance;
+    }
+
+    private ConstraintChecker() {
         readMetaDataFromFile();
+        C_constraint_to_validator = new HashMap<>();
+        dataType_to_validator = new HashMap<>();
+
+        C_constraint_to_validator.put(new Constraint(ConstraintEnum.CONSTRAINT1),
+                (constraint) -> validateReferentialIntegrity());
+
+        dataType_to_validator.put(new Constraint(ConstraintEnum.constraint1),
+                (constraint) -> validateReferentialIntegrity());
 
     }
 
@@ -45,7 +58,7 @@ public class ConstraintChecker implements ConstraintChecks {
     }
 
     @Override
-    public void check(Table t, HashMap<String, String> attributesToCheck)
+    public Error check(Table t, HashMap<String, String> attributesToCheck)
             throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
 
         JSONObject table = getTableInfoFromMetaData(t.getTableName());
@@ -59,14 +72,23 @@ public class ConstraintChecker implements ConstraintChecks {
             for (Object obj : attributeConstraints) {
                 String constraint = (String) obj;
 
-                if (constraint.startsWith("R"))
+                if (constraint.startsWith("R_"))
                     validateReferentialIntegrity();
+                else if (constraint.startsWith("P_"))
+                    validatePrimaryKey();
+                else if (constraint.startsWith("U_"))
+                    validateUniqueness();
+                else if (constraint.startsWith("C_"))
+                    validateCheckCondition();
 
-                else if (!constraint_to_validator.containsKey(constraint))
-                    throw new ConstraintNotFoundException(constraint);
+                else
+                    validateType();
 
-                ValidationFunction validator = constraint_to_validator.get(constraint);
-                validator.validate(constraint);
+                // else if (!dataType_to_validator.containsKey(constraint))
+                // throw new ConstraintNotFoundException(constraint);
+
+                // ValidationFunction validator = constraint_to_validator.get(constraint);
+                // validator.validate(constraint);
             }
         }
 
@@ -82,7 +104,7 @@ public class ConstraintChecker implements ConstraintChecks {
     }
     // ///////////////////////////////////////////VALIDATORS/////////////////////////////////////////////////
 
-    private void validateReferentialIntegrity() {
+    private String validateReferentialIntegrity() {
     }
 
     public static void main(String[] args) {
