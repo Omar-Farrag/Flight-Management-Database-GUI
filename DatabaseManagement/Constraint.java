@@ -6,17 +6,34 @@ public enum Constraint {
     CONSTRAINT1("CONSTRAINT 1");
 
     private String name;
+    private ConstraintFunctionality functionality;
 
     private Constraint(String name) {
-        this.name = name;
+        this.name = name.toUpperCase();
+        functionality = new ConstraintFunctionality();
     }
 
     public String getName() {
         return name;
     }
 
-    public static void parse() {
-        // TODO: implement parse method in Constraint enum
+    public ConstraintFunctionality get() {
+        return functionality;
+    }
+
+    private class ConstraintFunctionality {
+
+        @Override
+        public boolean equals(Object obj) {
+            String constraintString = (String) obj;
+            return constraintString.contains(name);
+        }
+
+        @Override
+        public int hashCode() {
+            return name.hashCode();
+        }
+
     }
 
 }

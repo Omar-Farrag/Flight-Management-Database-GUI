@@ -1,5 +1,7 @@
 package DatabaseManagement;
 
+import java.util.HashMap;
+
 public interface ConstraintChecks {
     /*
      * Here we can put functions for all the constraints in the database
@@ -11,4 +13,7 @@ public interface ConstraintChecks {
      */
 
     // TODO: ADD ALL CONSTAINTChecks functions to ConstraintChecks Interface
+    public void check(Table t, HashMap<String, String> attributes)
+            throws TableNotFoundException, AttributeNotFoundException;
+
 }
