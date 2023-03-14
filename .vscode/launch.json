@@ -6,6 +6,13 @@
 	"configurations": [
 		{
 			"type": "java",
+			"name": "Constraint",
+			"request": "launch",
+			"mainClass": "DatabaseManagement.Constraint",
+			"projectName": "Flight Management Database_5adf7dbb"
+		},
+		{
+			"type": "java",
 			"name": "ConstraintChecker",
 			"request": "launch",
 			"mainClass": "DatabaseManagement.ConstraintChecker",

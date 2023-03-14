@@ -128,6 +128,7 @@ public class DatabaseManager implements DatabaseOperations {
         // TODO: Implement validateConstraints
 
     }
+
     // Puts tables and their attributes into a metadata json file
     private void extractTables() {
 
@@ -149,8 +150,6 @@ public class DatabaseManager implements DatabaseOperations {
         }
 
     }
-
-
 
     private JSONObject getAttributesForTable(String tableName, DatabaseMetaData meta) throws SQLException {
         ResultSet columns = meta.getColumns(null, "B00087320", tableName, null);

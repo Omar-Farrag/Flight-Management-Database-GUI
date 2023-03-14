@@ -2,34 +2,34 @@ package DatabaseManagement;
 
 public enum ConstraintEnum {
     // Names of constraints come here.
-
-    PRIMARY(""),
-    UNIQUE(""),
-    LESS_THAN("<")
-    GREATER_THAN(">")
-    EQUAL("=")
-    NOT_EQUAL("!=")
-    LESS_EQUAL("<=")
-    GREATER_EQUAL(">=")
-    NOT_NULL("IS NOT NULL")
-    LIKE("LIKE")
-    BETWEEN("BETWEEN")
-    IN("IN")
-    REGEXP_LIKE("REGEXP_LIKE")
-    NUMBER("NUMBER")
-    FLOAT("FLOAT")
-    CHAR("CHAR")
-    VARCHAR2("VARCHAR2")
-    DATE("DATE")
-
+    // ^C_\\w*\\s*<\\s*\\w*\\s*$
+    PRIMARY("P"),
+    UNIQUE("U"),
+    FOREIGN("^R_\\w+"),
+    LESS_THAN("^C_\\s*\\w+\\s*<\\s*\\w"),
+    GREATER_THAN("^C_\\s*\\w+\\s*>\\s*\\w"),
+    EQUAL("^C_\\s*\\w+\\s*=\\s*\\w"),
+    NOT_EQUAL("^C_\\s*\\w+\\s*!=\\s*\\w"),
+    LESS_EQUAL("^C_\\s*\\w+\\s*<=\\s*\\w"),
+    GREATER_EQUAL("^C_\\s*\\w+\\s*>=\\s*\\w"),
+    NOT_NULL("^C_\\s*\\w\\s+IS NOT NULL"),
+    LIKE("^C_\\s*\\w+\\s+LIKE\\s+\\w+$"),
+    BETWEEN("^C_\\s*\\w\\s+BETWEEN\\s+\\w\\s+AND\\s+\\w"),
+    IN("^C_\\s*\\w+\\s+IN\\s*\\(\\s*'[\\w\\s]*'(,\\s*'[\\w\\s]*')*\\s*\\)$"),
+    REGEXP_LIKE("^C_REGEXP_LIKE\\s*\\(\\s*\\w+\\s*,'[\\w\\s]*'\\)$"),
+    NUMBER("NUMBER_\\d{1,}_\\d{1,}"),
+    FLOAT("FLOAT"),
+    CHAR("CHAR_\\d{1,}"),
+    VARCHAR2("VARCHAR2_\\d{1,}"),
+    DATE("DATE");
 
     private String name;
 
     private ConstraintEnum(String name) {
-        this.name = name.toUpperCase();
+        this.name = name;
     }
 
-    public String getName() {
+    public String getRegex() {
         return name;
     }
 
