@@ -3,8 +3,6 @@ package DatabaseManagement;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,7 +10,6 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -44,11 +41,54 @@ public class ConstraintChecker implements ConstraintChecks {
             currentApplicationTables.add(t.getTableName().toUpperCase());
 
         if (!new File(metaDataFile).exists())
-               initMetaDataFile();
+            initMetaDataFile();
         else
             readMetaDataFromFile();
 
+        initConstraintsToValidatorMap();
+    }
+
+    private void initConstraintsToValidatorMap() {
         constraint_to_validator = new HashMap<>();
+
+        constraint_to_validator.put(new Constraint(ConstraintEnum.PRIMARY),
+                (constraint) -> validatePRIMARY(constraint));
+        constraint_to_validator.put(new Constraint(ConstraintEnum.UNIQUE),
+                (constraint) -> validateUNIQUE(constraint));
+        constraint_to_validator.put(new Constraint(ConstraintEnum.FOREIGN),
+                (constraint) -> validateFOREIGN(constraint));
+        constraint_to_validator.put(new Constraint(ConstraintEnum.LESS_THAN),
+                (constraint) -> validateLESS_THAN(constraint));
+        constraint_to_validator.put(new Constraint(ConstraintEnum.GREATER_THAN),
+                (constraint) -> validateGREATER_THAN(constraint));
+        constraint_to_validator.put(new Constraint(ConstraintEnum.EQUAL),
+                (constraint) -> validateEQUAL(constraint));
+        constraint_to_validator.put(new Constraint(ConstraintEnum.NOT_EQUAL),
+                (constraint) -> validateNOT_EQUAL(constraint));
+        constraint_to_validator.put(new Constraint(ConstraintEnum.LESS_EQUAL),
+                (constraint) -> validateLESS_EQUAL(constraint));
+        constraint_to_validator.put(new Constraint(ConstraintEnum.GREATER_EQUAL),
+                (constraint) -> validateGREATER_EQUAL(constraint));
+        constraint_to_validator.put(new Constraint(ConstraintEnum.NOT_NULL),
+                (constraint) -> validateNOT_NULL(constraint));
+        constraint_to_validator.put(new Constraint(ConstraintEnum.LIKE),
+                (constraint) -> validateLIKE(constraint));
+        constraint_to_validator.put(new Constraint(ConstraintEnum.BETWEEN),
+                (constraint) -> validateBETWEEN(constraint));
+        constraint_to_validator.put(new Constraint(ConstraintEnum.IN),
+                (constraint) -> validateIN(constraint));
+        constraint_to_validator.put(new Constraint(ConstraintEnum.REGEXP_LIKE),
+                (constraint) -> validateREGEXP_LIKE(constraint));
+        constraint_to_validator.put(new Constraint(ConstraintEnum.NUMBER),
+                (constraint) -> validateNUMBER(constraint));
+        constraint_to_validator.put(new Constraint(ConstraintEnum.FLOAT),
+                (constraint) -> validateFLOAT(constraint));
+        constraint_to_validator.put(new Constraint(ConstraintEnum.CHAR),
+                (constraint) -> validateCHAR(constraint));
+        constraint_to_validator.put(new Constraint(ConstraintEnum.VARCHAR2),
+                (constraint) -> validateVARCHAR2(constraint));
+        constraint_to_validator.put(new Constraint(ConstraintEnum.DATE),
+                (constraint) -> validateDATE(constraint));
     }
 
     private void readMetaDataFromFile() {
@@ -63,6 +103,7 @@ public class ConstraintChecker implements ConstraintChecks {
                 fileContent += line;
 
             metaData = (JSONArray) new JSONParser().parse(fileContent);
+            bin.close();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ParseException e) {
@@ -71,13 +112,14 @@ public class ConstraintChecker implements ConstraintChecks {
     }
 
     @Override
-    public Errors check(Table t, HashMap<String, String> attributesToCheck)
+    public Errors check(Table t, AttributeCollection attributesToCheck)
             throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
 
         JSONObject table = getTableInfoFromMetaData(t.getTableName());
         JSONObject tableAttributes = (JSONObject) table.get("Attributes");
 
-        for (String attribute : attributesToCheck.keySet()) {
+        for (Attribute a : attributesToCheck.attributes()) {
+            String attribute = a.getAttributeName();
             if (!tableAttributes.containsKey(attribute))
                 throw new AttributeNotFoundException(t.getTableName(), attribute);
 
@@ -126,7 +168,7 @@ public class ConstraintChecker implements ConstraintChecks {
                             " ON ( U.TABLE_NAME = A.TABLE_NAME" +
                             " AND U.CONSTRAINT_NAME = A.CONSTRAINT_NAME )" +
                             " WHERE U.OWNER = '" + DatabaseManager.getInstance().getUsername() + "'" +
-                            " AND A.OWNER = 'B00087320'" +
+                            " AND A.OWNER = '" + DatabaseManager.getInstance().getUsername() + "'" +
                             " AND U.TABLE_NAME in (" + formattedTableNames + ")");
 
             tableDataTypes = DatabaseManager.getInstance().executeStatement(
@@ -193,7 +235,6 @@ public class ConstraintChecker implements ConstraintChecks {
 
     private String extractDataType(int rowNumber, String tableName) {
         try {
-            Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
 
             tableDataTypes.beforeFirst();
             while (tableDataTypes.next()) {
@@ -249,7 +290,79 @@ public class ConstraintChecker implements ConstraintChecks {
 
     // ///////////////////////////////////////////VALIDATORS/////////////////////////////////////////////////
 
-    private String validateReferentialIntegrity() {
+    private String validatePRIMARY(String constraint) {
+        return "";
+    }
+
+    private String validateUNIQUE(String constraint) {
+        return "";
+    }
+
+    private String validateFOREIGN(String constraint) {
+        return "";
+    }
+
+    private String validateLESS_THAN(String constraint) {
+        return "";
+    }
+
+    private String validateGREATER_THAN(String constraint) {
+        return "";
+    }
+
+    private String validateEQUAL(String constraint) {
+        return "";
+    }
+
+    private String validateNOT_EQUAL(String constraint) {
+        return "";
+    }
+
+    private String validateLESS_EQUAL(String constraint) {
+        return "";
+    }
+
+    private String validateGREATER_EQUAL(String constraint) {
+        return "";
+    }
+
+    private String validateNOT_NULL(String constraint) {
+        return "";
+    }
+
+    private String validateLIKE(String constraint) {
+        return "";
+    }
+
+    private String validateBETWEEN(String constraint) {
+        return "";
+    }
+
+    private String validateIN(String constraint) {
+        return "";
+    }
+
+    private String validateREGEXP_LIKE(String constraint) {
+        return "";
+    }
+
+    private String validateNUMBER(String constraint) {
+        return "";
+    }
+
+    private String validateFLOAT(String constraint) {
+        return "";
+    }
+
+    private String validateCHAR(String constraint) {
+        return "";
+    }
+
+    private String validateVARCHAR2(String constraint) {
+        return "";
+    }
+
+    private String validateDATE(String constraint) {
         return "";
     }
 

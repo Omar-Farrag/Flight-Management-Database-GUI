@@ -15,10 +15,6 @@ public class DatabaseManager implements DatabaseOperations {
     private Connection conn;
     private static DatabaseManager instance;
 
-    public static void main(String[] args) {
-        DatabaseManager db = DatabaseManager.getInstance();
-
-    }
 
     private DatabaseManager() {
         try {
