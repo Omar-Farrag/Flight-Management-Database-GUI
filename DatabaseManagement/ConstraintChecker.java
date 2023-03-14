@@ -14,7 +14,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.json.simple.JSONArray;
+
 import org.json.simple.JSONObject;
+
 import org.json.simple.parser.*;
 
 public class ConstraintChecker implements ConstraintChecks {
@@ -25,12 +27,13 @@ public class ConstraintChecker implements ConstraintChecks {
     private ResultSet constraintsTable;
     private ResultSet tableDataTypes;
     private Connection conn;
+    private Validator validator;
 
     public JSONArray metaData;
     private HashMap<Constraint, ValidationFunction> constraint_to_validator;
     private static ConstraintChecker instance;
 
-    public ConstraintChecker getInstance() {
+    public static ConstraintChecker getInstance() {
         return instance == null ? instance = new ConstraintChecker() : instance;
     }
 
@@ -40,56 +43,14 @@ public class ConstraintChecker implements ConstraintChecks {
         for (Table t : Table.values())
             currentApplicationTables.add(t.getTableName().toUpperCase());
 
+        validator = new Validator();
+
         if (!new File(metaDataFile).exists())
             initMetaDataFile();
         else
             readMetaDataFromFile();
-
-        initConstraintsToValidatorMap();
     }
 
-    private void initConstraintsToValidatorMap() {
-        constraint_to_validator = new HashMap<>();
-
-        constraint_to_validator.put(new Constraint(ConstraintEnum.PRIMARY),
-                (constraint) -> validatePRIMARY(constraint));
-        constraint_to_validator.put(new Constraint(ConstraintEnum.UNIQUE),
-                (constraint) -> validateUNIQUE(constraint));
-        constraint_to_validator.put(new Constraint(ConstraintEnum.FOREIGN),
-                (constraint) -> validateFOREIGN(constraint));
-        constraint_to_validator.put(new Constraint(ConstraintEnum.LESS_THAN),
-                (constraint) -> validateLESS_THAN(constraint));
-        constraint_to_validator.put(new Constraint(ConstraintEnum.GREATER_THAN),
-                (constraint) -> validateGREATER_THAN(constraint));
-        constraint_to_validator.put(new Constraint(ConstraintEnum.EQUAL),
-                (constraint) -> validateEQUAL(constraint));
-        constraint_to_validator.put(new Constraint(ConstraintEnum.NOT_EQUAL),
-                (constraint) -> validateNOT_EQUAL(constraint));
-        constraint_to_validator.put(new Constraint(ConstraintEnum.LESS_EQUAL),
-                (constraint) -> validateLESS_EQUAL(constraint));
-        constraint_to_validator.put(new Constraint(ConstraintEnum.GREATER_EQUAL),
-                (constraint) -> validateGREATER_EQUAL(constraint));
-        constraint_to_validator.put(new Constraint(ConstraintEnum.NOT_NULL),
-                (constraint) -> validateNOT_NULL(constraint));
-        constraint_to_validator.put(new Constraint(ConstraintEnum.LIKE),
-                (constraint) -> validateLIKE(constraint));
-        constraint_to_validator.put(new Constraint(ConstraintEnum.BETWEEN),
-                (constraint) -> validateBETWEEN(constraint));
-        constraint_to_validator.put(new Constraint(ConstraintEnum.IN),
-                (constraint) -> validateIN(constraint));
-        constraint_to_validator.put(new Constraint(ConstraintEnum.REGEXP_LIKE),
-                (constraint) -> validateREGEXP_LIKE(constraint));
-        constraint_to_validator.put(new Constraint(ConstraintEnum.NUMBER),
-                (constraint) -> validateNUMBER(constraint));
-        constraint_to_validator.put(new Constraint(ConstraintEnum.FLOAT),
-                (constraint) -> validateFLOAT(constraint));
-        constraint_to_validator.put(new Constraint(ConstraintEnum.CHAR),
-                (constraint) -> validateCHAR(constraint));
-        constraint_to_validator.put(new Constraint(ConstraintEnum.VARCHAR2),
-                (constraint) -> validateVARCHAR2(constraint));
-        constraint_to_validator.put(new Constraint(ConstraintEnum.DATE),
-                (constraint) -> validateDATE(constraint));
-    }
 
     private void readMetaDataFromFile() {
         try {
@@ -112,32 +73,38 @@ public class ConstraintChecker implements ConstraintChecks {
     }
 
     @Override
-    public Errors check(Table t, AttributeCollection attributesToCheck)
+    public Errors checkInsertion(Table t, AttributeCollection toInsert)
+            throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
+
+        return check(t, null, toInsert);
+
+    }
+
+    @Override
+    public Errors checkUpdate(Table t, AttributeCollection primaryKey, AttributeCollection toUpdate)
+            throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
+
+        return check(t, primaryKey, toUpdate);
+    }
+
+    private Errors check(Table t, AttributeCollection primaryKey, AttributeCollection toValidate)
             throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
 
         JSONObject table = getTableInfoFromMetaData(t.getTableName());
         JSONObject tableAttributes = (JSONObject) table.get("Attributes");
 
-        for (Attribute a : attributesToCheck.attributes()) {
-            String attribute = a.getAttributeName();
-            if (!tableAttributes.containsKey(attribute))
-                throw new AttributeNotFoundException(t.getTableName(), attribute);
+        for (Attribute attribute : toValidate.attributes()) {
+            if (!tableAttributes.containsKey(attribute.getAttributeName()))
+                throw new AttributeNotFoundException(t.getTableName(), attribute.getAttributeName());
 
-            JSONArray attributeConstraints = (JSONArray) tableAttributes.get(attribute);
+            JSONArray attributeConstraints = (JSONArray) tableAttributes.get(attribute.getAttributeName());
             for (Object obj : attributeConstraints) {
+                
                 String constraint = (String) obj;
-
-                if (!constraint_to_validator.containsKey(constraint))
-                    throw new ConstraintNotFoundException(constraint);
-
-                else {
-                    ValidationFunction validator = constraint_to_validator.get(constraint);
-                    validator.validate(constraint);
-                }
+                validator.validate(constraint, primaryKey, attribute, toValidate);
             }
         }
         return new Errors();
-
     }
 
     private JSONObject getTableInfoFromMetaData(String tableName) throws TableNotFoundException {
@@ -286,84 +253,6 @@ public class ConstraintChecker implements ConstraintChecks {
             }
         }
         return constraints;
-    }
-
-    // ///////////////////////////////////////////VALIDATORS/////////////////////////////////////////////////
-
-    private String validatePRIMARY(String constraint) {
-        return "";
-    }
-
-    private String validateUNIQUE(String constraint) {
-        return "";
-    }
-
-    private String validateFOREIGN(String constraint) {
-        return "";
-    }
-
-    private String validateLESS_THAN(String constraint) {
-        return "";
-    }
-
-    private String validateGREATER_THAN(String constraint) {
-        return "";
-    }
-
-    private String validateEQUAL(String constraint) {
-        return "";
-    }
-
-    private String validateNOT_EQUAL(String constraint) {
-        return "";
-    }
-
-    private String validateLESS_EQUAL(String constraint) {
-        return "";
-    }
-
-    private String validateGREATER_EQUAL(String constraint) {
-        return "";
-    }
-
-    private String validateNOT_NULL(String constraint) {
-        return "";
-    }
-
-    private String validateLIKE(String constraint) {
-        return "";
-    }
-
-    private String validateBETWEEN(String constraint) {
-        return "";
-    }
-
-    private String validateIN(String constraint) {
-        return "";
-    }
-
-    private String validateREGEXP_LIKE(String constraint) {
-        return "";
-    }
-
-    private String validateNUMBER(String constraint) {
-        return "";
-    }
-
-    private String validateFLOAT(String constraint) {
-        return "";
-    }
-
-    private String validateCHAR(String constraint) {
-        return "";
-    }
-
-    private String validateVARCHAR2(String constraint) {
-        return "";
-    }
-
-    private String validateDATE(String constraint) {
-        return "";
     }
 
     public static void main(String[] args) {

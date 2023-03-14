@@ -1,6 +1,5 @@
 package DatabaseManagement;
 
-import java.util.HashMap;
 
 public interface ConstraintChecks {
     /*
@@ -13,7 +12,7 @@ public interface ConstraintChecks {
      */
 
     // TODO: ADD ALL CONSTAINTChecks functions to ConstraintChecks Interface
-    public Errors check(Table t, AttributeCollection attributes)
-            throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException;
+    public Errors checkInsertion(Table t, AttributeCollection attributesToCheck)throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException;
+    public Errors checkUpdate(Table t, AttributeCollection primaryKey, AttributeCollection toUpdate)throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException;
 
 }

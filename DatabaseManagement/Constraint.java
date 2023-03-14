@@ -22,11 +22,6 @@ public class Constraint {
         return match.matches();
     }
 
-    @Override
-    public int hashCode() {
-        return constraintEnum.getRegex().hashCode();
-    }
-
     public static void main(String[] args) {
 
         Constraint conPRIMARY = new Constraint(ConstraintEnum.PRIMARY);

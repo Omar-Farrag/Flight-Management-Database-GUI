@@ -37,7 +37,7 @@ public class DatabaseManager implements DatabaseOperations {
         return conn;
     }
     public String getUsername(){
-        return username;
+        return username.toUpperCase();
     }
 
 
