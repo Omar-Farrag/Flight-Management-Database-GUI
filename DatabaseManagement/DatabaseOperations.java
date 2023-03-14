@@ -1,9 +1,10 @@
 package DatabaseManagement;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public interface DatabaseOperations {
     // Just a simple iterface for our database manager class
-
-    public Boolean establishConnection(String URL, String username, String password);
 
     // Inserts an entry into the database
     public void insert();
@@ -16,4 +17,10 @@ public interface DatabaseOperations {
 
     // retrieves data from the database
     public void retrieve();
+
+    // executes a given sql statement 
+    public ResultSet executeStatement(String sqlStatement) throws SQLException;
+
+    // executes a given sql prepared statement
+    public int executePreparedStatement(String sqlPreparedStatement) throws SQLException;
 }

@@ -13,7 +13,7 @@ public interface ConstraintChecks {
      */
 
     // TODO: ADD ALL CONSTAINTChecks functions to ConstraintChecks Interface
-    public void check(Table t, HashMap<String, String> attributes)
+    public Errors check(Table t, HashMap<String, String> attributes)
             throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException;
 
 }
