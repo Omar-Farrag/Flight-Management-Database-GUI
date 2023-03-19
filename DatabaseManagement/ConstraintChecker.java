@@ -29,8 +29,7 @@ public class ConstraintChecker implements ConstraintChecks {
     private Connection conn;
     private Validator validator;
 
-    public JSONArray metaData;
-    private HashMap<Constraint, ValidationFunction> constraint_to_validator;
+    private HashMap<String, JSONObject> table_to_object;
     private static ConstraintChecker instance;
 
     public static ConstraintChecker getInstance() {
@@ -44,13 +43,13 @@ public class ConstraintChecker implements ConstraintChecks {
             currentApplicationTables.add(t.getTableName().toUpperCase());
 
         validator = new Validator();
+        table_to_object = new HashMap<>();
 
         if (!new File(metaDataFile).exists())
             initMetaDataFile();
         else
             readMetaDataFromFile();
     }
-
 
     private void readMetaDataFromFile() {
         try {
@@ -63,7 +62,12 @@ public class ConstraintChecker implements ConstraintChecks {
             while ((line = bin.readLine()) != null)
                 fileContent += line;
 
-            metaData = (JSONArray) new JSONParser().parse(fileContent);
+            JSONArray metaData = (JSONArray) new JSONParser().parse(fileContent);
+            for (Object table : metaData) {
+                JSONObject tableJSONObject = (JSONObject) table;
+                table_to_object.put(tableJSONObject.get("TableName").toString(), tableJSONObject);
+            }
+
             bin.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -99,7 +103,7 @@ public class ConstraintChecker implements ConstraintChecks {
 
             JSONArray attributeConstraints = (JSONArray) tableAttributes.get(attribute.getAttributeName());
             for (Object obj : attributeConstraints) {
-                
+
                 String constraint = (String) obj;
                 validator.validate(constraint, primaryKey, attribute, toValidate);
             }
@@ -108,12 +112,10 @@ public class ConstraintChecker implements ConstraintChecks {
     }
 
     private JSONObject getTableInfoFromMetaData(String tableName) throws TableNotFoundException {
-        for (Object table : metaData) {
-            JSONObject tableObject = (JSONObject) table;
-            if (tableObject.get("TableName").equals(tableName))
-                return tableObject;
-        }
-        throw new TableNotFoundException();
+        if (!table_to_object.containsKey(tableName))
+            throw new TableNotFoundException();
+        else
+            return table_to_object.get(tableName);
     }
 
     // ///////////////////////////////////////////METADATA EXTRACTION FROM
@@ -121,7 +123,7 @@ public class ConstraintChecker implements ConstraintChecks {
     private Boolean initMetaDataFile() {
         try {
             fout = new FileWriter(metaDataFile);
-            metaData = new JSONArray();
+            JSONArray metaData = new JSONArray();
 
             String formattedTableNames = "'" + String.join(",", currentApplicationTables).replace(",", "','") + "'";
             constraintsTable = DatabaseManager.getInstance().executeStatement(
@@ -145,7 +147,7 @@ public class ConstraintChecker implements ConstraintChecks {
 
             );
 
-            extractTables();
+            extractTables(metaData);
 
             fout.write(metaData.toJSONString());
             fout.flush();
@@ -158,7 +160,7 @@ public class ConstraintChecker implements ConstraintChecks {
         return false;
     }
 
-    private void extractTables() {
+    private void extractTables(JSONArray metaData) {
 
         try {
             DatabaseMetaData meta = conn.getMetaData();
@@ -171,6 +173,7 @@ public class ConstraintChecker implements ConstraintChecks {
 
                 table.put("Attributes", attributes);
                 metaData.add(table);
+                table_to_object.put(tableName, table);
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
