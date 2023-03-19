@@ -13,7 +13,7 @@ public class Attribute {
         return attributeName.getName();
     }
 
-    public int getInt() throws NumberFormatException {
+    public int getInt()  throws NumberFormatException {
         return Integer.parseInt(attributeValue);
     }
 
@@ -27,6 +27,10 @@ public class Attribute {
 
     public String getString() {
         return attributeValue;
+    }
+    @Override
+    public int hashCode() {
+        return attributeName.getName().hashCode();
     }
 
     public enum Name {

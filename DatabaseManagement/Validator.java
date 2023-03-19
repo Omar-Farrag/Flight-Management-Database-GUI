@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+import DatabaseManagement.ConstraintChecker.Errors;
+
 public class Validator {
 
         private ArrayList<Constraint> constraints;
@@ -36,14 +38,12 @@ public class Validator {
 
         private String validatePRIMARY(String constraint, AttributeCollection PK, Attribute toValidate,
                         AttributeCollection remaining) {
-                System.out.println("Hello From Primary");
-                return "";
+                return "Hello From Primary";
         }
 
         private String validateUNIQUE(String constraint, AttributeCollection PK, Attribute toValidate,
                         AttributeCollection remaining) {
-                System.out.println("Hellow from Unique");
-                return "";
+                return "Hellow from Unique";
         }
 
         private String validateFOREIGN(String constraint, AttributeCollection PK, Attribute toValidate,
@@ -83,9 +83,8 @@ public class Validator {
 
         private String validateNOT_NULL(String constraint, AttributeCollection PK, Attribute toValidate,
                         AttributeCollection remaining) {
-                System.out.println("Hello from NOTNULL");
 
-                return "";
+return "Hello from NOTNULL";
         }
 
         private String validateLIKE(String constraint, AttributeCollection PK, Attribute toValidate,
@@ -105,9 +104,8 @@ public class Validator {
 
         private String validateREGEXP_LIKE(String constraint, AttributeCollection PK, Attribute toValidate,
                         AttributeCollection remaining) {
-                System.out.println("Hello from REGEXP_LIKE");
 
-                return "";
+return "Hello from REGEXP_LIKE";
         }
 
         private String validateNUMBER(String constraint, AttributeCollection PK, Attribute toValidate,
@@ -122,9 +120,8 @@ public class Validator {
 
         private String validateCHAR(String constraint, AttributeCollection PK, Attribute toValidate,
                         AttributeCollection remaining) {
-                System.out.println("Hello from Char");
 
-                return "";
+return "Hello from Char";
         }
 
         private String validateVARCHAR2(String constraint, AttributeCollection PK, Attribute toValidate,
@@ -223,7 +220,8 @@ public class Validator {
 
         public static void main(String[] args) {
                 AttributeCollection collection = new AttributeCollection();
-                collection.add(new Attribute(Attribute.Name.MALL_NUM, "ABC"));
+                Attribute x = new Attribute(Attribute.Name.MALL_NUM, "ABC");
+                collection.add(x);
                 collection.add(new Attribute(Attribute.Name.LOCATION_NUM, "ABC"));
                 collection.add(new Attribute(Attribute.Name.STORE_NUM, "ABC"));
 
@@ -231,7 +229,9 @@ public class Validator {
                         ConstraintChecker checker = ConstraintChecker.getInstance();
                         System.out.println("Done initializing");
                         new Scanner(System.in).nextLine();
-                        checker.checkInsertion(Table.LOCS, collection);
+                        Errors errors = checker.checkInsertion(Table.LOCS, collection);
+                        ArrayList<String> errorsList = errors.getErrorByAttribute(x);
+                        for(String error : errorsList) System.out.println(error);
                 } catch (TableNotFoundException | AttributeNotFoundException | ConstraintNotFoundException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();

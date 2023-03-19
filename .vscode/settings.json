@@ -1,7 +1,8 @@
 {
 	"java.project.referencedLibraries": [
 		"lib/**/*.jar",
-		"g:\\My Drive\\AUS\\3)Junior\\Junior I\\COE 312\\VS Code Workspace\\Project\\Project Starter Code (Version 14)\\Project Starter Code (Version 14.2)\\json-simple-1.1.jar",
-		"g:\\My Drive\\AUS\\3)Junior\\Junior II\\CMP 320\\ojdbc7.jar"
-	]
+		"g:\\My Drive\\AUS\\3)Junior\\Junior II\\CMP 320\\ojdbc7.jar",
+		"g:\\My Drive\\AUS\\3)Junior\\Junior II\\CMP 320\\json-simple-1.1.jar"
+	],
+	"java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx2G -Xms100m -Xlog:disable"
 }

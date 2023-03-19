@@ -1,5 +1,6 @@
 package DatabaseManagement;
 
+import DatabaseManagement.ConstraintChecker.Errors;
 
 public interface ConstraintChecks {
     /*
