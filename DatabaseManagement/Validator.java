@@ -223,9 +223,9 @@ public class Validator {
 
         public static void main(String[] args) {
                 AttributeCollection collection = new AttributeCollection();
-                collection.add(new Attribute("MALL_NUM", "ABC"));
-                collection.add(new Attribute("LOCATION_NUM", "ABC"));
-                collection.add(new Attribute("STORE_NUM", "ABC"));
+                collection.add(new Attribute(Attribute.Name.MALL_NUM, "ABC"));
+                collection.add(new Attribute(Attribute.Name.LOCATION_NUM, "ABC"));
+                collection.add(new Attribute(Attribute.Name.STORE_NUM, "ABC"));
 
                 try {
                         ConstraintChecker checker = ConstraintChecker.getInstance();
