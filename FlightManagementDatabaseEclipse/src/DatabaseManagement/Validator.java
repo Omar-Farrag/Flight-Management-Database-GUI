@@ -10,6 +10,7 @@ import DatabaseManagement.ConstraintChecker.Errors;
 public class Validator {
 
         private ArrayList<Constraint> constraints;
+        private 
 
         public Validator() {
                 initConstraintsToValidatorMap();

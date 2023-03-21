@@ -6,25 +6,41 @@ import java.util.Map;
 
 public class Filter {
     private HashMap<Attribute, FilterType> filters;
+    private ComparisonCompatibility checker;
 
     public Filter() {
         filters = new HashMap<>();
+        checker = new ComparisonCompatibility();
     }
 
     public void add(Attribute attribute, FilterType type) {
         filters.put(attribute, type);
     }
 
-    public String getFilterClause() {
+    public String getFilterClause() throws IncompatibleFilterException {
         if (filters.isEmpty())
             return "";
         String clause = "where ";
-        ArrayList<String> conditions;
+        ArrayList<String> conditions = new ArrayList<>();
 
         for (Map.Entry<Attribute, FilterType> entry : filters.entrySet()) {
-            String condition = entry.getKey().getAttributeName() + " " + entry.getValue().getName();
-            conditions.add();
+            if (checkCompatibility(entry)) {
+                String condition = entry.getKey().getAttributeName() + " " + entry.getValue().getOperator();
+                if (entry.getKey().getType() == Attribute.Type.STRING)
+                    condition += "'" + entry.getKey().getString() + "'";
+                conditions.add(condition);
+            }
+
+            // + entry.getKey().getString();
+            // conditions.add();
         }
+        return clause + String.join(",", conditions);
+    }
+
+    public boolean checkCompatibility(Map.Entry<Attribute, FilterType> filter) throws IncompatibleFilterException {
+        if (!checker.areCompatible(filter.getKey().getType(), filter.getValue()))
+            throw new IncompatibleFilterException(filter);
+        return true;
     }
 
     public enum FilterType {
@@ -37,14 +53,14 @@ public class Filter {
         GREATER(">"),
         GREATER_EQUAL(">=");
 
-        private String name;
+        private String operator;
 
-        private FilterType(String name) {
-            this.name = name;
+        private FilterType(String operator) {
+            this.operator = operator;
         }
 
-        public String getName() {
-            return name;
+        public String getOperator() {
+            return operator;
         }
     }
 }

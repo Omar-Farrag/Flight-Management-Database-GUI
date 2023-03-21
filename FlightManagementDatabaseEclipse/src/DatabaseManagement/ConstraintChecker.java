@@ -27,7 +27,6 @@ public class ConstraintChecker implements ConstraintChecks {
     private ResultSet tableDataTypes;
     private Connection conn;
     private Validator validator;
-    private ComparisonCompatibility compChecker;
 
     private HashMap<String, JSONObject> table_to_object;
     private static ConstraintChecker instance;
@@ -39,8 +38,6 @@ public class ConstraintChecker implements ConstraintChecks {
     private ConstraintChecker() {
         conn = DatabaseManager.getInstance().getConn();
         currentApplicationTables = new ArrayList<>();
-        compChecker = new ComparisonCompatibility();
-
         for (Table t : Table.values())
             currentApplicationTables.add(t.getTableName().toUpperCase());
 
@@ -96,8 +93,8 @@ public class ConstraintChecker implements ConstraintChecks {
     @Override
     public Errors checkRetrieval(Table t, AttributeCollection toGet, Filter filter)
             throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
-
-            return check(t, null, new AttributeCollection(filter));
+        // TODO Auto-generated method stub
+        return null;
     }
 
     private Errors check(Table t, AttributeCollection primaryKey, AttributeCollection toValidate)
@@ -113,13 +110,9 @@ public class ConstraintChecker implements ConstraintChecks {
 
             JSONArray attributeConstraints = (JSONArray) tableAttributes.get(attribute.getAttributeName());
             for (Object obj : attributeConstraints) {
+
                 String constraint = (String) obj;
-                try {
-                    errors.add(attribute, validator.validate(constraint, primaryKey, attribute, toValidate));
-                } catch (MissingValidatorException e) {
-                    System.out.println(e.getMessage())
-                    e.printStackTrace();
-                }
+                errors.add(attribute, validator.validate(constraint, primaryKey, attribute, toValidate));
             }
         }
         return errors;

@@ -65,8 +65,9 @@ public class DatabaseManager implements DatabaseOperations {
 
     @Override
     public ResultSet retrieve(Table t, Filter filters) {
-        String query = "Select * from " + t.getTableName() + filters.getFilterClause();
-        return executeStatement(query);
+        String query = "Select * from " + t.getTableName();
+        filters.
+        // TODO Auto-generated method stub
     }
 
     @Override

@@ -1,0 +1,36 @@
+package DatabaseManagement;
+
+public enum ConstraintEnum {
+    // Names of constraints come here.
+    // ^C_\\w*\\s*<\\s*\\w*\\s*$
+    PRIMARY("P"),
+    UNIQUE("U"),
+    FOREIGN("^R_\\w+"),
+    LESS_THAN("^C_\\s*\\w+\\s*<\\s*\\w"),
+    GREATER_THAN("^C_\\s*\\w+\\s*>\\s*\\w"),
+    EQUAL("^C_\\s*\\w+\\s*=\\s*\\w"),
+    NOT_EQUAL("^C_\\s*\\w+\\s*!=\\s*\\w"),
+    LESS_EQUAL("^C_\\s*\\w+\\s*<=\\s*\\w"),
+    GREATER_EQUAL("^C_\\s*\\w+\\s*>=\\s*\\w"),
+    NOT_NULL("^C_\\s*\\w+\\s+IS NOT NULL"),
+    LIKE("^C_\\s*\\w+\\s+LIKE\\s+\\w+$"),
+    BETWEEN("^C_\\s*\\w\\s+BETWEEN\\s+\\w\\s+AND\\s+\\w"),
+    IN("^C_\\s*\\w+\\s+IN\\s*\\(\\s*'[\\w\\s]*'(,\\s*'[\\w\\s]*')*\\s*\\)$"),
+    REGEXP_LIKE("^C_REGEXP_LIKE\\(STORE_NUM, '[^']*'\\)$"),
+    NUMBER("NUMBER_\\d{1,}_\\d{1,}"),
+    FLOAT("FLOAT"),
+    CHAR("CHAR_\\d{1,}"),
+    VARCHAR2("VARCHAR2_\\d{1,}"),
+    DATE("DATE");
+
+    private String name;
+
+    private ConstraintEnum(String name) {
+        this.name = name;
+    }
+
+    public String getRegex() {
+        return name;
+    }
+
+}

@@ -9,12 +9,6 @@ public class AttributeCollection {
         attributes = new ArrayList<>();
     }
 
-    public AttributeCollection(Filter filter) {
-        attributes = new ArrayList<>();
-        for (Attribute att : filter.getAttributes())
-            add(attribute);
-    }
-
     public void add(Attribute attribute) {
         attributes.add(attribute);
     }

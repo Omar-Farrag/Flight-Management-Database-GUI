@@ -7,6 +7,7 @@ public class Attribute {
 
     public Attribute(Attribute.Name attribute, String value) {
         this.attributeName = attribute;
+        if(ConstraintChecker.)
         this.attributeValue = value;
 
     }
