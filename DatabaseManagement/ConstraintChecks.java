@@ -15,5 +15,6 @@ public interface ConstraintChecks {
     // TODO: ADD ALL CONSTAINTChecks functions to ConstraintChecks Interface
     public Errors checkInsertion(Table t, AttributeCollection attributesToCheck)throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException;
     public Errors checkUpdate(Table t, AttributeCollection primaryKey, AttributeCollection toUpdate)throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException;
+    public Errors checkRetrieval(Table t, AttributeCollection toGet, Filter filter)throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException;
 
 }

@@ -3,27 +3,12 @@ package DatabaseManagement;
 public class Attribute {
     private Attribute.Name attributeName;
     private String attributeValue;
-
-    private Type type;
+    
 
     public Attribute(Attribute.Name attribute, String value) {
         this.attributeName = attribute;
+        if(ConstraintChecker.)
         this.attributeValue = value;
-
-        if(Boolean.parseBoolean(attributeValue)!=null){
-            type = BOOLEAN;
-        }
-        if(Integer.parseInt(attributeValue).){
-            type = INT;
-        }
-        if(Double.parseDouble(attributeValue)!=null){
-            type = DOUBLE;
-        }
-        else {
-            type = String;
-        }
-
-        
 
     }
 
@@ -31,17 +16,17 @@ public class Attribute {
         return attributeName.getName();
     }
 
-    public int getInt() throws NumberFormatException {
-        return Integer.parseInt(attributeValue);
-    }
+    // public int getInt() throws NumberFormatException {
+    //     return Integer.parseInt(attributeValue);
+    // }
 
-    public double getDouble() throws NumberFormatException {
-        return Double.parseDouble(attributeValue);
-    }
+    // public double getDouble() throws NumberFormatException {
+    //     return Double.parseDouble(attributeValue);
+    // }
 
-    public boolean getBoolean() throws NumberFormatException {
-        return Boolean.parseBoolean(attributeValue);
-    }
+    // public boolean getBoolean() throws NumberFormatException {
+    //     return Boolean.parseBoolean(attributeValue);
+    // }
 
     public String getString() {
         return attributeValue;
@@ -122,9 +107,10 @@ public class Attribute {
         }
     }
 
-    private enum Type {
-        INT, DOUBLE, STRING, BOOLEAN;
+    public enum Type {
+        INT, DOUBLE, STRING, BOOLEAN, DATE;
     }
+
     public static void main(String[] args) {
         String x = "3.23";
         System.out.println(Integer.parseInt(x));

@@ -1,6 +1,8 @@
 package DatabaseManagement;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Filter {
     private HashMap<Attribute, FilterType> filters;
@@ -14,7 +16,15 @@ public class Filter {
     }
 
     public String getFilterClause() {
-        Attribute
+        if (filters.isEmpty())
+            return "";
+        String clause = "where ";
+        ArrayList<String> conditions;
+
+        for (Map.Entry<Attribute, FilterType> entry : filters.entrySet()) {
+            String condition = entry.getKey().getAttributeName() + " " + entry.getValue().getName();
+            conditions.add();
+        }
     }
 
     public enum FilterType {
@@ -31,6 +41,10 @@ public class Filter {
 
         private FilterType(String name) {
             this.name = name;
+        }
+
+        public String getName() {
+            return name;
         }
     }
 }

@@ -12,9 +12,13 @@ public class Constraint {
         this.constraintEnum = constraintEnum;
         this.vFunction = vFunction;
     }
+    public Constraint(ConstraintEnum constraintEnum) {
+        this.constraintEnum = constraintEnum;
+    }
 
-    public ValidationFunction getValidationFunction() {
-        return vFunction;
+    public ValidationFunction getValidationFunction() throws MissingValidatorException {
+        if(vFunction == null) throw new MissingValidatorException();
+        else return vFunction;
     }
 
     @Override

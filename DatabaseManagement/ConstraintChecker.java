@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.json.simple.JSONArray;
-
 import org.json.simple.JSONObject;
 
 import org.json.simple.parser.*;
@@ -89,6 +88,13 @@ public class ConstraintChecker implements ConstraintChecks {
             throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
 
         return check(t, primaryKey, toUpdate);
+    }
+
+    @Override
+    public Errors checkRetrieval(Table t, AttributeCollection toGet, Filter filter)
+            throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     private Errors check(Table t, AttributeCollection primaryKey, AttributeCollection toValidate)
