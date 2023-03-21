@@ -16,9 +16,18 @@ public interface DatabaseOperations {
     public void modify();
 
     // retrieves data from the database
-    public void retrieve();
+    public ResultSet retrieve(Table t);
 
-    // executes a given sql statement 
+    // retrieves data from the database
+    public ResultSet retrieve(Table t, Filter filters);
+
+    // retrieves data from the database
+    public ResultSet retrieve(Table t, AttributeCollection toGet);
+
+    // retrieves data from the database
+    public ResultSet retrieve(Table t, AttributeCollection toGet, Filter filters);
+
+    // executes a given sql statement
     public ResultSet executeStatement(String sqlStatement) throws SQLException;
 
     // executes a given sql prepared statement

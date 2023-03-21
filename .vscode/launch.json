@@ -6,6 +6,13 @@
 	"configurations": [
 		{
 			"type": "java",
+			"name": "Attribute",
+			"request": "launch",
+			"mainClass": "DatabaseManagement.Attribute",
+			"projectName": "Flight Management Database_5adf7dbb"
+		},
+		{
+			"type": "java",
 			"name": "Validator",
 			"request": "launch",
 			"mainClass": "DatabaseManagement.Validator",

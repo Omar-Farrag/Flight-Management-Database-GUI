@@ -84,7 +84,7 @@ public class Validator {
         private String validateNOT_NULL(String constraint, AttributeCollection PK, Attribute toValidate,
                         AttributeCollection remaining) {
 
-return "Hello from NOTNULL";
+                return "Hello from NOTNULL";
         }
 
         private String validateLIKE(String constraint, AttributeCollection PK, Attribute toValidate,
@@ -105,7 +105,7 @@ return "Hello from NOTNULL";
         private String validateREGEXP_LIKE(String constraint, AttributeCollection PK, Attribute toValidate,
                         AttributeCollection remaining) {
 
-return "Hello from REGEXP_LIKE";
+                return "Hello from REGEXP_LIKE";
         }
 
         private String validateNUMBER(String constraint, AttributeCollection PK, Attribute toValidate,
@@ -121,7 +121,7 @@ return "Hello from REGEXP_LIKE";
         private String validateCHAR(String constraint, AttributeCollection PK, Attribute toValidate,
                         AttributeCollection remaining) {
 
-return "Hello from Char";
+                return "Hello from Char";
         }
 
         private String validateVARCHAR2(String constraint, AttributeCollection PK, Attribute toValidate,
@@ -220,21 +220,39 @@ return "Hello from Char";
 
         public static void main(String[] args) {
                 AttributeCollection collection = new AttributeCollection();
-                Attribute x = new Attribute(Attribute.Name.MALL_NUM, "ABC");
-                collection.add(x);
-                collection.add(new Attribute(Attribute.Name.LOCATION_NUM, "ABC"));
-                collection.add(new Attribute(Attribute.Name.STORE_NUM, "ABC"));
+
+                ConstraintChecker checker = ConstraintChecker.getInstance();
+                System.out.println("Done initializing");
+                new Scanner(System.in).nextLine();
 
                 try {
-                        ConstraintChecker checker = ConstraintChecker.getInstance();
-                        System.out.println("Done initializing");
-                        new Scanner(System.in).nextLine();
-                        Errors errors = checker.checkInsertion(Table.LOCS, collection);
-                        ArrayList<String> errorsList = errors.getErrorByAttribute(x);
-                        for(String error : errorsList) System.out.println(error);
+                        Attribute x = new Attribute(Attribute.Name.MALL_NUM, "ABC");
+                        Attribute y = new Attribute(Attribute.Name.ADDRESS, "ABC");
+                        // Attribute z = new Attribute(Attribute.Name.STORE_NUM, "ABC");
+
+                        collection.add(x);
+                        collection.add(y);
+                        // collection.add(z);
+
+                        Errors errors = checker.checkInsertion(Table.MALLS, collection);
+                        ArrayList<String> errorsList1 = errors.getErrorByAttribute(x);
+                        ArrayList<String> errorsList2 = errors.getErrorByAttribute(y);
+                        // ArrayList<String> errorsList3 = errors.getErrorByAttribute(z);
+
+                        printList(errorsList1);
+                        printList(errorsList2);
+                        // printList(errorsList3);
+
+
                 } catch (TableNotFoundException | AttributeNotFoundException | ConstraintNotFoundException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                 }
+        }
+
+        private static void printList(ArrayList<String> errors) {
+                for (String error : errors)
+                        System.out.println(error);
+                System.out.println();
         }
 }

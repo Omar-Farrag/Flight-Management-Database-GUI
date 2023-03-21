@@ -109,7 +109,7 @@ public class ConstraintChecker implements ConstraintChecks {
                 errors.add(attribute, validator.validate(constraint, primaryKey, attribute, toValidate));
             }
         }
-        return new Errors();
+        return errors;
     }
 
     private JSONObject getTableInfoFromMetaData(String tableName) throws TableNotFoundException {
@@ -261,34 +261,34 @@ public class ConstraintChecker implements ConstraintChecks {
 
     public class Errors {
         private HashMap<Attribute, ArrayList<String>> attribute_to_errors;
-    
+
         private Errors() {
             attribute_to_errors = new HashMap<>();
         }
-    
+
         private void add(Attribute attribute, String errorMessage) {
             if (errorMessage.isEmpty())
                 return;
-    
+
             if (!attribute_to_errors.containsKey(attribute))
                 attribute_to_errors.put(attribute, new ArrayList<String>());
-    
+
             attribute_to_errors.get(attribute).add(errorMessage);
-    
+
         }
-    
+
         public boolean noErrors() {
             return attribute_to_errors.isEmpty();
         }
-    
-        public ArrayList<String> getErrorByAttribute(Attribute attribute) {
-                if(!attribute_to_errors.containsKey(attribute))
-                    return new ArrayList<>();
-               else return attribute_to_errors.get(attribute);
+
+        public ArrayList<String> getErrorByAttribute(Attribute attribute) throws UnvalidatedAttributeException {
+            if (!attribute_to_errors.containsKey(attribute))
+                throw new UnvalidatedAttributeException(attribute);
+            else
+                return attribute_to_errors.get(attribute);
         }
-    
+
     }
-    
 
     public static void main(String[] args) {
         new ConstraintChecker();

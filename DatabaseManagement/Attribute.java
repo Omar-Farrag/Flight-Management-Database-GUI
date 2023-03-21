@@ -4,16 +4,34 @@ public class Attribute {
     private Attribute.Name attributeName;
     private String attributeValue;
 
+    private Type type;
+
     public Attribute(Attribute.Name attribute, String value) {
         this.attributeName = attribute;
         this.attributeValue = value;
+
+        if(Boolean.parseBoolean(attributeValue)!=null){
+            type = BOOLEAN;
+        }
+        if(Integer.parseInt(attributeValue).){
+            type = INT;
+        }
+        if(Double.parseDouble(attributeValue)!=null){
+            type = DOUBLE;
+        }
+        else {
+            type = String;
+        }
+
+        
+
     }
 
     public String getAttributeName() {
         return attributeName.getName();
     }
 
-    public int getInt()  throws NumberFormatException {
+    public int getInt() throws NumberFormatException {
         return Integer.parseInt(attributeValue);
     }
 
@@ -28,9 +46,10 @@ public class Attribute {
     public String getString() {
         return attributeValue;
     }
+
     @Override
     public int hashCode() {
-        return attributeName.getName().hashCode();
+        return (attributeName.getName() + attributeValue).hashCode();
     }
 
     public enum Name {
@@ -101,5 +120,13 @@ public class Attribute {
         public String getName() {
             return name;
         }
+    }
+
+    private enum Type {
+        INT, DOUBLE, STRING, BOOLEAN;
+    }
+    public static void main(String[] args) {
+        String x = "3.23";
+        System.out.println(Integer.parseInt(x));
     }
 }

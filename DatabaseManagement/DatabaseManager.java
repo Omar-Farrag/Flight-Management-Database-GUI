@@ -15,7 +15,6 @@ public class DatabaseManager implements DatabaseOperations {
     private Connection conn;
     private static DatabaseManager instance;
 
-
     private DatabaseManager() {
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
@@ -36,10 +35,10 @@ public class DatabaseManager implements DatabaseOperations {
     public Connection getConn() {
         return conn;
     }
-    public String getUsername(){
+
+    public String getUsername() {
         return username.toUpperCase();
     }
-
 
     @Override
     public void insert() {
@@ -60,9 +59,27 @@ public class DatabaseManager implements DatabaseOperations {
     }
 
     @Override
-    public void retrieve() {
+    public ResultSet retrieve(Table t) throws SQLException {
+        return executeStatement("Select * from " + t.getTableName());
+    }
+
+    @Override
+    public ResultSet retrieve(Table t, Filter filters) {
+        String query = "Select * from " + t.getTableName();
+        filters.
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+    }
+
+    @Override
+    public ResultSet retrieve(Table t, AttributeCollection toGet) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'retrieve'");
+    }
+
+    @Override
+    public ResultSet retrieve(Table t, AttributeCollection toGet, Filter filters) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'retrieve'");
     }
 
     @Override
