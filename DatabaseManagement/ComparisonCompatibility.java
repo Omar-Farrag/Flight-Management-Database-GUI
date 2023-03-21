@@ -41,7 +41,7 @@ public class ComparisonCompatibility {
                 add(Filter.FilterType.LESS_EQUAL);
             }
         });
-        type_to_operator.put(Type.DATE, new ArrayList<Filter.FilterType>() {
+        type_to_operator.put(Attribute.Type.DATE, new ArrayList<Filter.FilterType>() {
             {
                 add(Filter.FilterType.EQUAL);
                 add(Filter.FilterType.NOT_EQUAL);

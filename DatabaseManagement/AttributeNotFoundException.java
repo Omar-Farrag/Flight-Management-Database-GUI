@@ -7,6 +7,7 @@ public class AttributeNotFoundException extends Exception {
 
     public AttributeNotFoundException(String tableName, String attributeName) {
         this.attributeName = attributeName;
+        this.tableName = tableName;
     }
 
     @Override

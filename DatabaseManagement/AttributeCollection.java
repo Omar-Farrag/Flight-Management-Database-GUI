@@ -12,7 +12,16 @@ public class AttributeCollection {
     public AttributeCollection(Filter filter) {
         attributes = new ArrayList<>();
         for (Attribute att : filter.getAttributes())
-            add(attribute);
+            add(att);
+    }
+
+    public AttributeCollection append(AttributeCollection ac) {
+        if (ac == null)
+            return this;
+
+        for (Attribute attribute : ac.attributes)
+            attributes.add(attribute);
+        return this;
     }
 
     public void add(Attribute attribute) {

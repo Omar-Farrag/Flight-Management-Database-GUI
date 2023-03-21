@@ -3,6 +3,7 @@ package DatabaseManagement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class Filter {
     private HashMap<Attribute, FilterType> filters;
@@ -27,14 +28,18 @@ public class Filter {
             if (checkCompatibility(entry)) {
                 String condition = entry.getKey().getAttributeName() + " " + entry.getValue().getOperator();
                 if (entry.getKey().getType() == Attribute.Type.STRING)
-                    condition += "'" + entry.getKey().getString() + "'";
+                    condition += " '" + entry.getKey().getString() + "'";
+                else
+                    condition += " " + entry.getKey().getString();
                 conditions.add(condition);
             }
 
-            // + entry.getKey().getString();
-            // conditions.add();
         }
-        return clause + String.join(",", conditions);
+        return clause + String.join(" AND ", conditions);
+    }
+
+    public Set<Attribute> getAttributes() {
+        return filters.keySet();
     }
 
     public boolean checkCompatibility(Map.Entry<Attribute, FilterType> filter) throws IncompatibleFilterException {

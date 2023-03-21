@@ -16,7 +16,7 @@ public class Validator {
         }
 
         public String validate(String constraint, AttributeCollection primaryKey, Attribute toValidate,
-                        AttributeCollection RestOfAttributes) {
+                        AttributeCollection RestOfAttributes) throws MissingValidatorException {
                 try {
                         ValidationFunction validationFunc = find(constraint);
                         return validationFunc.validate(constraint, primaryKey, toValidate, RestOfAttributes);
@@ -27,7 +27,8 @@ public class Validator {
                 return "";
         }
 
-        private ValidationFunction find(String constraintToSearchFor) throws ConstraintNotFoundException {
+        private ValidationFunction find(String constraintToSearchFor)
+                        throws ConstraintNotFoundException, MissingValidatorException {
                 for (Constraint constraint : constraints) {
                         if (constraint.equals(constraintToSearchFor))
                                 return constraint.getValidationFunction();
@@ -218,41 +219,41 @@ public class Validator {
                                                 remaining)));
         }
 
-        public static void main(String[] args) {
-                AttributeCollection collection = new AttributeCollection();
+        // public static void main(String[] args) {
+        // AttributeCollection collection = new AttributeCollection();
 
-                ConstraintChecker checker = ConstraintChecker.getInstance();
-                System.out.println("Done initializing");
-                new Scanner(System.in).nextLine();
+        // ConstraintChecker checker = ConstraintChecker.getInstance();
+        // System.out.println("Done initializing");
+        // new Scanner(System.in).nextLine();
 
-                try {
-                        Attribute x = new Attribute(Attribute.Name.MALL_NUM, "ABC");
-                        Attribute y = new Attribute(Attribute.Name.ADDRESS, "ABC");
-                        // Attribute z = new Attribute(Attribute.Name.STORE_NUM, "ABC");
+        // try {
+        // // Attribute x = new Attribute(Attribute.Name.MALL_NUM, "ABC");
+        // // Attribute y = new Attribute(Attribute.Name.ADDRESS, "ABC");
+        // // Attribute z = new Attribute(Attribute.Name.STORE_NUM, "ABC");
 
-                        collection.add(x);
-                        collection.add(y);
-                        // collection.add(z);
+        // // collection.add(x);
+        // // collection.add(y);
+        // // collection.add(z);
 
-                        Errors errors = checker.checkInsertion(Table.MALLS, collection);
-                        ArrayList<String> errorsList1 = errors.getErrorByAttribute(x);
-                        ArrayList<String> errorsList2 = errors.getErrorByAttribute(y);
-                        // ArrayList<String> errorsList3 = errors.getErrorByAttribute(z);
+        // Errors errors = checker.checkInsertion(Table.MALLS, collection);
+        // ArrayList<String> errorsList1 = errors.getErrorByAttribute(x);
+        // ArrayList<String> errorsList2 = errors.getErrorByAttribute(y);
+        // // ArrayList<String> errorsList3 = errors.getErrorByAttribute(z);
 
-                        printList(errorsList1);
-                        printList(errorsList2);
-                        // printList(errorsList3);
+        // printList(errorsList1);
+        // printList(errorsList2);
+        // // printList(errorsList3);
 
+        // } catch (TableNotFoundException | AttributeNotFoundException |
+        // ConstraintNotFoundException e) {
+        // // TODO Auto-generated catch block
+        // e.printStackTrace();
+        // }
+        // }
 
-                } catch (TableNotFoundException | AttributeNotFoundException | ConstraintNotFoundException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                }
-        }
-
-        private static void printList(ArrayList<String> errors) {
-                for (String error : errors)
-                        System.out.println(error);
-                System.out.println();
-        }
+        // private static void printList(ArrayList<String> errors) {
+        // for (String error : errors)
+        // System.out.println(error);
+        // System.out.println();
+        // }
 }

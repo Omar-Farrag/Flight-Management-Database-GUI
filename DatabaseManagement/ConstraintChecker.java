@@ -97,7 +97,7 @@ public class ConstraintChecker implements ConstraintChecks {
     public Errors checkRetrieval(Table t, AttributeCollection toGet, Filter filter)
             throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
 
-            return check(t, null, new AttributeCollection(filter));
+        return check(t, null, new AttributeCollection(filter).append(toGet));
     }
 
     private Errors check(Table t, AttributeCollection primaryKey, AttributeCollection toValidate)
@@ -117,7 +117,7 @@ public class ConstraintChecker implements ConstraintChecks {
                 try {
                     errors.add(attribute, validator.validate(constraint, primaryKey, attribute, toValidate));
                 } catch (MissingValidatorException e) {
-                    System.out.println(e.getMessage())
+                    System.out.println(e.getMessage());
                     e.printStackTrace();
                 }
             }

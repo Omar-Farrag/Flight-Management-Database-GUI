@@ -3,11 +3,12 @@ package DatabaseManagement;
 public class Attribute {
     private Attribute.Name attributeName;
     private String attributeValue;
-    
+    private Type type;
 
-    public Attribute(Attribute.Name attribute, String value) {
+    public Attribute(Attribute.Name attribute, Type type, String value) {
         this.attributeName = attribute;
         this.attributeValue = value;
+        this.type = type;
 
     }
 
@@ -16,19 +17,23 @@ public class Attribute {
     }
 
     // public int getInt() throws NumberFormatException {
-    //     return Integer.parseInt(attributeValue);
+    // return Integer.parseInt(attributeValue);
     // }
 
     // public double getDouble() throws NumberFormatException {
-    //     return Double.parseDouble(attributeValue);
+    // return Double.parseDouble(attributeValue);
     // }
 
     // public boolean getBoolean() throws NumberFormatException {
-    //     return Boolean.parseBoolean(attributeValue);
+    // return Boolean.parseBoolean(attributeValue);
     // }
 
     public String getString() {
         return attributeValue;
+    }
+
+    public Type getType() {
+        return type;
     }
 
     @Override

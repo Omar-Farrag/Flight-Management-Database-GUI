@@ -4,11 +4,11 @@ import java.util.Map;
 
 import DatabaseManagement.Filter.FilterType;
 
-public class IncompatibleFilterException<K, V> extends Exception {
+public class IncompatibleFilterException extends Exception {
 
     private Map.Entry<Attribute, FilterType> filter;
 
-    public void Exception(Map.Entry<Attribute, FilterType> entry) {
+    public IncompatibleFilterException(Map.Entry<Attribute, FilterType> filter) {
         this.filter = filter;
     }
 

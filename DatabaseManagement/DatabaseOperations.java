@@ -16,10 +16,11 @@ public interface DatabaseOperations {
     public void modify();
 
     // retrieves data from the database
-    public ResultSet retrieve(Table t);
+    public ResultSet retrieve(Table t) throws SQLException;
 
     // retrieves data from the database
-    public ResultSet retrieve(Table t, Filter filters);
+    public ResultSet retrieve(Table t, Filter filters) throws IncompatibleFilterException, SQLException,
+            TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException;
 
     // retrieves data from the database
     public ResultSet retrieve(Table t, AttributeCollection toGet);
