@@ -13,15 +13,14 @@ public class ComparisonCompatibility {
             {
                 add(Filter.FilterType.EQUAL);
                 add(Filter.FilterType.NOT_EQUAL);
+                add(Filter.FilterType.GREATER);
+                add(Filter.FilterType.GREATER_EQUAL);
+                add(Filter.FilterType.LESS);
+                add(Filter.FilterType.LESS_EQUAL);
+
             }
         });
         type_to_operator.put(Attribute.Type.DOUBLE, new ArrayList<Filter.FilterType>() {
-            {
-                add(Filter.FilterType.EQUAL);
-                add(Filter.FilterType.NOT_EQUAL);
-            }
-        });
-        type_to_operator.put(Attribute.Type.STRING, new ArrayList<Filter.FilterType>() {
             {
                 add(Filter.FilterType.EQUAL);
                 add(Filter.FilterType.NOT_EQUAL);
@@ -31,7 +30,7 @@ public class ComparisonCompatibility {
                 add(Filter.FilterType.LESS_EQUAL);
             }
         });
-        type_to_operator.put(Attribute.Type.BOOLEAN, new ArrayList<Filter.FilterType>() {
+        type_to_operator.put(Attribute.Type.STRING, new ArrayList<Filter.FilterType>() {
             {
                 add(Filter.FilterType.EQUAL);
                 add(Filter.FilterType.NOT_EQUAL);

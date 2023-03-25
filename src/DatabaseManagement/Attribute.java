@@ -1,9 +1,9 @@
 package DatabaseManagement;
 
 public class Attribute {
-    private Attribute.Name attributeName;
-    private String attributeValue;
-    private Type type;
+    private final Attribute.Name attributeName;
+    private final String attributeValue;
+    private final Type type;
 
     public Attribute(Attribute.Name attribute, Type type, String value) {
         this.attributeName = attribute;
@@ -100,9 +100,9 @@ public class Attribute {
         RECEIVER_ID("RECEIVER_ID"),
         DATE_SENT("DATE_SENT");
 
-        private String name;
+        private final String name;
 
-        private Name(String name) {
+        Name(String name) {
             this.name = name;
         }
 

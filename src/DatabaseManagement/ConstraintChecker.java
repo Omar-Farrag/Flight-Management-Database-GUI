@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -82,25 +83,46 @@ public class ConstraintChecker implements ConstraintChecks {
     public Errors checkInsertion(Table t, AttributeCollection toInsert)
             throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
 
-        return check(t, null, toInsert);
+        return check(t, toInsert);
 
     }
 
     @Override
-    public Errors checkUpdate(Table t, AttributeCollection primaryKey, AttributeCollection toUpdate)
+    public Errors checkUpdate(Table t, Filter filter, AttributeCollection newValues)
             throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
 
-        return check(t, primaryKey, toUpdate);
+        Errors error = check(t, newValues);
+        error.append(check(t, new AttributeCollection(filter)));
+
+        return error;
     }
 
     @Override
-    public Errors checkRetrieval(Table t, AttributeCollection toGet, Filter filter)
+    public Errors checkRetrieval(Table t, Filter filter, AttributeCollection toGet)
             throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
 
-        return check(t, null, new AttributeCollection(filter).append(toGet));
+        Errors error = check(t, toGet);
+        error.append(check(t, new AttributeCollection(filter)));
+
+        return error;
     }
 
-    private Errors check(Table t, AttributeCollection primaryKey, AttributeCollection toValidate)
+    @Override
+    public Errors checkRetrieval(Table t, Filter filter) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
+        return check(t, new AttributeCollection(filter));
+    }
+
+    @Override
+    public Errors checkRetrieval(Table t, AttributeCollection toGet) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
+        return check(t, toGet);
+    }
+
+    @Override
+    public Errors checkDeletion(Table t, Filter filter) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
+        return check(t, new AttributeCollection(filter));
+    }
+
+    private Errors check(Table t, AttributeCollection toValidate)
             throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
 
         JSONObject table = getTableInfoFromMetaData(t.getTableName());
@@ -115,7 +137,7 @@ public class ConstraintChecker implements ConstraintChecks {
             for (Object obj : attributeConstraints) {
                 String constraint = (String) obj;
                 try {
-                    errors.add(attribute, validator.validate(constraint, primaryKey, attribute, toValidate));
+                    errors.add(attribute, validator.validate(constraint, attribute, toValidate));
                 } catch (MissingValidatorException e) {
                     System.out.println(e.getMessage());
                     e.printStackTrace();
@@ -262,7 +284,7 @@ public class ConstraintChecker implements ConstraintChecks {
                 if (constraint.equals("C"))
                     constraint += "_"
                             + constraintsTable.getString("SEARCH_CONDITION").replace("\"", "").replace("\n", "")
-                                    .replace("   ", "");
+                            .replace("   ", "");
                 else if (constraint.equals("R"))
                     constraint += "_" + constraintsTable.getString("R_CONSTRAINT_NAME");
 
@@ -273,7 +295,7 @@ public class ConstraintChecker implements ConstraintChecks {
     }
 
     public class Errors {
-        private HashMap<Attribute, ArrayList<String>> attribute_to_errors;
+        private final HashMap<Attribute, ArrayList<String>> attribute_to_errors;
 
         private Errors() {
             attribute_to_errors = new HashMap<>();
@@ -288,6 +310,13 @@ public class ConstraintChecker implements ConstraintChecks {
 
             attribute_to_errors.get(attribute).add(errorMessage);
 
+        }
+
+        public Errors append(Errors error) {
+            for (Map.Entry<Attribute, ArrayList<String>> entry : error.attribute_to_errors.entrySet())
+                for (String message : entry.getValue())
+                    add(entry.getKey(), message);
+            return this;
         }
 
         public boolean noErrors() {

@@ -73,7 +73,15 @@ public class DatabaseManager implements DatabaseOperations {
     public ResultSet retrieve(Table t, Filter filters) throws IncompatibleFilterException, SQLException,
             TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
         Errors error;
-        if (!(error = ConstraintChecker.getInstance().checkRetrieval(t, null, filters)).noErrors()) {
+        if (!(error = ConstraintChecker.getInstance().checkRetrieval(t, filters)).noErrors()) {
+
+            for (Attribute attr : filters.getAttributes()) {
+                try {
+                    Validator.printList(error.getErrorByAttribute(attr));
+                } catch (UnvalidatedAttributeException e) {
+                    throw new RuntimeException(e);
+                }
+            }
             System.out.println("error known");
             throw new SQLException();
         }
@@ -109,7 +117,7 @@ public class DatabaseManager implements DatabaseOperations {
     /**
      * Prints the content of a given ResultSet neatly, in tabular form to the
      * console.
-     * 
+     *
      * @param employees ResultSet to be displayed to the console.
      * @throws SQLException
      */
@@ -130,7 +138,7 @@ public class DatabaseManager implements DatabaseOperations {
 
     /**
      * Prints the current row pointed to by the given ResultSet object
-     * 
+     *
      * @param employees ResultSet pointing to the row to be printed
      * @throws SQLException
      */
@@ -150,7 +158,7 @@ public class DatabaseManager implements DatabaseOperations {
     /**
      * Formats the date stored at the given row and column. Only the date is shown
      * in dd-mmm-yyyy format without displaying the time
-     * 
+     *
      * @param row    ResultSet pointing to the row containing the date to be
      *               formatted
      * @param column Column number of the date to be formatted
@@ -170,28 +178,33 @@ public class DatabaseManager implements DatabaseOperations {
         DatabaseManager DB = DatabaseManager.getInstance();
         try {
             Filter filters = new Filter();
-            filters.add(new Attribute(Attribute.Name.PAID, Attribute.Type.BOOLEAN, "true"), FilterType.EQUAL);
-            // filters.add(new Attribute(Attribute.Name.LNAME, Attribute.Type.STRING,
-            // "Farrag"), FilterType.EQUAL);
-            DB.printTable(DB.retrieve(Table.BILLS, filters));
+            Attribute att1 = new Attribute(Attribute.Name.USER_ID, Attribute.Type.STRING, "A2");
+            Attribute att2 = new Attribute(Attribute.Name.PASSWORD, Attribute.Type.STRING, "A6");
+
+            filters.addBetween(att1, att2);
+
+            DB.printTable(DB.retrieve(Table.USERS, filters));
+//            DB.printTable(DB.retrieve(Table.CREDENTIALS));
+
+
         } catch (SQLException e) {
             // TODO Auto-generated catch block
+            e.printStackTrace();
+
+        } catch (TableNotFoundException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        } catch (AttributeNotFoundException e) {
+            System.out.println(e.getMessage());
             e.printStackTrace();
         } catch (IncompatibleFilterException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
-        } catch (TableNotFoundException e) {
-            // TODO Auto-generated catch block
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        } catch (AttributeNotFoundException e) {
-            // TODO Auto-generated catch block
-            System.out.println(e.getMessage());
-            e.printStackTrace();
         } catch (ConstraintNotFoundException e) {
-            // TODO Auto-generated catch block
             System.out.println(e.getMessage());
             e.printStackTrace();
+        } catch (AttributeMismatchException e) {
+            System.out.println(e.getMessage());
         }
     }
 
