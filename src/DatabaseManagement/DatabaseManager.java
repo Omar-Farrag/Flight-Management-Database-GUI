@@ -11,7 +11,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import DatabaseManagement.ConstraintChecker.Errors;
-import DatabaseManagement.Filter.FilterType;
 
 public class DatabaseManager implements DatabaseOperations {
 
@@ -25,9 +24,7 @@ public class DatabaseManager implements DatabaseOperations {
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
             conn = DriverManager.getConnection(URL, username, password);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -46,59 +43,74 @@ public class DatabaseManager implements DatabaseOperations {
         return username.toUpperCase();
     }
 
+
     @Override
-    public void insert() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'insert'");
+    public QueryResult insert(Table t, AttributeCollection toInsert) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, InsufficientAttributesException, SQLException {
+        Errors error = ConstraintChecker.getInstance().checkInsertion(t, toInsert);
+        String query = "Insert into " + t.getTableName() + "(" + toInsert.getFormattedAttributes() + ") values(" + toInsert.getFormattedValues() + ")";
+
+        return handleDBOperation(t, error, query, true);
     }
 
     @Override
-    public void delete() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'delete'");
+    public QueryResult delete(Table t, Filter filter) {
+        return null;
     }
 
     @Override
-    public void modify() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'modify'");
+    public QueryResult modify(Table t, Filter filter, AttributeCollection toModify) {
+        return null;
     }
 
     @Override
-    public ResultSet retrieve(Table t) throws SQLException {
-        return executeStatement("Select * from " + t.getTableName());
+    public QueryResult retrieve(Table t) throws SQLException {
+
+        String query = "Select * from " + t.getTableName();
+        return handleDBOperation(t, null, query, false);
+
     }
 
     @Override
-    public ResultSet retrieve(Table t, Filter filters) throws IncompatibleFilterException, SQLException,
+    public QueryResult retrieve(Table t, Filter filters) throws IncompatibleFilterException, SQLException,
             TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
-        Errors error;
-        if (!(error = ConstraintChecker.getInstance().checkRetrieval(t, filters)).noErrors()) {
 
-            for (Attribute attr : filters.getAttributes()) {
-                try {
-                    Validator.printList(error.getErrorByAttribute(attr));
-                } catch (UnvalidatedAttributeException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            System.out.println("error known");
-            throw new SQLException();
-        }
+        Errors error = ConstraintChecker.getInstance().checkRetrieval(t, filters);
         String query = "Select * from " + t.getTableName() + " " + filters.getFilterClause();
-        return executeStatement(query);
+        return handleDBOperation(t, error, query, false);
     }
 
     @Override
-    public ResultSet retrieve(Table t, AttributeCollection toGet) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'retrieve'");
+    public QueryResult retrieve(Table t, AttributeCollection toGet) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, SQLException {
+
+        Errors error = ConstraintChecker.getInstance().checkRetrieval(t, toGet);
+        String query = "Select " + toGet.getFormattedAttributes() + " from " + t.getTableName();
+        return handleDBOperation(t, error, query, false);
+
     }
 
     @Override
-    public ResultSet retrieve(Table t, AttributeCollection toGet, Filter filters) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'retrieve'");
+    public QueryResult retrieve(Table t, AttributeCollection toGet, Filter filters) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, IncompatibleFilterException, SQLException {
+        Errors error = ConstraintChecker.getInstance().checkRetrieval(t, toGet);
+        error.append(ConstraintChecker.getInstance().checkRetrieval(t, filters));
+
+        String query = "Select " + toGet.getFormattedAttributes() + " from " + t.getTableName() + " " + filters.getFilterClause();
+
+        return handleDBOperation(t, error, query, false);
+    }
+
+    private QueryResult handleDBOperation(Table t, Errors error, String query, boolean isUpdate) throws SQLException {
+        ResultSet rs = null;
+        int rows = 0;
+        if (error == null || error.noErrors()) {
+            if (!isUpdate) {
+                rs = executeStatement(query);
+                rs.last();
+                rows = rs.getRow();
+                rs.beforeFirst();
+            } else
+                rows = executePreparedStatement(query);
+        }
+        return new QueryResult(rs, rows, error);
     }
 
     @Override
@@ -178,34 +190,54 @@ public class DatabaseManager implements DatabaseOperations {
         DatabaseManager DB = DatabaseManager.getInstance();
         try {
             Filter filters = new Filter();
-            Attribute att1 = new Attribute(Attribute.Name.USER_ID, Attribute.Type.STRING, "A2");
-            Attribute att2 = new Attribute(Attribute.Name.PASSWORD, Attribute.Type.STRING, "A6");
+            AttributeCollection collection = new AttributeCollection();
 
-            filters.addBetween(att1, att2);
+            Attribute att1 = new Attribute(Attribute.Name.USER_ID, Attribute.Type.STRING, "A11");
+            Attribute att2 = new Attribute(Attribute.Name.FNAME, Attribute.Type.STRING, "Ramadan");
+            Attribute att3 = new Attribute(Attribute.Name.LNAME, Attribute.Type.STRING, "Kareem");
+            Attribute att4 = new Attribute(Attribute.Name.PHONE_NUMBER, Attribute.Type.STRING, "0561234567");
+            Attribute att5 = new Attribute(Attribute.Name.EMAIL_ADDRESS, Attribute.Type.STRING, "Ramadan@RealEstate.edu");
+            Attribute att6 = new Attribute(Attribute.Name.ROLE_ID, Attribute.Type.STRING, "AC");
 
-            DB.printTable(DB.retrieve(Table.USERS, filters));
-//            DB.printTable(DB.retrieve(Table.CREDENTIALS));
+
+            collection.add(att1);
+            collection.add(att2);
+            collection.add(att3);
+            collection.add(att4);
+            collection.add(att5);
+            collection.add(att6);
+
+            QueryResult res = DB.insert(Table.USERS, collection);
+
+            if (res.noErrors()) {
+                System.out.println(res.getRowsAffected());
+//                DB.printTable(res.getResult());
+            }
+
+            DB.printTable(DB.retrieve(Table.USERS).getResult());
 
 
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
 
-        } catch (TableNotFoundException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        } catch (AttributeNotFoundException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        } catch (IncompatibleFilterException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
         } catch (ConstraintNotFoundException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
-        } catch (AttributeMismatchException e) {
-            System.out.println(e.getMessage());
         }
+//        catch (AttributeMismatchException e) {
+//            System.out.println(e.getMessage());
+//        }
+        catch (TableNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (AttributeNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (InsufficientAttributesException e) {
+            throw new RuntimeException(e);
+        }
+//        catch (ConstraintNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
 }

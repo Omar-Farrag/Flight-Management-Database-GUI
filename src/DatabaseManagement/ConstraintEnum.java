@@ -16,7 +16,7 @@ public enum ConstraintEnum {
     LIKE("^C_\\s*\\w+\\s+LIKE\\s+\\w+$"),
     BETWEEN("^C_\\s*\\w\\s+BETWEEN\\s+\\w\\s+AND\\s+\\w"),
     IN("^C_\\s*\\w+\\s+IN\\s*\\(\\s*'[\\w\\s]*'(,\\s*'[\\w\\s]*')*\\s*\\)$"),
-    REGEXP_LIKE("^C_REGEXP_LIKE\\(STORE_NUM, '[^']*'\\)$"),
+    REGEXP_LIKE("^C_REGEXP_LIKE\\(\\w+, '[^']*'\\)$"),
     NUMBER("NUMBER_\\d{1,}_\\d{1,}"),
     FLOAT("FLOAT"),
     CHAR("CHAR_\\d{1,}"),

@@ -12,7 +12,7 @@ public interface ConstraintChecks {
      * This increases the re-usability of input validation functions.
      */
 
-    public Errors checkInsertion(Table t, AttributeCollection toInsert) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException;
+    public Errors checkInsertion(Table t, AttributeCollection toInsert) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, InsufficientAttributesException;
 
     public Errors checkUpdate(Table t, Filter filter, AttributeCollection toUpdate) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException;
 

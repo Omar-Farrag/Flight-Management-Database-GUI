@@ -179,6 +179,8 @@ public class Validator {
                  UnvalidatedAttributeException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
+        } catch (InsufficientAttributesException e) {
+            throw new RuntimeException(e);
         }
     }
 

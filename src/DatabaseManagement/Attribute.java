@@ -12,6 +12,13 @@ public class Attribute {
 
     }
 
+    public Attribute(Attribute.Name attribute) {
+        this.attributeName = attribute;
+        this.attributeValue = "";
+        this.type = Type.STRING;
+
+    }
+
     public String getAttributeName() {
         return attributeName.getName();
     }
@@ -37,8 +44,13 @@ public class Attribute {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        return attributeName.equals(((Attribute) obj).attributeName);
+    }
+
+    @Override
     public int hashCode() {
-        return (attributeName.getName() + attributeValue).hashCode();
+        return (attributeName.getName()).hashCode();
     }
 
     public enum Name {

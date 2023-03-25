@@ -81,9 +81,11 @@ public class ConstraintChecker implements ConstraintChecks {
 
     @Override
     public Errors checkInsertion(Table t, AttributeCollection toInsert)
-            throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
-
-        return check(t, toInsert);
+            throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, InsufficientAttributesException {
+        int numAttributes = checkAttributeExistence(t, toInsert);
+        if (numAttributes != toInsert.size())
+            throw new InsufficientAttributesException(t, numAttributes, toInsert.size());
+        return checkConstraints(t, toInsert);
 
     }
 
@@ -91,8 +93,10 @@ public class ConstraintChecker implements ConstraintChecks {
     public Errors checkUpdate(Table t, Filter filter, AttributeCollection newValues)
             throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
 
-        Errors error = check(t, newValues);
-        error.append(check(t, new AttributeCollection(filter)));
+        checkAttributeExistence(t, new AttributeCollection(filter));
+        checkAttributeExistence(t, newValues);
+        Errors error = checkConstraints(t, newValues);
+        error.append(checkConstraints(t, new AttributeCollection(filter)));
 
         return error;
     }
@@ -101,38 +105,39 @@ public class ConstraintChecker implements ConstraintChecks {
     public Errors checkRetrieval(Table t, Filter filter, AttributeCollection toGet)
             throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
 
-        Errors error = check(t, toGet);
-        error.append(check(t, new AttributeCollection(filter)));
+        checkAttributeExistence(t, toGet);
+        AttributeCollection filterCollection = new AttributeCollection(filter);
+        checkAttributeExistence(t, filterCollection);
+        return checkConstraints(t, filterCollection);
 
-        return error;
     }
 
     @Override
     public Errors checkRetrieval(Table t, Filter filter) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
-        return check(t, new AttributeCollection(filter));
+        AttributeCollection filterCollection = new AttributeCollection(filter);
+        checkAttributeExistence(t, filterCollection);
+        return checkConstraints(t, filterCollection);
     }
 
     @Override
     public Errors checkRetrieval(Table t, AttributeCollection toGet) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
-        return check(t, toGet);
+        checkAttributeExistence(t, toGet);
+        return new Errors();
     }
 
     @Override
     public Errors checkDeletion(Table t, Filter filter) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
-        return check(t, new AttributeCollection(filter));
+        AttributeCollection filterCollection = new AttributeCollection(filter);
+        checkAttributeExistence(t, filterCollection);
+        return checkConstraints(t, filterCollection);
     }
 
-    private Errors check(Table t, AttributeCollection toValidate)
-            throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
-
-        JSONObject table = getTableInfoFromMetaData(t.getTableName());
+    private Errors checkConstraints(Table t, AttributeCollection toValidate) throws TableNotFoundException, ConstraintNotFoundException {
+        JSONObject table = getTableInfoFromMetaData(t);
         JSONObject tableAttributes = (JSONObject) table.get("Attributes");
         Errors errors = new Errors();
 
         for (Attribute attribute : toValidate.attributes()) {
-            if (!tableAttributes.containsKey(attribute.getAttributeName()))
-                throw new AttributeNotFoundException(t.getTableName(), attribute.getAttributeName());
-
             JSONArray attributeConstraints = (JSONArray) tableAttributes.get(attribute.getAttributeName());
             for (Object obj : attributeConstraints) {
                 String constraint = (String) obj;
@@ -147,11 +152,22 @@ public class ConstraintChecker implements ConstraintChecks {
         return errors;
     }
 
-    private JSONObject getTableInfoFromMetaData(String tableName) throws TableNotFoundException {
-        if (!table_to_object.containsKey(tableName))
+    private int checkAttributeExistence(Table t, AttributeCollection toValidate) throws AttributeNotFoundException, TableNotFoundException {
+        JSONObject table = getTableInfoFromMetaData(t);
+        JSONObject tableAttributes = (JSONObject) table.get("Attributes");
+
+        for (Attribute attribute : toValidate.attributes()) {
+            if (!tableAttributes.containsKey(attribute.getAttributeName()))
+                throw new AttributeNotFoundException(t.getTableName(), attribute.getAttributeName());
+        }
+        return tableAttributes.size();
+    }
+
+    private JSONObject getTableInfoFromMetaData(Table t) throws TableNotFoundException {
+        if (!table_to_object.containsKey(t.getTableName()))
             throw new TableNotFoundException();
         else
-            return table_to_object.get(tableName);
+            return table_to_object.get(t.getTableName());
     }
 
     // ///////////////////////////////////////////METADATA EXTRACTION FROM
