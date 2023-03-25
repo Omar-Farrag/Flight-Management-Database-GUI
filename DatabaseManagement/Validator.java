@@ -111,7 +111,7 @@ public class Validator {
 
         private String validateNUMBER(String constraint, AttributeCollection PK, Attribute toValidate,
                         AttributeCollection remaining) {
-                return "";
+                return "Hello from Number";
         }
 
         private String validateFLOAT(String constraint, AttributeCollection PK, Attribute toValidate,

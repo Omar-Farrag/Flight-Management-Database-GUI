@@ -2,6 +2,7 @@ package DatabaseManagement;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -9,9 +10,8 @@ import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
+import DatabaseManagement.ConstraintChecker.Errors;
 import DatabaseManagement.Filter.FilterType;
-
-import java.sql.PreparedStatement;
 
 public class DatabaseManager implements DatabaseOperations {
 
@@ -72,7 +72,11 @@ public class DatabaseManager implements DatabaseOperations {
     @Override
     public ResultSet retrieve(Table t, Filter filters) throws IncompatibleFilterException, SQLException,
             TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
-        ConstraintChecker.getInstance().checkRetrieval(t, null, filters);
+        Errors error;
+        if (!(error = ConstraintChecker.getInstance().checkRetrieval(t, null, filters)).noErrors()) {
+            System.out.println("error known");
+            throw new SQLException();
+        }
         String query = "Select * from " + t.getTableName() + " " + filters.getFilterClause();
         return executeStatement(query);
     }
