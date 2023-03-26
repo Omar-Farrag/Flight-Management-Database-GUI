@@ -26,9 +26,9 @@ public class ConstraintChecker implements ConstraintChecks {
     private FileWriter fout;
     private ResultSet constraintsTable;
     private ResultSet tableDataTypes;
-    private Connection conn;
     private Validator validator;
     private ComparisonCompatibility compChecker;
+    private ReferentialResolver resolver;
 
     private HashMap<String, JSONObject> table_to_object;
     private static ConstraintChecker instance;
@@ -38,9 +38,9 @@ public class ConstraintChecker implements ConstraintChecks {
     }
 
     private ConstraintChecker() {
-        conn = DatabaseManager.getInstance().getConn();
         currentApplicationTables = new ArrayList<>();
         compChecker = new ComparisonCompatibility();
+        resolver = ReferentialResolver.getInstance();
 
         for (Table t : Table.values())
             currentApplicationTables.add(t.getTableName().toUpperCase());
@@ -50,8 +50,8 @@ public class ConstraintChecker implements ConstraintChecks {
 
         if (!new File(metaDataFile).exists())
             initMetaDataFile();
-        else
-            readMetaDataFromFile();
+
+        readMetaDataFromFile();
     }
 
     private void readMetaDataFromFile() {
@@ -66,16 +66,38 @@ public class ConstraintChecker implements ConstraintChecks {
                 fileContent += line;
 
             JSONArray metaData = (JSONArray) new JSONParser().parse(fileContent);
+            if (metaData.isEmpty()) throw new EmptyFileException(metaDataFile);
+
             for (Object table : metaData) {
                 JSONObject tableJSONObject = (JSONObject) table;
-                table_to_object.put(tableJSONObject.get("TableName").toString(), tableJSONObject);
-            }
+                String tableName = tableJSONObject.get("TableName").toString();
 
+                table_to_object.put(tableName, tableJSONObject);
+                JSONObject attributes = (JSONObject) tableJSONObject.get("Attributes");
+                for (Object attribute : attributes.keySet()) {
+                    JSONArray constraints = (JSONArray) attributes.get(attribute);
+                    for (int i = 0; i < constraints.size(); i++) {
+
+                        Table t = Table.valueOf(tableName);
+                        Attribute.Name attName = Attribute.Name.valueOf(attribute.toString());
+                        String constraintName = constraints.get(i).toString();
+
+                        if (constraintName.startsWith("P"))
+                            resolver.insertPrimary(t, attName, constraintName.substring(2));
+                        else if (constraintName.startsWith("U"))
+                            resolver.insertUnique(t, attName, constraintName.substring(2));
+                        else if (constraintName.startsWith("R"))
+                            resolver.insertForeign(t, attName, constraintName.substring(2));
+                    }
+                }
+            }
+            resolver.initResolver();
             bin.close();
-        } catch (IOException e) {
+        } catch (IOException | ParseException | EmptyFileException e) {
+            System.out.println(e.getMessage());
             e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
+            initMetaDataFile();
+            readMetaDataFromFile();
         }
     }
 
@@ -183,6 +205,7 @@ public class ConstraintChecker implements ConstraintChecks {
                             "U.COLUMN_NAME," +
                             "CONSTRAINT_TYPE," +
                             " SEARCH_CONDITION," +
+                            " U.CONSTRAINT_NAME," +
                             " R_CONSTRAINT_NAME" +
                             " FROM USER_CONS_COLUMNS U" +
                             " JOIN ALL_CONSTRAINTS A" +
@@ -190,7 +213,7 @@ public class ConstraintChecker implements ConstraintChecks {
                             " AND U.CONSTRAINT_NAME = A.CONSTRAINT_NAME )" +
                             " WHERE U.OWNER = '" + DatabaseManager.getInstance().getUsername() + "'" +
                             " AND A.OWNER = '" + DatabaseManager.getInstance().getUsername() + "'" +
-                            " AND U.TABLE_NAME in (" + formattedTableNames + ")");
+                            " AND U.TABLE_NAME in (" + formattedTableNames + ") ORDER BY CONSTRAINT_TYPE");
 
             tableDataTypes = DatabaseManager.getInstance().executeStatement(
                     " select *" +
@@ -215,7 +238,7 @@ public class ConstraintChecker implements ConstraintChecks {
     private void extractTables(JSONArray metaData) {
 
         try {
-            DatabaseMetaData meta = conn.getMetaData();
+            DatabaseMetaData meta = DatabaseManager.getInstance().getMetaData();
 
             for (String tableName : currentApplicationTables) {
                 JSONObject table = new JSONObject();
@@ -225,7 +248,7 @@ public class ConstraintChecker implements ConstraintChecks {
 
                 table.put("Attributes", attributes);
                 metaData.add(table);
-                table_to_object.put(tableName, table);
+//                table_to_object.put(tableName, table);
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -235,7 +258,7 @@ public class ConstraintChecker implements ConstraintChecks {
     }
 
     private JSONObject extractAttributesForTable(String tableName, DatabaseMetaData meta) throws SQLException {
-        ResultSet columns = meta.getColumns(null, "B00087320", tableName, null);
+        ResultSet columns = meta.getColumns(null, DatabaseManager.getInstance().getUsername(), tableName, null);
         JSONObject attributes = new JSONObject();
 
         while (columns.next()) {
@@ -303,6 +326,11 @@ public class ConstraintChecker implements ConstraintChecks {
                             .replace("   ", "");
                 else if (constraint.equals("R"))
                     constraint += "_" + constraintsTable.getString("R_CONSTRAINT_NAME");
+                else if (constraint.equals("P"))
+                    constraint += "_" + constraintsTable.getString("CONSTRAINT_NAME");
+                else if (constraint.equals("U"))
+                    constraint += "_" + constraintsTable.getString("CONSTRAINT_NAME");
+
 
                 constraints.add(constraint);
             }
@@ -349,6 +377,6 @@ public class ConstraintChecker implements ConstraintChecks {
     }
 
     public static void main(String[] args) {
-        new ConstraintChecker();
+        ConstraintChecker.getInstance();
     }
 }

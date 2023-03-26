@@ -10,7 +10,7 @@ public interface DatabaseOperations {
     public QueryResult insert(Table t, AttributeCollection toInsert) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, InsufficientAttributesException, SQLException;
 
     // Deletes a set of entries from the database
-    public QueryResult delete(Table t, Filter filter);
+    public QueryResult delete(Table t, Filter filter) throws IncompatibleFilterException, TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, SQLException;
 
     // Modifies a set of entries in the database
     public QueryResult modify(Table t, Filter filter, AttributeCollection toModify);

@@ -1,16 +1,13 @@
 package DatabaseManagement;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import DatabaseManagement.ConstraintChecker.Errors;
+import oracle.jdbc.driver.Const;
+
+import javax.management.Query;
 
 public class DatabaseManager implements DatabaseOperations {
 
@@ -19,6 +16,7 @@ public class DatabaseManager implements DatabaseOperations {
     private String password = "b00087320";
     private Connection conn;
     private static DatabaseManager instance;
+
 
     private DatabaseManager() {
         try {
@@ -43,6 +41,9 @@ public class DatabaseManager implements DatabaseOperations {
         return username.toUpperCase();
     }
 
+    public DatabaseMetaData getMetaData() throws SQLException {
+        return conn.getMetaData();
+    }
 
     @Override
     public QueryResult insert(Table t, AttributeCollection toInsert) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, InsufficientAttributesException, SQLException {
@@ -53,8 +54,11 @@ public class DatabaseManager implements DatabaseOperations {
     }
 
     @Override
-    public QueryResult delete(Table t, Filter filter) {
-        return null;
+    public QueryResult delete(Table t, Filter filter) throws IncompatibleFilterException, TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, SQLException {
+        Errors error = ConstraintChecker.getInstance().checkDeletion(t, filter);
+        String query = "Delete From " + t + " " + filter.getFilterClause();
+
+        return handleDBOperation(t, error, query, true);
     }
 
     @Override
@@ -192,11 +196,11 @@ public class DatabaseManager implements DatabaseOperations {
             Filter filters = new Filter();
             AttributeCollection collection = new AttributeCollection();
 
-            Attribute att1 = new Attribute(Attribute.Name.USER_ID, Attribute.Type.STRING, "A11");
-            Attribute att2 = new Attribute(Attribute.Name.FNAME, Attribute.Type.STRING, "Ramadan");
+            Attribute att1 = new Attribute(Attribute.Name.USER_ID, Attribute.Type.STRING, "A15");
+            Attribute att2 = new Attribute(Attribute.Name.FNAME, Attribute.Type.STRING, "Oday");
             Attribute att3 = new Attribute(Attribute.Name.LNAME, Attribute.Type.STRING, "Kareem");
-            Attribute att4 = new Attribute(Attribute.Name.PHONE_NUMBER, Attribute.Type.STRING, "0561234567");
-            Attribute att5 = new Attribute(Attribute.Name.EMAIL_ADDRESS, Attribute.Type.STRING, "Ramadan@RealEstate.edu");
+            Attribute att4 = new Attribute(Attribute.Name.PHONE_NUMBER, Attribute.Type.STRING, "0571234567");
+            Attribute att5 = new Attribute(Attribute.Name.EMAIL_ADDRESS, Attribute.Type.STRING, "AK@RealEstate.edu");
             Attribute att6 = new Attribute(Attribute.Name.ROLE_ID, Attribute.Type.STRING, "AC");
 
 
@@ -207,37 +211,29 @@ public class DatabaseManager implements DatabaseOperations {
             collection.add(att5);
             collection.add(att6);
 
-            QueryResult res = DB.insert(Table.USERS, collection);
+            filters.addGreaterEqual(att1);
+//            QueryResult res = DB.insert(Table.USERS, collection);
+//            QueryResult res = DB.delete(Table.USERS, filters);
+//
+//            if (res.noErrors()) {
+//                System.out.println(res.getRowsAffected());
+////                DB.printTable(res.getResult());
+//            }
 
-            if (res.noErrors()) {
-                System.out.println(res.getRowsAffected());
-//                DB.printTable(res.getResult());
-            }
+            long startTime = System.currentTimeMillis();
+
+            ConstraintChecker.getInstance();
+            long endTime = System.currentTimeMillis();
+
+            System.out.println("Initialized in " + ((endTime - startTime) / 1000.0) + " seconds");
 
             DB.printTable(DB.retrieve(Table.USERS).getResult());
 
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-
-        } catch (ConstraintNotFoundException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
         }
-//        catch (AttributeMismatchException e) {
-//            System.out.println(e.getMessage());
-//        }
-        catch (TableNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (AttributeNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (InsufficientAttributesException e) {
-            throw new RuntimeException(e);
-        }
-//        catch (ConstraintNotFoundException e) {
-//            throw new RuntimeException(e);
-//        }
     }
 
 }

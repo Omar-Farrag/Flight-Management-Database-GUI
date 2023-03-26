@@ -3,7 +3,7 @@ package DatabaseManagement;
 public enum ConstraintEnum {
     // Names of constraints come here.
     // ^C_\\w*\\s*<\\s*\\w*\\s*$
-    PRIMARY("P"),
+    PRIMARY("^P_\\w+"),
     UNIQUE("U"),
     FOREIGN("^R_\\w+"),
     LESS_THAN("^C_\\s*\\w+\\s*<\\s*\\w"),
