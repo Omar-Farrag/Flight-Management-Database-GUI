@@ -4,10 +4,8 @@ import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import DatabaseManagement.ConstraintChecker.Errors;
-import oracle.jdbc.driver.Const;
 
 public class DatabaseManager implements DatabaseOperations {
 
@@ -229,29 +227,29 @@ public class DatabaseManager implements DatabaseOperations {
             Filters filters = new Filters();
             AttributeCollection collection = new AttributeCollection();
 
-            Attribute att1 = new Attribute(Attribute.Name.USER_ID, Attribute.Type.STRING, "A13");
-            Attribute att2 = new Attribute(Attribute.Name.USER_ID, Attribute.Type.STRING, "A19");
-            Attribute att3 = new Attribute(Attribute.Name.LNAME, Attribute.Type.STRING, "Kareem");
-            Attribute att4 = new Attribute(Attribute.Name.PHONE_NUMBER, Attribute.Type.STRING,
-                    "0518894567");
-            Attribute att5 = new Attribute(Attribute.Name.EMAIL_ADDRESS, Attribute.Type.STRING,
-                    "Oday@RealEstate.edu");
-            Attribute att6 = new Attribute(Attribute.Name.ROLE_ID, Attribute.Type.STRING, "MD");
+            Attribute att1 = new Attribute(Attribute.Name.ELECHARGE, "-1");
+            Attribute att2 = new Attribute(Attribute.Name.ELECONS, "2");
+            Attribute att3 = new Attribute(Attribute.Name.WASTECHARGE, "3");
+            Attribute att4 = new Attribute(Attribute.Name.WASTEDISPOSED, "4");
+            Attribute att5 = new Attribute(Attribute.Name.WATCHARGE, "5");
+            Attribute att6 = new Attribute(Attribute.Name.WATCONS, "6");
+            Attribute att7 = new Attribute(Attribute.Name.UTILITY_ID, "U134567890");
 
 
-            collection.add(att2);
-//            collection.add(att1);
 //            collection.add(att2);
-//            collection.add(att3);
-//            collection.add(att4);
-//            collection.add(att5);
-//            collection.add(att6);
+            collection.add(att1);
+            collection.add(att2);
+            collection.add(att3);
+            collection.add(att4);
+            collection.add(att5);
+            collection.add(att6);
+            collection.add(att7);
 
             filters.addIn(att1, new String[]{"A3"});
 
-//            QueryResult res = DB.insert(Table.USERS, collection);
+            QueryResult res = DB.insert(Table.UTILITY_CONSUMPTION, collection);
 //            QueryResult res = DB.delete(Table.USERS, filters);
-            QueryResult res = DB.modify(Table.USERS, filters, collection);
+//            QueryResult res = DB.modify(Table.USERS, filters, collection);
 //
             if (res.noErrors()) {
                 System.out.println(res.getRowsAffected());
@@ -270,12 +268,11 @@ public class DatabaseManager implements DatabaseOperations {
 
             System.out.println("Initialized in " + ((endTime - startTime) / 1000.0) + " seconds");
 
-            DB.printTable(DB.retrieve(Table.USERS).getResult());
+            DB.printTable(DB.retrieve(Table.UTILITY_CONSUMPTION).getResult());
 
 
         } catch (
                 Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

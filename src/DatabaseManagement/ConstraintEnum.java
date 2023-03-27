@@ -13,7 +13,7 @@ public enum ConstraintEnum {
     LESS_EQUAL("^C_\\s*\\w+\\s*<=\\s*\\w"),
     GREATER_EQUAL("^C_\\s*\\w+\\s*>=\\s*\\w"),
     NOT_NULL("^C_\\s*\\w+\\s+IS NOT NULL"),
-    LIKE("^C_\\s*\\w+\\s+LIKE\\s+\\w+$"),
+    LIKE("^C_\\s*\\w+\\s+LIKE\\s+'[^']*'$"),
     BETWEEN("^C_\\s*\\w\\s+BETWEEN\\s+\\w\\s+AND\\s+\\w"),
     IN("^C_\\s*\\w+\\s+IN\\s*\\(\\s*'[\\w\\s]*'(,\\s*'[\\w\\s]*')*\\s*\\)$"),
     REGEXP_LIKE("^C_REGEXP_LIKE\\(\\w+, '[^']*'\\)$"),

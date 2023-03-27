@@ -39,7 +39,8 @@ public class Filters {
     }
 
     public void addBetween(Attribute min, Attribute max) throws AttributeMismatchException {
-        if (!min.getStringName().equals(max.getStringName())) throw new AttributeMismatchException(min, max);
+        if (!min.getStringName().equals(max.getStringName()))
+            throw new AttributeMismatchException(min, max);
         filters.put(min, FilterType.GREATER_EQUAL);
         filters.put(max, FilterType.LESS_EQUAL);
     }
@@ -86,11 +87,6 @@ public class Filters {
         return filters.keySet();
     }
 
-    public boolean checkCompatibility(Map.Entry<Attribute, FilterType> filter) throws IncompatibleFilterException {
-        if (!checker.areCompatible(filter.getKey().getType(), filter.getValue()))
-            throw new IncompatibleFilterException(filter);
-        return true;
-    }
 
     public enum FilterType {
         EQUAL("="),

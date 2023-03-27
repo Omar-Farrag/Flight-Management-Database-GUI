@@ -2,17 +2,18 @@ package DatabaseManagement;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class AttributeCollection {
     private final Set<Attribute> attributes;
 
     public AttributeCollection() {
-        attributes = new HashSet<>();
+        attributes = new LinkedHashSet<>();
     }
 
     public AttributeCollection(Filters filters) {
-        attributes = new HashSet<>();
+        attributes = new LinkedHashSet<>();
         for (Attribute att : filters.getAttributes())
             add(att);
     }

@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import DatabaseManagement.Attribute.Name;
-import DatabaseManagement.Attribute.Type;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -59,7 +58,7 @@ public class ConstraintChecker implements ConstraintChecks {
 
     public static void main(String[] args) throws IncompatibleFilterException {
         ConstraintChecker.getInstance();
-        HashMap<Table, Filters> x = ReferentialResolver.getInstance().getReferencingAttributes(Table.USERS, new Attribute(Name.USER_ID, Type.STRING, "A7"));
+        HashMap<Table, Filters> x = ReferentialResolver.getInstance().getReferencingAttributes(Table.USERS, new Attribute(Name.USER_ID, "A7"));
 
         for (var entry : x.entrySet()) {
             System.out.println(entry.getKey() + "\t" + entry.getValue().getFilterClause());
@@ -118,7 +117,8 @@ public class ConstraintChecker implements ConstraintChecks {
     @Override
     public Errors checkInsertion(Table t, AttributeCollection toInsert)
             throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, InsufficientAttributesException {
-        int numAttributes = checkAttributeExistence(t, toInsert);
+        checkAttributeExistence(t, toInsert);
+        int numAttributes = getTableAttributes(t).size();
         if (numAttributes != toInsert.size())
             throw new InsufficientAttributesException(t, numAttributes, toInsert.size());
         return checkConstraints(t, toInsert);
@@ -183,7 +183,7 @@ public class ConstraintChecker implements ConstraintChecks {
         while (toDelete.next()) {
             for (Attribute attribute : referencedAttributes.attributes()) {
                 String toDeleteValue = toDelete.getString(attribute.getStringName());
-                Attribute toFindReferences = new Attribute(attribute.getAttributeName(), Type.STRING, toDeleteValue);
+                Attribute toFindReferences = new Attribute(attribute.getAttributeName(), toDeleteValue);
 
                 HashMap<Table, Filters> referencingAttributes = resolver.getReferencingAttributes(t, toFindReferences);
 

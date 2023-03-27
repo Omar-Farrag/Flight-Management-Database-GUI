@@ -45,7 +45,7 @@ public class ReferentialResolver {
         HashMap<Table, Filters> table_to_filters = new HashMap<>();
 
         for (DetailedKey key : references) {
-            Attribute toFilterBy = new Attribute(key.column, attribute.getType(), attribute.getString());
+            Attribute toFilterBy = new Attribute(key.column, attribute.getString());
             Filters filter = new Filters();
             filter.addEqual(toFilterBy);
             table_to_filters.put(key.t, filter);
