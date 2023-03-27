@@ -167,9 +167,8 @@ public class ConstraintChecker implements ConstraintChecks {
         Errors constraintErrorsNew = checkConstraints(t, newValues);
         Errors constraintErrorsFilters = checkConstraints(t, new AttributeCollection(filters));
         Errors referentialErrors = checkReferencingTables(t, filters);
-        error.append();
 
-        return error;
+        return constraintErrorsNew.append(constraintErrorsFilters).append(referentialErrors);
     }
 
     public JSONObject getTableAttributes(Table t) {
@@ -191,7 +190,8 @@ public class ConstraintChecker implements ConstraintChecks {
                 for (Map.Entry<Table, Filters> entry : referencingAttributes.entrySet()) {
                     if (DB.retrieve(entry.getKey(), entry.getValue()).getRowsAffected() > 0) {
                         String errorMessage =
-                                "Cannot Delete Entry With " + attribute.getStringName() + " = " +
+                                "Cannot Delete/Modify Entry With " + attribute.getStringName() +
+                                        " = " +
                                         toDeleteValue + " because it is referenced by table " + entry.getKey().getTableName();
 
                         errors.add(attribute, errorMessage);

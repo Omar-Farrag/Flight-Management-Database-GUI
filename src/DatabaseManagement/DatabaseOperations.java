@@ -13,7 +13,7 @@ public interface DatabaseOperations {
     public QueryResult delete(Table t, Filters filters) throws IncompatibleFilterException, TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, SQLException;
 
     // Modifies a set of entries in the database
-    public QueryResult modify(Table t, Filters filters, AttributeCollection toModify);
+    public QueryResult modify(Table t, Filters filters, AttributeCollection toModify) throws TableNotFoundException, AttributeNotFoundException, SQLException, IncompatibleFilterException, ConstraintNotFoundException, MissingUpdatedValuesException;
 
 
     // retrieves data from the database

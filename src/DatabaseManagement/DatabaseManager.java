@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import DatabaseManagement.ConstraintChecker.Errors;
+import oracle.jdbc.driver.Const;
 
 public class DatabaseManager implements DatabaseOperations {
 
@@ -66,8 +67,31 @@ public class DatabaseManager implements DatabaseOperations {
     }
 
     @Override
-    public QueryResult modify(Table t, Filters filters, AttributeCollection toModify) {
-        return null;
+    public QueryResult modify(Table t, Filters filters, AttributeCollection toModify) throws TableNotFoundException, AttributeNotFoundException, SQLException, IncompatibleFilterException, ConstraintNotFoundException, MissingUpdatedValuesException {
+
+        if (toModify.isEmpty()) throw new MissingUpdatedValuesException(t);
+
+        Errors error = ConstraintChecker.getInstance().checkUpdate(t, filters, toModify);
+        String query =
+                "Update " + t.getTableName() + " " + getModificationClause(toModify) + " " + filters.getFilterClause();
+
+        return handleDBOperation(t, error, query, true);
+
+
+    }
+
+    private String getModificationClause(AttributeCollection toModify) {
+        String clause = "set ";
+        ArrayList<String> updates = new ArrayList<>();
+        for (Attribute attribute : toModify.attributes()) {
+            String update = attribute.getStringName() + " = ";
+            if (attribute.getType().equals(Attribute.Type.STRING))
+                update += "'" + attribute.getString() + "'";
+            else update += attribute.getString();
+            updates.add(update);
+        }
+        return clause + String.join(",", updates);
+
     }
 
     @Override
@@ -205,24 +229,29 @@ public class DatabaseManager implements DatabaseOperations {
             Filters filters = new Filters();
             AttributeCollection collection = new AttributeCollection();
 
-            Attribute att1 = new Attribute(Attribute.Name.USER_ID, Attribute.Type.STRING, "A12");
-            Attribute att2 = new Attribute(Attribute.Name.FNAME, Attribute.Type.STRING, "Ahmed");
-            Attribute att3 = new Attribute(Attribute.Name.LNAME, Attribute.Type.STRING, "Wael");
-            Attribute att4 = new Attribute(Attribute.Name.PHONE_NUMBER, Attribute.Type.STRING, "0508894567");
-            Attribute att5 = new Attribute(Attribute.Name.EMAIL_ADDRESS, Attribute.Type.STRING, "Ahmed@RealEstate.edu");
+            Attribute att1 = new Attribute(Attribute.Name.USER_ID, Attribute.Type.STRING, "A13");
+            Attribute att2 = new Attribute(Attribute.Name.USER_ID, Attribute.Type.STRING, "A19");
+            Attribute att3 = new Attribute(Attribute.Name.LNAME, Attribute.Type.STRING, "Kareem");
+            Attribute att4 = new Attribute(Attribute.Name.PHONE_NUMBER, Attribute.Type.STRING,
+                    "0518894567");
+            Attribute att5 = new Attribute(Attribute.Name.EMAIL_ADDRESS, Attribute.Type.STRING,
+                    "Oday@RealEstate.edu");
             Attribute att6 = new Attribute(Attribute.Name.ROLE_ID, Attribute.Type.STRING, "MD");
 
 
-            collection.add(att1);
             collection.add(att2);
-            collection.add(att3);
-            collection.add(att4);
-            collection.add(att5);
-            collection.add(att6);
+//            collection.add(att1);
+//            collection.add(att2);
+//            collection.add(att3);
+//            collection.add(att4);
+//            collection.add(att5);
+//            collection.add(att6);
 
-            filters.addIn(new Attribute(Attribute.Name.USER_ID), new String[]{"A12", "A13"});
+            filters.addIn(att1, new String[]{"A3"});
+
 //            QueryResult res = DB.insert(Table.USERS, collection);
-            QueryResult res = DB.delete(Table.USERS, filters);
+//            QueryResult res = DB.delete(Table.USERS, filters);
+            QueryResult res = DB.modify(Table.USERS, filters, collection);
 //
             if (res.noErrors()) {
                 System.out.println(res.getRowsAffected());

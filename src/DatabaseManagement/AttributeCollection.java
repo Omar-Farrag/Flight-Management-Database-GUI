@@ -53,6 +53,10 @@ public class AttributeCollection {
         return String.join(" , ", values_as_string);
     }
 
+    public boolean isEmpty() {
+        return attributes.isEmpty();
+    }
+
     public int size() {
         return attributes.size();
     }
