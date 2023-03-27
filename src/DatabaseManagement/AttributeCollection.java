@@ -48,6 +48,7 @@ public class AttributeCollection {
         for (Attribute att : attributes) {
             if (att.getType().equals(Attribute.Type.STRING))
                 values_as_string.add("'" + att.getString() + "'");
+            else if (att.getString() == null) values_as_string.add("NULL");
             else values_as_string.add(att.getString());
         }
 

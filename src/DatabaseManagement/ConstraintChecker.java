@@ -9,9 +9,7 @@ import java.io.InputStreamReader;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import DatabaseManagement.Attribute.Name;
 import org.json.simple.JSONArray;
@@ -212,7 +210,7 @@ public class ConstraintChecker implements ConstraintChecks {
             for (Object obj : attributeConstraints) {
                 String constraint = (String) obj;
                 try {
-                    errors.add(attribute, validator.validate(constraint, attribute, toValidate));
+                    errors.add(attribute, validator.validate(constraint, attribute, toValidate, t));
                 } catch (
                         MissingValidatorException e) {
                     System.out.println(e.getMessage());
@@ -398,13 +396,15 @@ public class ConstraintChecker implements ConstraintChecks {
         }
 
         private void add(Attribute attribute, String errorMessage) {
-            if (errorMessage.isEmpty())
+            if (errorMessage.isEmpty()) {
                 return;
+            }
 
             if (!attribute_to_errors.containsKey(attribute))
                 attribute_to_errors.put(attribute, new ArrayList<String>());
 
             attribute_to_errors.get(attribute).add(errorMessage);
+
 
         }
 
@@ -421,7 +421,8 @@ public class ConstraintChecker implements ConstraintChecks {
 
         public ArrayList<String> getErrorByAttribute(Attribute attribute) throws UnvalidatedAttributeException {
             if (!attribute_to_errors.containsKey(attribute))
-                throw new UnvalidatedAttributeException(attribute);
+//                throw new UnvalidatedAttributeException(attribute);
+                return new ArrayList<>();
             else
                 return attribute_to_errors.get(attribute);
         }

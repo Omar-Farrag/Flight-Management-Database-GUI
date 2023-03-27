@@ -85,6 +85,7 @@ public class DatabaseManager implements DatabaseOperations {
             String update = attribute.getStringName() + " = ";
             if (attribute.getType().equals(Attribute.Type.STRING))
                 update += "'" + attribute.getString() + "'";
+            else if (attribute.getString() == null) update += "NULL";
             else update += attribute.getString();
             updates.add(update);
         }
@@ -227,13 +228,13 @@ public class DatabaseManager implements DatabaseOperations {
             Filters filters = new Filters();
             AttributeCollection collection = new AttributeCollection();
 
-            Attribute att1 = new Attribute(Attribute.Name.ELECHARGE, "-1");
-            Attribute att2 = new Attribute(Attribute.Name.ELECONS, "2");
+            Attribute att1 = new Attribute(Attribute.Name.ELECHARGE, "5");
+            Attribute att2 = new Attribute(Attribute.Name.ELECONS, "10");
             Attribute att3 = new Attribute(Attribute.Name.WASTECHARGE, "3");
             Attribute att4 = new Attribute(Attribute.Name.WASTEDISPOSED, "4");
             Attribute att5 = new Attribute(Attribute.Name.WATCHARGE, "5");
             Attribute att6 = new Attribute(Attribute.Name.WATCONS, "6");
-            Attribute att7 = new Attribute(Attribute.Name.UTILITY_ID, "U134567890");
+            Attribute att7 = new Attribute(Attribute.Name.UTILITY_ID, "U234567891");
 
 
 //            collection.add(att2);
@@ -255,7 +256,7 @@ public class DatabaseManager implements DatabaseOperations {
                 System.out.println(res.getRowsAffected());
 ////                DB.printTable(res.getResult());
             } else {
-                ArrayList<String> errors = res.getErrors().getErrorByAttribute(att1);
+                ArrayList<String> errors = res.getErrors().getErrorByAttribute(att7);
                 for (String error : errors) {
                     System.out.println(error);
                 }
