@@ -11,6 +11,6 @@ public class AttributeMismatchException extends Exception {
 
     @Override
     public String getMessage() {
-        return "The attributes " + attr1.getAttributeName() + " and " + attr2.getAttributeName() + " do not match for a 'Between' filtration";
+        return "The attributes " + attr1.getStringName() + " and " + attr2.getStringName() + " do not match for a 'Between' filtration";
     }
 }

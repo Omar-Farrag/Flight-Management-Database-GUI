@@ -10,24 +10,24 @@ public interface DatabaseOperations {
     public QueryResult insert(Table t, AttributeCollection toInsert) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, InsufficientAttributesException, SQLException;
 
     // Deletes a set of entries from the database
-    public QueryResult delete(Table t, Filter filter) throws IncompatibleFilterException, TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, SQLException;
+    public QueryResult delete(Table t, Filters filters) throws IncompatibleFilterException, TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, SQLException;
 
     // Modifies a set of entries in the database
-    public QueryResult modify(Table t, Filter filter, AttributeCollection toModify);
+    public QueryResult modify(Table t, Filters filters, AttributeCollection toModify);
 
 
     // retrieves data from the database
     public QueryResult retrieve(Table t) throws SQLException;
 
     // retrieves data from the database
-    public QueryResult retrieve(Table t, Filter filters) throws IncompatibleFilterException, SQLException,
+    public QueryResult retrieve(Table t, Filters filters) throws IncompatibleFilterException, SQLException,
             TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException;
 
     // retrieves data from the database
     public QueryResult retrieve(Table t, AttributeCollection toGet) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, SQLException;
 
     // retrieves data from the database
-    public QueryResult retrieve(Table t, AttributeCollection toGet, Filter filters) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, IncompatibleFilterException, SQLException;
+    public QueryResult retrieve(Table t, AttributeCollection toGet, Filters filters) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, IncompatibleFilterException, SQLException;
 
     // executes a given sql statement
     public ResultSet executeStatement(String sqlStatement) throws SQLException;

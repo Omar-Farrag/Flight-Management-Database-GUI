@@ -9,7 +9,7 @@ public class UnvalidatedAttributeException extends Exception {
 
     @Override
     public String getMessage() {
-        return "Cannot get error for attribute " + attribute.getAttributeName()
+        return "Cannot get error for attribute " + attribute.getStringName()
                 + ": attribute was not validated in the first place";
     }
 }

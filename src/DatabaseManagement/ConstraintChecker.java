@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,6 +13,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import DatabaseManagement.Attribute.Name;
+import DatabaseManagement.Attribute.Type;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -21,6 +22,7 @@ import org.json.simple.parser.*;
 
 public class ConstraintChecker implements ConstraintChecks {
 
+    private static ConstraintChecker instance;
     private String metaDataFile = "Metadata.json";
     private ArrayList<String> currentApplicationTables;
     private FileWriter fout;
@@ -29,18 +31,14 @@ public class ConstraintChecker implements ConstraintChecks {
     private Validator validator;
     private ComparisonCompatibility compChecker;
     private ReferentialResolver resolver;
-
+    private DatabaseManager DB;
     private HashMap<String, JSONObject> table_to_object;
-    private static ConstraintChecker instance;
-
-    public static ConstraintChecker getInstance() {
-        return instance == null ? instance = new ConstraintChecker() : instance;
-    }
 
     private ConstraintChecker() {
         currentApplicationTables = new ArrayList<>();
         compChecker = new ComparisonCompatibility();
         resolver = ReferentialResolver.getInstance();
+        DB = DatabaseManager.getInstance();
 
         for (Table t : Table.values())
             currentApplicationTables.add(t.getTableName().toUpperCase());
@@ -52,6 +50,20 @@ public class ConstraintChecker implements ConstraintChecks {
             initMetaDataFile();
 
         readMetaDataFromFile();
+        resolver.initResolver();
+    }
+
+    public static ConstraintChecker getInstance() {
+        return instance == null ? instance = new ConstraintChecker() : instance;
+    }
+
+    public static void main(String[] args) throws IncompatibleFilterException {
+        ConstraintChecker.getInstance();
+        HashMap<Table, Filters> x = ReferentialResolver.getInstance().getReferencingAttributes(Table.USERS, new Attribute(Name.USER_ID, Type.STRING, "A7"));
+
+        for (var entry : x.entrySet()) {
+            System.out.println(entry.getKey() + "\t" + entry.getValue().getFilterClause());
+        }
     }
 
     private void readMetaDataFromFile() {
@@ -66,7 +78,8 @@ public class ConstraintChecker implements ConstraintChecks {
                 fileContent += line;
 
             JSONArray metaData = (JSONArray) new JSONParser().parse(fileContent);
-            if (metaData.isEmpty()) throw new EmptyFileException(metaDataFile);
+            if (metaData.isEmpty())
+                throw new EmptyFileException(metaDataFile);
 
             for (Object table : metaData) {
                 JSONObject tableJSONObject = (JSONObject) table;
@@ -79,7 +92,7 @@ public class ConstraintChecker implements ConstraintChecks {
                     for (int i = 0; i < constraints.size(); i++) {
 
                         Table t = Table.valueOf(tableName);
-                        Attribute.Name attName = Attribute.Name.valueOf(attribute.toString());
+                        Name attName = Name.valueOf(attribute.toString());
                         String constraintName = constraints.get(i).toString();
 
                         if (constraintName.startsWith("P"))
@@ -91,9 +104,10 @@ public class ConstraintChecker implements ConstraintChecks {
                     }
                 }
             }
-            resolver.initResolver();
             bin.close();
-        } catch (IOException | ParseException | EmptyFileException e) {
+        } catch (IOException |
+                 ParseException |
+                 EmptyFileException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
             initMetaDataFile();
@@ -112,31 +126,19 @@ public class ConstraintChecker implements ConstraintChecks {
     }
 
     @Override
-    public Errors checkUpdate(Table t, Filter filter, AttributeCollection newValues)
-            throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
-
-        checkAttributeExistence(t, new AttributeCollection(filter));
-        checkAttributeExistence(t, newValues);
-        Errors error = checkConstraints(t, newValues);
-        error.append(checkConstraints(t, new AttributeCollection(filter)));
-
-        return error;
-    }
-
-    @Override
-    public Errors checkRetrieval(Table t, Filter filter, AttributeCollection toGet)
+    public Errors checkRetrieval(Table t, Filters filters, AttributeCollection toGet)
             throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
 
         checkAttributeExistence(t, toGet);
-        AttributeCollection filterCollection = new AttributeCollection(filter);
+        AttributeCollection filterCollection = new AttributeCollection(filters);
         checkAttributeExistence(t, filterCollection);
         return checkConstraints(t, filterCollection);
 
     }
 
     @Override
-    public Errors checkRetrieval(Table t, Filter filter) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
-        AttributeCollection filterCollection = new AttributeCollection(filter);
+    public Errors checkRetrieval(Table t, Filters filters) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
+        AttributeCollection filterCollection = new AttributeCollection(filters);
         checkAttributeExistence(t, filterCollection);
         return checkConstraints(t, filterCollection);
     }
@@ -148,10 +150,56 @@ public class ConstraintChecker implements ConstraintChecks {
     }
 
     @Override
-    public Errors checkDeletion(Table t, Filter filter) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
-        AttributeCollection filterCollection = new AttributeCollection(filter);
+    public Errors checkDeletion(Table t, Filters filters) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, SQLException, IncompatibleFilterException {
+        AttributeCollection filterCollection = new AttributeCollection(filters);
         checkAttributeExistence(t, filterCollection);
-        return checkConstraints(t, filterCollection);
+        Errors constraintErrors = checkConstraints(t, filterCollection);
+        Errors referentialErrors = checkReferencingTables(t, filters);
+        return constraintErrors.append(referentialErrors);
+    }
+
+    @Override
+    public Errors checkUpdate(Table t, Filters filters, AttributeCollection newValues)
+            throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, SQLException, IncompatibleFilterException {
+
+        checkAttributeExistence(t, new AttributeCollection(filters));
+        checkAttributeExistence(t, newValues);
+        Errors constraintErrorsNew = checkConstraints(t, newValues);
+        Errors constraintErrorsFilters = checkConstraints(t, new AttributeCollection(filters));
+        Errors referentialErrors = checkReferencingTables(t, filters);
+        error.append();
+
+        return error;
+    }
+
+    public JSONObject getTableAttributes(Table t) {
+        return (JSONObject) table_to_object.get(t.getTableName()).get("Attributes");
+    }
+
+    private Errors checkReferencingTables(Table t, Filters f) throws TableNotFoundException, AttributeNotFoundException, SQLException, IncompatibleFilterException, ConstraintNotFoundException {
+        Errors errors = new Errors();
+        ResultSet toDelete = DB.retrieve(t, f).getResult();
+        AttributeCollection referencedAttributes = resolver.getReferencedAttributes(t);
+
+        while (toDelete.next()) {
+            for (Attribute attribute : referencedAttributes.attributes()) {
+                String toDeleteValue = toDelete.getString(attribute.getStringName());
+                Attribute toFindReferences = new Attribute(attribute.getAttributeName(), Type.STRING, toDeleteValue);
+
+                HashMap<Table, Filters> referencingAttributes = resolver.getReferencingAttributes(t, toFindReferences);
+
+                for (Map.Entry<Table, Filters> entry : referencingAttributes.entrySet()) {
+                    if (DB.retrieve(entry.getKey(), entry.getValue()).getRowsAffected() > 0) {
+                        String errorMessage =
+                                "Cannot Delete Entry With " + attribute.getStringName() + " = " +
+                                        toDeleteValue + " because it is referenced by table " + entry.getKey().getTableName();
+
+                        errors.add(attribute, errorMessage);
+                    }
+                }
+            }
+        }
+        return errors;
     }
 
     private Errors checkConstraints(Table t, AttributeCollection toValidate) throws TableNotFoundException, ConstraintNotFoundException {
@@ -160,12 +208,13 @@ public class ConstraintChecker implements ConstraintChecks {
         Errors errors = new Errors();
 
         for (Attribute attribute : toValidate.attributes()) {
-            JSONArray attributeConstraints = (JSONArray) tableAttributes.get(attribute.getAttributeName());
+            JSONArray attributeConstraints = (JSONArray) tableAttributes.get(attribute.getStringName());
             for (Object obj : attributeConstraints) {
                 String constraint = (String) obj;
                 try {
                     errors.add(attribute, validator.validate(constraint, attribute, toValidate));
-                } catch (MissingValidatorException e) {
+                } catch (
+                        MissingValidatorException e) {
                     System.out.println(e.getMessage());
                     e.printStackTrace();
                 }
@@ -179,8 +228,8 @@ public class ConstraintChecker implements ConstraintChecks {
         JSONObject tableAttributes = (JSONObject) table.get("Attributes");
 
         for (Attribute attribute : toValidate.attributes()) {
-            if (!tableAttributes.containsKey(attribute.getAttributeName()))
-                throw new AttributeNotFoundException(t.getTableName(), attribute.getAttributeName());
+            if (!tableAttributes.containsKey(attribute.getStringName()))
+                throw new AttributeNotFoundException(t.getTableName(), attribute.getStringName());
         }
         return tableAttributes.size();
     }
@@ -228,7 +277,8 @@ public class ConstraintChecker implements ConstraintChecks {
             fout.flush();
 
             return true;
-        } catch (Exception e) {
+        } catch (
+                Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
@@ -250,7 +300,8 @@ public class ConstraintChecker implements ConstraintChecks {
                 metaData.add(table);
 //                table_to_object.put(tableName, table);
             }
-        } catch (SQLException e) {
+        } catch (
+                SQLException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
@@ -295,7 +346,8 @@ public class ConstraintChecker implements ConstraintChecks {
                 }
 
             }
-        } catch (SQLException e) {
+        } catch (
+                SQLException e) {
             e.printStackTrace();
         }
         return "";
@@ -374,9 +426,5 @@ public class ConstraintChecker implements ConstraintChecks {
                 return attribute_to_errors.get(attribute);
         }
 
-    }
-
-    public static void main(String[] args) {
-        ConstraintChecker.getInstance();
     }
 }

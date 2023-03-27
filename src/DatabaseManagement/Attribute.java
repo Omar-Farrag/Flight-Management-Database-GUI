@@ -19,8 +19,12 @@ public class Attribute {
 
     }
 
-    public String getAttributeName() {
+    public String getStringName() {
         return attributeName.getName();
+    }
+
+    public Attribute.Name getAttributeName() {
+        return attributeName;
     }
 
     // public int getInt() throws NumberFormatException {

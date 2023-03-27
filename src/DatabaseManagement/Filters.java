@@ -2,12 +2,12 @@ package DatabaseManagement;
 
 import java.util.*;
 
-public class Filter {
+public class Filters {
     private HashMap<Attribute, FilterType> filters;
     private HashMap<Attribute, String[]> filters_IN_Type;
     private ComparisonCompatibility checker;
 
-    public Filter() {
+    public Filters() {
         filters = new HashMap<>();
         filters_IN_Type = new HashMap<>();
         checker = new ComparisonCompatibility();
@@ -39,7 +39,7 @@ public class Filter {
     }
 
     public void addBetween(Attribute min, Attribute max) throws AttributeMismatchException {
-        if (!min.getAttributeName().equals(max.getAttributeName())) throw new AttributeMismatchException(min, max);
+        if (!min.getStringName().equals(max.getStringName())) throw new AttributeMismatchException(min, max);
         filters.put(min, FilterType.GREATER_EQUAL);
         filters.put(max, FilterType.LESS_EQUAL);
     }
@@ -56,7 +56,7 @@ public class Filter {
         ArrayList<String> conditions = new ArrayList<>();
 
         for (Map.Entry<Attribute, FilterType> entry : filters.entrySet()) {
-            String condition = entry.getKey().getAttributeName() + " " + entry.getValue().getOperator();
+            String condition = entry.getKey().getStringName() + " " + entry.getValue().getOperator();
             if (entry.getKey().getType() == Attribute.Type.STRING)
                 condition += " '" + entry.getKey().getString() + "'";
             else
@@ -65,7 +65,7 @@ public class Filter {
         }
 
         for (Map.Entry<Attribute, String[]> entry : filters_IN_Type.entrySet()) {
-            String condition = entry.getKey().getAttributeName() + " IN ";
+            String condition = entry.getKey().getStringName() + " IN ";
             ArrayList<String> acceptedInValues = new ArrayList<>();
 
             if (entry.getKey().getType() == Attribute.Type.STRING)

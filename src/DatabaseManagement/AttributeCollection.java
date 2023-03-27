@@ -11,9 +11,9 @@ public class AttributeCollection {
         attributes = new HashSet<>();
     }
 
-    public AttributeCollection(Filter filter) {
+    public AttributeCollection(Filters filters) {
         attributes = new HashSet<>();
-        for (Attribute att : filter.getAttributes())
+        for (Attribute att : filters.getAttributes())
             add(att);
     }
 
@@ -36,7 +36,7 @@ public class AttributeCollection {
         ArrayList<String> attributes_as_string = new ArrayList<>();
 
         for (Attribute att : attributes)
-            attributes_as_string.add(att.getAttributeName());
+            attributes_as_string.add(att.getStringName());
 
         return String.join(" , ", attributes_as_string);
     }

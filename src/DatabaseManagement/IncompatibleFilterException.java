@@ -2,7 +2,7 @@ package DatabaseManagement;
 
 import java.util.Map;
 
-import DatabaseManagement.Filter.FilterType;
+import DatabaseManagement.Filters.FilterType;
 
 public class IncompatibleFilterException extends Exception {
 
@@ -15,7 +15,7 @@ public class IncompatibleFilterException extends Exception {
     @Override
     public String getMessage() {
         return "The operator " + filter.getValue() + " cannot be used to filter the attribute "
-                + filter.getKey().getAttributeName();
+                + filter.getKey().getStringName();
     }
 
 }

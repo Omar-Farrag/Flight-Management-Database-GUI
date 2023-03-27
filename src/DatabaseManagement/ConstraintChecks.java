@@ -2,6 +2,8 @@ package DatabaseManagement;
 
 import DatabaseManagement.ConstraintChecker.Errors;
 
+import java.sql.SQLException;
+
 public interface ConstraintChecks {
     /*
      * Here we can put functions for all the constraints in the database
@@ -14,14 +16,14 @@ public interface ConstraintChecks {
 
     public Errors checkInsertion(Table t, AttributeCollection toInsert) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, InsufficientAttributesException;
 
-    public Errors checkUpdate(Table t, Filter filter, AttributeCollection toUpdate) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException;
+    public Errors checkUpdate(Table t, Filters filters, AttributeCollection toUpdate) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, SQLException, IncompatibleFilterException;
 
-    public Errors checkRetrieval(Table t, Filter filter, AttributeCollection toGet) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException;
+    public Errors checkRetrieval(Table t, Filters filters, AttributeCollection toGet) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException;
 
-    public Errors checkRetrieval(Table t, Filter filter) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException;
+    public Errors checkRetrieval(Table t, Filters filters) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException;
 
     public Errors checkRetrieval(Table t, AttributeCollection toGet) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException;
 
-    public Errors checkDeletion(Table t, Filter filter) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException;
+    public Errors checkDeletion(Table t, Filters filters) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, SQLException, IncompatibleFilterException;
 
 }

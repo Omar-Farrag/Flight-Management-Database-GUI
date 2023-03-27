@@ -1,5 +1,7 @@
 package DatabaseManagement;
 
+import org.json.simple.JSONObject;
+
 import java.util.*;
 
 public class ReferentialResolver {
@@ -21,6 +23,45 @@ public class ReferentialResolver {
 
     public static ReferentialResolver getInstance() {
         return instance == null ? instance = new ReferentialResolver() : instance;
+    }
+
+    public AttributeCollection getReferencedAttributes(Table t) {
+        AttributeCollection collection = new AttributeCollection();
+        JSONObject attributes = ConstraintChecker.getInstance().getTableAttributes(t);
+        for (var attribute : attributes.keySet()) {
+            Attribute.Name column = Attribute.Name.valueOf(attribute.toString());
+            String constraintName = column_to_P_Constraint.get(new Key(t, column));
+
+            if (constraintName != null && referenced_to_referencers.containsKey(new DetailedKey(t,
+                    column, constraintName)))
+                collection.add(new Attribute(column));
+        }
+
+        return collection;
+    }
+
+    public HashMap<Table, Filters> getReferencingAttributes(Table t, Attribute attribute) {
+        ArrayList<DetailedKey> references = getReferences(t, attribute.getAttributeName());
+        HashMap<Table, Filters> table_to_filters = new HashMap<>();
+
+        for (DetailedKey key : references) {
+            Attribute toFilterBy = new Attribute(key.column, attribute.getType(), attribute.getString());
+            Filters filter = new Filters();
+            filter.addEqual(toFilterBy);
+            table_to_filters.put(key.t, filter);
+        }
+
+        return table_to_filters;
+    }
+
+    private ArrayList<DetailedKey> getReferences(Table t, Attribute.Name column) {
+        String constraintName = column_to_P_Constraint.get(new Key(t, column));
+        DetailedKey key = new DetailedKey(t, column, constraintName);
+
+        if (constraintName == null || !referenced_to_referencers.containsKey(key))
+            return new ArrayList<>();
+
+        else return referenced_to_referencers.get(key);
     }
 
     public void insertPrimary(Table t, Attribute.Name column, String constraintName) {
@@ -49,9 +90,6 @@ public class ReferentialResolver {
             referenced_to_referencers.get(key).add(key);
         }
     }
-//    private String generateConstraintName(String oldConstraintName,){
-//
-//    }
 
     private class Key {
         protected Table t;
@@ -62,10 +100,11 @@ public class ReferentialResolver {
             this.column = column;
         }
 
+
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (o == null) return false;
             Key key = (Key) o;
             return t == key.t && column == key.column;
         }
@@ -87,14 +126,14 @@ public class ReferentialResolver {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (o == null) return false;
             DetailedKey key = (DetailedKey) o;
             return constraintName.equals(key.constraintName);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(constraintName);
+            return constraintName.hashCode();
         }
 
     }
