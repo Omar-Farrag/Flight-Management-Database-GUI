@@ -56,7 +56,9 @@ public class ConstraintChecker implements ConstraintChecks {
 
     public static void main(String[] args) throws IncompatibleFilterException {
         ConstraintChecker.getInstance();
-        HashMap<Table, Filters> x = ReferentialResolver.getInstance().getReferencingAttributes(Table.USERS, new Attribute(Name.USER_ID, "A7"));
+        HashMap<Table, Filters> x =
+                ReferentialResolver.getInstance().getReferencingAttributes(Table.USERS,
+                        new Attribute(Name.USER_ID, "A7", Table.USERS));
 
         for (var entry : x.entrySet()) {
             System.out.println(entry.getKey() + "\t" + entry.getValue().getFilterClause());
@@ -181,7 +183,8 @@ public class ConstraintChecker implements ConstraintChecks {
         while (toDelete.next()) {
             for (Attribute attribute : referencedAttributes.attributes()) {
                 String toDeleteValue = toDelete.getString(attribute.getStringName());
-                Attribute toFindReferences = new Attribute(attribute.getAttributeName(), toDeleteValue);
+                Attribute toFindReferences = new Attribute(attribute.getAttributeName(),
+                        toDeleteValue, attribute.getT());
 
                 HashMap<Table, Filters> referencingAttributes = resolver.getReferencingAttributes(t, toFindReferences);
 

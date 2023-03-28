@@ -4,18 +4,21 @@ public class Attribute {
     private final Attribute.Name attributeName;
     private final String attributeValue;
     private final Type type;
+    private final Table t;
 
-    public Attribute(Name attributeName, String value) {
+    public Attribute(Name attributeName, String value, Table t) {
         this.attributeName = attributeName;
         this.attributeValue = value;
         this.type = attributeName.type;
+        this.t = t;
 
     }
 
-    public Attribute(Attribute.Name attribute) {
+    public Attribute(Attribute.Name attribute, Table t) {
         this.attributeName = attribute;
         this.attributeValue = "";
         this.type = Type.STRING;
+        this.t = t;
 
     }
 
@@ -25,6 +28,10 @@ public class Attribute {
 
     public Attribute.Name getAttributeName() {
         return attributeName;
+    }
+
+    public String getAliasedStringName() {
+        return t.getAlias() + "." + getStringName();
     }
 
     // public int getInt() throws NumberFormatException {
@@ -47,9 +54,14 @@ public class Attribute {
         return type;
     }
 
+    public Table getT() {
+        return t;
+    }
+
     @Override
     public boolean equals(Object obj) {
-        return attributeName.equals(((Attribute) obj).attributeName);
+        Attribute other = (Attribute) obj;
+        return attributeName.equals(other.attributeName) && t.equals(other.t);
     }
 
     @Override

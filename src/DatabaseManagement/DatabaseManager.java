@@ -228,13 +228,13 @@ public class DatabaseManager implements DatabaseOperations {
             Filters filters = new Filters();
             AttributeCollection collection = new AttributeCollection();
 
-            Attribute att1 = new Attribute(Attribute.Name.ELECHARGE, "5");
-            Attribute att2 = new Attribute(Attribute.Name.ELECONS, "10");
-            Attribute att3 = new Attribute(Attribute.Name.WASTECHARGE, "3");
-            Attribute att4 = new Attribute(Attribute.Name.WASTEDISPOSED, "4");
-            Attribute att5 = new Attribute(Attribute.Name.WATCHARGE, "5");
-            Attribute att6 = new Attribute(Attribute.Name.WATCONS, "6");
-            Attribute att7 = new Attribute(Attribute.Name.UTILITY_ID, "U234567891");
+            Attribute att1 = new Attribute(Attribute.Name.ELECHARGE, "5", Table.UTILITY_CONSUMPTION);
+            Attribute att2 = new Attribute(Attribute.Name.ELECONS, "10", Table.UTILITY_CONSUMPTION);
+            Attribute att3 = new Attribute(Attribute.Name.WASTECHARGE, "3", Table.UTILITY_CONSUMPTION);
+            Attribute att4 = new Attribute(Attribute.Name.WASTEDISPOSED, "4", Table.UTILITY_CONSUMPTION);
+            Attribute att5 = new Attribute(Attribute.Name.WATCHARGE, "5", Table.UTILITY_CONSUMPTION);
+            Attribute att6 = new Attribute(Attribute.Name.WATCONS, "6", Table.UTILITY_CONSUMPTION);
+            Attribute att7 = new Attribute(Attribute.Name.UTILITY_ID, "U234567891", Table.UTILITY_CONSUMPTION);
 
 
 //            collection.add(att2);

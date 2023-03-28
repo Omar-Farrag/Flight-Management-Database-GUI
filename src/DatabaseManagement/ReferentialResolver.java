@@ -28,13 +28,13 @@ public class ReferentialResolver {
     public AttributeCollection getReferencedAttributes(Table t) {
         AttributeCollection collection = new AttributeCollection();
         JSONObject attributes = ConstraintChecker.getInstance().getTableAttributes(t);
+
         for (var attribute : attributes.keySet()) {
             Attribute.Name column = Attribute.Name.valueOf(attribute.toString());
             String constraintName = column_to_P_Constraint.get(new Key(t, column));
 
-            if (constraintName != null && referenced_to_referencers.containsKey(new DetailedKey(t,
-                    column, constraintName)))
-                collection.add(new Attribute(column));
+            if (constraintName != null && referenced_to_referencers.containsKey(new DetailedKey(t, column, constraintName)))
+                collection.add(new Attribute(column, t));
         }
 
         return collection;
@@ -45,10 +45,14 @@ public class ReferentialResolver {
         HashMap<Table, Filters> table_to_filters = new HashMap<>();
 
         for (DetailedKey key : references) {
-            Attribute toFilterBy = new Attribute(key.column, attribute.getString());
-            Filters filter = new Filters();
-            filter.addEqual(toFilterBy);
-            table_to_filters.put(key.t, filter);
+            Attribute toFilterBy = new Attribute(key.column, attribute.getString(), key.t);
+            if (table_to_filters.containsKey(key.t))
+                table_to_filters.get(key.t).addEqual(toFilterBy);
+            else {
+                Filters filter = new Filters();
+                filter.addEqual(toFilterBy);
+                table_to_filters.put(key.t, filter);
+            }
         }
 
         return table_to_filters;

@@ -9,30 +9,40 @@ public enum Table {
      * put the names of this application's tables here.
      */
     // DEPT("DEPT"),BONUS("BONUS"),EMP("EMP"),SALGRADE("SALGRADE");
-    UTILITY_CONSUMPTION("UTILITY_CONSUMPTION"),
-    MAINTENANCE_REQUESTS("MAINTENANCE_REQUESTS"),
-    BILLS("BILLS"),
-    RECEIPTS("RECEIPTS"),
-    DISCOUNTS("DISCOUNTS"),
-    LEASES("LEASES"),
-    LEASE_REQUESTS("LEASE_REQUESTS"),
-    APPOINTMENT_SLOTS("APPOINTMENT_SLOTS"),
-    APPOINTMENTS("APPOINTMENTS"),
-    PROPERTIES("PROPERTIES"),
-    LOCS("LOCS"),
-    MALLS("MALLS"),
-    USERS("USERS"),
-    ROLES("ROLES"),
-    CREDENTIALS("CREDENTIALS"),
-    NOTIFICATIONS("NOTIFICATIONS");
+    UTILITY_CONSUMPTION("UTILITY_CONSUMPTION", "A"),
+    MAINTENANCE_REQUESTS("MAINTENANCE_REQUESTS", "B"),
+    BILLS("BILLS", "C"),
+    RECEIPTS("RECEIPTS", "D"),
+    DISCOUNTS("DISCOUNTS", "E"),
+    LEASES("LEASES", "F"),
+    LEASE_REQUESTS("LEASE_REQUESTS", "G"),
+    APPOINTMENT_SLOTS("APPOINTMENT_SLOTS", "H"),
+    APPOINTMENTS("APPOINTMENTS", "I"),
+    PROPERTIES("PROPERTIES", "J"),
+    LOCS("LOCS", "K"),
+    MALLS("MALLS", "L"),
+    USERS("USERS", "M"),
+    ROLES("ROLES", "N"),
+    CREDENTIALS("CREDENTIALS", "O"),
+    NOTIFICATIONS("NOTIFICATIONS", "P");
 
     private String tableName;
+    private String alias;
 
-    private Table(String tableName) {
+    private Table(String tableName, String alias) {
         this.tableName = tableName;
+        this.alias = alias;
     }
 
     public String getTableName() {
         return tableName;
+    }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public String getAliasedName() {
+        return getTableName() + " " + alias;
     }
 }

@@ -21,7 +21,7 @@ public class Validator {
                            AttributeCollection allAttributes, Table t) throws MissingValidatorException,
             ConstraintNotFoundException {
         ValidationFunction validationFunc = find(constraint);
-        return validationFunc.validate(constraint, toValidate, allAttributes, t);
+        return validationFunc.validate(constraint, toValidate, allAttributes);
 
     }
 
@@ -36,20 +36,20 @@ public class Validator {
     // ///////////////////////////////////////////VALIDATORS/////////////////////////////////////////////////
 
     private String validatePRIMARY(String constraint, Attribute toValidate,
-                                   AttributeCollection allAttributes, Table t) {
-        String errorMessage = validateNOT_NULL(constraint, toValidate, allAttributes, t);
+                                   AttributeCollection allAttributes) {
+        String errorMessage = validateNOT_NULL(constraint, toValidate, allAttributes);
         if (!errorMessage.isEmpty()) return errorMessage;
 
-        errorMessage = validateUNIQUE(constraint, toValidate, allAttributes, t);
+        errorMessage = validateUNIQUE(constraint, toValidate, allAttributes);
         if (!errorMessage.isEmpty()) return errorMessage;
 
         return "";
     }
 
     private String validateUNIQUE(String constraint, Attribute toValidate,
-                                  AttributeCollection allAttributes, Table t) {
+                                  AttributeCollection allAttributes) {
         try {
-            String query = "Select * from " + t.getTableName() +
+            String query = "Select * from " + toValidate.getT().getTableName() +
                     " where " + toValidate.getStringName() + " = ";
             if (toValidate.getType() == Attribute.Type.STRING)
                 query += "'" + toValidate.getString() + "'";
@@ -64,12 +64,12 @@ public class Validator {
     }
 
     private String validateFOREIGN(String constraint, Attribute toValidate,
-                                   AttributeCollection allAttributes, Table t) {
+                                   AttributeCollection allAttributes) {
         return "";
     }
 
     private String validateLESS_THAN(String constraint, Attribute toValidate,
-                                     AttributeCollection allAttributes, Table t) {
+                                     AttributeCollection allAttributes) {
         ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes);
         if (comparisonResult.testFailed || comparisonResult.result == -1) return "";
         else
@@ -77,7 +77,7 @@ public class Validator {
     }
 
     private String validateGREATER_THAN(String constraint, Attribute toValidate,
-                                        AttributeCollection allAttributes, Table t) {
+                                        AttributeCollection allAttributes) {
         ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes);
         if (comparisonResult.testFailed || comparisonResult.result == 1) return "";
         else
@@ -85,7 +85,7 @@ public class Validator {
     }
 
     private String validateEQUAL(String constraint, Attribute toValidate,
-                                 AttributeCollection allAttributes, Table t) {
+                                 AttributeCollection allAttributes) {
         ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes);
         if (comparisonResult.testFailed || comparisonResult.result == 0) return "";
         else
@@ -93,7 +93,7 @@ public class Validator {
     }
 
     private String validateNOT_EQUAL(String constraint, Attribute toValidate,
-                                     AttributeCollection allAttributes, Table t) {
+                                     AttributeCollection allAttributes) {
         ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes);
         if (comparisonResult.testFailed || comparisonResult.result != 0) return "";
         else
@@ -101,7 +101,7 @@ public class Validator {
     }
 
     private String validateLESS_EQUAL(String constraint, Attribute toValidate,
-                                      AttributeCollection allAttributes, Table t) {
+                                      AttributeCollection allAttributes) {
         ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes);
         if (comparisonResult.testFailed || comparisonResult.result <= 0) return "";
         else
@@ -109,7 +109,7 @@ public class Validator {
     }
 
     private String validateGREATER_EQUAL(String constraint, Attribute toValidate,
-                                         AttributeCollection allAttributes, Table t) {
+                                         AttributeCollection allAttributes) {
         ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes);
         if (comparisonResult.testFailed || comparisonResult.result >= 0) return "";
         else
@@ -139,10 +139,10 @@ public class Validator {
             }
 
             if (lvalue == null) lvalue = convert(new Attribute(toValidate.getAttributeName(),
-                    operands[0]));
+                    operands[0], toValidate.getT()));
 
             if (rvalue == null) rvalue = convert(new Attribute(toValidate.getAttributeName(),
-                    operands[1]));
+                    operands[1], toValidate.getT()));
 
             return new ComparisonResult(operands[0], operands[1], lvalue.compareTo(rvalue), false);
         } catch (ParseException | NumberFormatException | NullPointerException e) {
@@ -170,7 +170,7 @@ public class Validator {
     }
 
     private String validateNOT_NULL(String constraint, Attribute toValidate,
-                                    AttributeCollection allAttributes, Table t) {
+                                    AttributeCollection allAttributes) {
         if (toValidate.getString() == null || toValidate.getString().isEmpty())
             return toValidate.getStringName() + " cannot be null";
         else return "";
@@ -178,13 +178,13 @@ public class Validator {
 
 
     private String validateBETWEEN(String constraint, Attribute toValidate,
-                                   AttributeCollection allAttributes, Table t) {
+                                   AttributeCollection allAttributes) {
 
-
+        return "";
     }
 
     private String validateIN(String constraint, Attribute toValidate,
-                              AttributeCollection allAttributes, Table t) {
+                              AttributeCollection allAttributes) {
         String[] acceptedValues =
                 constraint.split("IN")[1].replace("(", "").replace(")", "").trim().split(",");
         for (String value : acceptedValues) {
@@ -196,7 +196,7 @@ public class Validator {
     }
 
     private String validateLIKE(String constraint, Attribute toValidate,
-                                AttributeCollection allAttributes, Table t) {
+                                AttributeCollection allAttributes) {
 
         String value = toValidate.getString();
         String pattern = constraint.split("LIKE")[1].trim().replace("'", "");
@@ -206,7 +206,7 @@ public class Validator {
     }
 
     private String validateREGEXP_LIKE(String constraint, Attribute toValidate,
-                                       AttributeCollection allAttributes, Table t) {
+                                       AttributeCollection allAttributes) {
         String value = toValidate.getString();
         String pattern = constraint.split(",")[1].trim().replace("'", "").replace(")", "");
 
@@ -222,7 +222,7 @@ public class Validator {
     }
 
     private String validateNUMBER(String constraint, Attribute toValidate,
-                                  AttributeCollection allAttributes, Table t) {
+                                  AttributeCollection allAttributes) {
         try {
             // tries converting userInput to a BigDecimal
             // throws an exception if it can't
@@ -261,7 +261,7 @@ public class Validator {
     }
 
     private String validateFLOAT(String constraint, Attribute toValidate,
-                                 AttributeCollection allAttributes, Table t) {
+                                 AttributeCollection allAttributes) {
         try {
             Float.parseFloat(toValidate.getString());
             return "";
@@ -274,7 +274,7 @@ public class Validator {
     }
 
     private String validateCHAR(String constraint, Attribute toValidate,
-                                AttributeCollection allAttributes, Table t) {
+                                AttributeCollection allAttributes) {
         int length = Integer.parseInt(constraint.split("_")[1]);
         try {
             if (toValidate.getString().isEmpty()) return "";
@@ -287,7 +287,7 @@ public class Validator {
     }
 
     private String validateVARCHAR2(String constraint, Attribute toValidate,
-                                    AttributeCollection allAttributes, Table t) {
+                                    AttributeCollection allAttributes) {
         int maxLength = Integer.parseInt(constraint.split("_")[1]);
         try {
             if (toValidate.getString().length() > maxLength)
@@ -299,7 +299,7 @@ public class Validator {
     }
 
     private String validateDATE(String constraint, Attribute toValidate,
-                                AttributeCollection allAttributes, Table t) {
+                                AttributeCollection allAttributes) {
         // The main logic of this function, is to match the userInput with the
         // dateFormat specified below. If SimpleDateFormat object can parse a date with
         // the specified dateFormat from the userInput, then the userInput is a valid
@@ -428,11 +428,11 @@ public class Validator {
 //        System.out.println(comp1.compareTo(comp2));
 
 
-        String value1 = "Go89u";
-        String pattern1 = "C_REGEXP_LIKE(STORE_NUM, '^[GFST]\\w*')";
-//        Pattern
-        Validator validator = new Validator();
-        System.out.println(validator.testValidateREGEXP_LIKE(value1, pattern1));
+//        String value1 = "Go89u";
+//        String pattern1 = "C_REGEXP_LIKE(STORE_NUM, '^[GFST]\\w*')";
+////        Pattern
+//        Validator validator = new Validator();
+//        System.out.println(validator.testValidateREGEXP_LIKE(value1, pattern1));
 
     }
 
