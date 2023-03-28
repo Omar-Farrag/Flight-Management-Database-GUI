@@ -67,8 +67,7 @@
         "CHAR_10"
       ],
       "CHARGE": [
-        "NUMBER_10_2",
-        "C_CHARGE >= 0"
+        "NUMBER_10_2"
       ]
     }
   },
@@ -322,6 +321,7 @@
     "Attributes": {
       "MALL_NUM": [
         "CHAR_3",
+        "C_MALL_NUM IS NOT NULL",
         "U_LOCATIONS_UNIQUENESS"
       ],
       "LOCATION_NUM": [
@@ -330,7 +330,7 @@
       ],
       "STORE_NUM": [
         "CHAR_3",
-        "C_REGEXP_LIKE(STORE_NUM, '^[GFSTF]')",
+        "C_REGEXP_LIKE(STORE_NUM, '^[GFST]\\w*')",
         "C_STORE_NUM IS NOT NULL",
         "U_LOCATIONS_UNIQUENESS"
       ]

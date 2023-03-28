@@ -176,25 +176,49 @@ public class Validator {
         else return "";
     }
 
-    private String validateLIKE(String constraint, Attribute toValidate,
-                                AttributeCollection allAttributes, Table t) {
-        return "";
-    }
 
     private String validateBETWEEN(String constraint, Attribute toValidate,
                                    AttributeCollection allAttributes, Table t) {
-        return "";
+
+
     }
 
     private String validateIN(String constraint, Attribute toValidate,
                               AttributeCollection allAttributes, Table t) {
-        return "";
+        String[] acceptedValues =
+                constraint.split("IN")[1].replace("(", "").replace(")", "").trim().split(",");
+        for (String value : acceptedValues) {
+            value = value.replace("'", "");
+            if (value.equals(toValidate.getString())) return "";
+        }
+        return toValidate.getStringName() + " must be in one of these values: " + String.join(","
+                , acceptedValues);
+    }
+
+    private String validateLIKE(String constraint, Attribute toValidate,
+                                AttributeCollection allAttributes, Table t) {
+
+        String value = toValidate.getString();
+        String pattern = constraint.split("LIKE")[1].trim().replace("'", "");
+
+        if (value == null || value.isEmpty() || regexMatch(value, pattern)) return "";
+        else return toValidate.getStringName() + " must be in the following format: " + pattern;
     }
 
     private String validateREGEXP_LIKE(String constraint, Attribute toValidate,
                                        AttributeCollection allAttributes, Table t) {
+        String value = toValidate.getString();
+        String pattern = constraint.split(",")[1].trim().replace("'", "").replace(")", "");
 
-        return "";
+        if (value == null || value.isEmpty() || regexMatch(value, pattern)) return "";
+        else return toValidate.getStringName() + " must be in the following format: " + pattern;
+    }
+
+    private boolean regexMatch(String value, String regex) {
+        regex = regex.replace("%", ".*").replace("_", ".");
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(value);
+        return matcher.matches();
     }
 
     private String validateNUMBER(String constraint, Attribute toValidate,
@@ -350,6 +374,7 @@ public class Validator {
         constraints.add(new Constraint(ConstraintEnum.DATE, this::validateDATE));
     }
 
+
     public static void main(String[] args) {
 //        AttributeCollection collection = new AttributeCollection();
 //
@@ -383,24 +408,31 @@ public class Validator {
 //            throw new RuntimeException(e);
 //        }
 
-        String dateTimeString1 = "29-MAR-2023";
-        String dateTimeString2 = "29-MAR-2023";
+//        String dateTimeString1 = "29-MAR-2023";
+//        String dateTimeString2 = "29-MAR-2023";
+//
+//        String dateFormat = "dd-MMM-yyyy";
+//        SimpleDateFormat simpleFormat = new SimpleDateFormat(dateFormat);
+//        simpleFormat.setLenient(false);
+//
+//
+//        Comparable comp1 = null;
+//        Comparable comp2 = null;
+//        try {
+//            comp1 = simpleFormat.parse(dateTimeString1);
+//            comp2 = simpleFormat.parse(dateTimeString2);
+//        } catch (ParseException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        System.out.println(comp1.compareTo(comp2));
 
-        String dateFormat = "dd-MMM-yyyy";
-        SimpleDateFormat simpleFormat = new SimpleDateFormat(dateFormat);
-        simpleFormat.setLenient(false);
 
-
-        Comparable comp1 = null;
-        Comparable comp2 = null;
-        try {
-            comp1 = simpleFormat.parse(dateTimeString1);
-            comp2 = simpleFormat.parse(dateTimeString2);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-
-        System.out.println(comp1.compareTo(comp2));
+        String value1 = "Go89u";
+        String pattern1 = "C_REGEXP_LIKE(STORE_NUM, '^[GFST]\\w*')";
+//        Pattern
+        Validator validator = new Validator();
+        System.out.println(validator.testValidateREGEXP_LIKE(value1, pattern1));
 
     }
 
