@@ -29,11 +29,13 @@ public class QueryGenerator {
     public String getFromClause() throws InvalidJoinException {
         //identify which tables to join;
         init_tables_to_join();
-
+        if (tables_to_join.size() == 1) return tables_to_join.get(0).getAliasedName();
         Iterator<Node> nodeIterator = tables_to_join.iterator();
 
         Set<Node> foundNodes = new HashSet<>();
-        foundNodes.add(nodeIterator.next());
+        Node starting = nodeIterator.next();
+        foundNodes.add(starting);
+        tables_to_join.remove(starting);
         Iterator<Node> foundNodeIterator = foundNodes.iterator();
 
         Queue<Node> BFSqueue = new LinkedList<>();
@@ -49,12 +51,16 @@ public class QueryGenerator {
             while (!BFSqueue.isEmpty()) {
                 Node current = BFSqueue.poll();
 
-                if (tables_to_join.contains(current) && !foundNodes.contains(current)) {
+                if (tables_to_join.contains(current)) {
                     foundNodes.add(current);
+                    tables_to_join.remove(current);
+
                     for (Node node = current; node.getParent() != null; node = node.getParent()) {
                         links.add(graph.getLinkTo(node.getParent(), node));
                     }
-                    if (foundNodes.size() == tables_to_join.size())
+                    if (current.getParent() == null)
+                        links.add(graph.getLinkTo(current, current));
+                    if (tables_to_join.size() == 0)
                         return generatedClause();
                 }
                 for (Node neighbor : graph.getNeighbors(current)) {
@@ -94,10 +100,12 @@ public class QueryGenerator {
 
     public static void main(String[] args) {
         AttributeCollection toGet = new AttributeCollection();
-        toGet.add(new Attribute(Attribute.Name.LEASE_NUM, Table.LEASES));
-        toGet.add(new Attribute(Attribute.Name.USER_ID, Table.USERS));
-        toGet.add(new Attribute(Attribute.Name.LOCATION_NUM, Table.LOCS));
-        toGet.add(new Attribute(Attribute.Name.ROLE_ID, Table.ROLES));
+//        toGet.add(new Attribute(Attribute.Name.LEASE_NUM, Table.LEASES));
+//        toGet.add(new Attribute(Attribute.Name.USER_ID, Table.USERS));
+//        toGet.add(new Attribute(Attribute.Name.LOCATION_NUM, Table.LOCS));
+        toGet.add(new Attribute(Attribute.Name.UTILITY_ID, Table.BILLS));
+        toGet.add(new Attribute(Attribute.Name.BILL_NUM, Table.DISCOUNTS));
+        toGet.add(new Attribute(Attribute.Name.BILL_NUM, Table.BILLS));
 
         QueryGenerator qg = new QueryGenerator(toGet, new Filters());
         try {

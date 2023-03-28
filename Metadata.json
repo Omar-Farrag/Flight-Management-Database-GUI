@@ -99,7 +99,7 @@
       "UTILITY_ID": [
         "CHAR_10",
         "C_UTILITY_ID IS NOT NULL",
-        "R_UT_CONS_UTILITY_ID_PK"
+        "R_BILLS_BILL_NUM_PK"
       ]
     }
   },
