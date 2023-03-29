@@ -1,5 +1,7 @@
 package DatabaseManagement;
 
+import DatabaseManagement.ReferentialResolver.DetailedKey;
+
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -62,7 +64,22 @@ public class Validator {
 
     private String validateFOREIGN(String constraint, Attribute toValidate,
                                    AttributeCollection allAttributes) {
-        return "";
+
+        constraint = constraint.replace("R_", "").trim();
+        DetailedKey referenced = ReferentialResolver.getInstance().getReferencedTable(constraint);
+
+        String query =
+                "Select * from " + referenced.t.getTableName() + " where " + referenced.column.getName() + " = " + toValidate.getString();
+        ResultSet result = null;
+        try {
+            result = DatabaseManager.getInstance().executeStatement(query);
+            if (!result.next()) return "This value is referencing a non-existent entry";
+            else return "";
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return "Something went wrong";
+        }
     }
 
     private String validateLESS_THAN(String constraint, Attribute toValidate,

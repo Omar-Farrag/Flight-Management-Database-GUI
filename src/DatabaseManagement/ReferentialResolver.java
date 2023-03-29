@@ -25,6 +25,14 @@ public class ReferentialResolver {
         return instance == null ? instance = new ReferentialResolver() : instance;
     }
 
+    public DetailedKey getReferencedTable(String constraintName) {
+        DetailedKey toFind = new DetailedKey(null, null, constraintName);
+        for (DetailedKey key : referenced_to_referencers.keySet())
+            if (key.equals(toFind)) return key;
+
+        throw new NullPointerException();
+    }
+
     public AttributeCollection getReferencedAttributes(Table t) {
         AttributeCollection collection = new AttributeCollection();
         JSONObject attributes = ConstraintChecker.getInstance().getTableAttributes(t);
@@ -119,7 +127,7 @@ public class ReferentialResolver {
         }
     }
 
-    private class DetailedKey extends Key {
+    public class DetailedKey extends Key {
         private String constraintName;
 
         public DetailedKey(Table table, Attribute.Name column, String constraintName) {

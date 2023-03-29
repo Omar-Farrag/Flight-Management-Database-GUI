@@ -235,9 +235,9 @@ public class DatabaseManager implements DatabaseOperations {
             Attribute x2 = new Attribute(Attribute.Name.MAINTENANCE_PERCENTAGE, "23",
                     Table.DISCOUNTS);
             Attribute x3 = new Attribute(Attribute.Name.LEASE_PERCENTAGE, "34", Table.DISCOUNTS);
-            Attribute x4 = new Attribute(Attribute.Name.DISCOUNT_NUM, "D122456789",
+            Attribute x4 = new Attribute(Attribute.Name.DISCOUNT_NUM, "D222456789",
                     Table.DISCOUNTS);
-            Attribute x5 = new Attribute(Attribute.Name.BILL_NUM, "B123456789",
+            Attribute x5 = new Attribute(Attribute.Name.BILL_NUM, "B133456789",
                     Table.DISCOUNTS);
 
 
