@@ -14,7 +14,7 @@ public class QueryGenerator {
     private AttributeCollection toGet;
     private Filters toFilter;
     private Graph graph;
-    private ArrayList<Node> tables_to_join;
+    private Set<Node> tables_to_join;
     private Set<Link> links;
 
 
@@ -22,7 +22,7 @@ public class QueryGenerator {
         this.toGet = toGet;
         this.toFilter = toFilter;
         graph = new Graph();
-        tables_to_join = new ArrayList<>();
+        tables_to_join = new HashSet<>();
         links = new HashSet<>();
     }
 
@@ -30,7 +30,7 @@ public class QueryGenerator {
         this.toGet = new AttributeCollection();
         this.toFilter = toFilter;
         graph = new Graph();
-        tables_to_join = new ArrayList<>();
+        tables_to_join = new HashSet<>();
         links = new HashSet<>();
     }
 
@@ -38,15 +38,15 @@ public class QueryGenerator {
         this.toGet = toGet;
         this.toFilter = new Filters();
         graph = new Graph();
-        tables_to_join = new ArrayList<>();
+        tables_to_join = new HashSet<>();
         links = new HashSet<>();
     }
 
     public String getFromClause() throws InvalidJoinException {
         //identify which tables to join;
         init_tables_to_join();
-        if (tables_to_join.size() == 1) return tables_to_join.get(0).getAliasedName();
         Iterator<Node> nodeIterator = tables_to_join.iterator();
+        if (tables_to_join.size() == 1) return nodeIterator.next().getAliasedName();
 
         Set<Node> foundNodes = new HashSet<>();
         Node starting = nodeIterator.next();
@@ -101,7 +101,9 @@ public class QueryGenerator {
 
         while (linksIterator.hasNext()) {
             link = linksIterator.next();
-            clause += " join " + link.getAliasedTail() + " on " + link.getAliasedCondition();
+            clause += " join " + (clause.contains(link.getAliasedTail()) ? link.getAliasedHead()
+                    : link.getAliasedTail()) +
+                    " on " + link.getAliasedCondition();
         }
         return clause;
     }

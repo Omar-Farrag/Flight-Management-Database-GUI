@@ -7,11 +7,12 @@ import java.util.stream.Collectors;
 import QueryGeneration.Graph.Node;
 
 public class InvalidJoinException extends Exception {
-    private ArrayList<Node> tables;
+    private Set<Node> tables;
 
-    public InvalidJoinException(ArrayList<Graph.Node> tables) {
+    public InvalidJoinException(Set<Graph.Node> tables) {
         this.tables = tables;
     }
+
 
     @Override
     public String getMessage() {

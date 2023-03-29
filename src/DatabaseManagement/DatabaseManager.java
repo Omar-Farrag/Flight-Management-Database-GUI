@@ -259,6 +259,7 @@ public class DatabaseManager implements DatabaseOperations {
             collection.add(new Attribute(Attribute.Name.LEASE_NUM, Table.LEASES));
             collection.add(new Attribute(Attribute.Name.USER_ID, Table.USERS));
             collection.add(new Attribute(Attribute.Name.LOCATION_NUM, Table.LOCS));
+            collection.add(new Attribute(Attribute.Name.ROLE_ID, Table.ROLES));
 //            collection.add(new Attribute(Attribute.Name.UTILITY_ID, Table.BILLS));
 //            collection.add(new Attribute(Attribute.Name.BILL_NUM, Table.DISCOUNTS));
 //            collection.add(new Attribute(Attribute.Name.BILL_NUM, Table.BILLS));
