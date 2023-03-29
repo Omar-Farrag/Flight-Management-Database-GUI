@@ -18,7 +18,7 @@ public class Validator {
     }
 
     public String validate(String constraint, Attribute toValidate,
-                           AttributeCollection allAttributes, Table t) throws MissingValidatorException,
+                           AttributeCollection allAttributes) throws MissingValidatorException,
             ConstraintNotFoundException {
         ValidationFunction validationFunc = find(constraint);
         return validationFunc.validate(constraint, toValidate, allAttributes);

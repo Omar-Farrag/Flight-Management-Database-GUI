@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import DatabaseManagement.ConstraintChecker.Errors;
+import QueryGeneration.InvalidJoinException;
+import QueryGeneration.QueryGenerator;
 
 public class DatabaseManager implements DatabaseOperations {
 
@@ -52,7 +54,7 @@ public class DatabaseManager implements DatabaseOperations {
         Errors error = ConstraintChecker.getInstance().checkInsertion(t, toInsert);
         String query = "Insert into " + t.getTableName() + "(" + toInsert.getFormattedAttributes() + ") values(" + toInsert.getFormattedValues() + ")";
 
-        return handleDBOperation(t, error, query, true);
+        return handleDBOperation(error, query, true);
     }
 
     @Override
@@ -61,7 +63,7 @@ public class DatabaseManager implements DatabaseOperations {
         String query = "Delete From " + t + " " + filters.getFilterClause();
 
 
-        return handleDBOperation(t, error, query, true);
+        return handleDBOperation(error, query, true);
     }
 
     @Override
@@ -73,7 +75,7 @@ public class DatabaseManager implements DatabaseOperations {
         String query =
                 "Update " + t.getTableName() + " " + getModificationClause(toModify) + " " + filters.getFilterClause();
 
-        return handleDBOperation(t, error, query, true);
+        return handleDBOperation(error, query, true);
 
 
     }
@@ -97,7 +99,7 @@ public class DatabaseManager implements DatabaseOperations {
     public QueryResult retrieve(Table t) throws SQLException {
 
         String query = "Select * from " + t.getTableName();
-        return handleDBOperation(t, null, query, false);
+        return handleDBOperation(null, query, false);
 
     }
 
@@ -107,29 +109,32 @@ public class DatabaseManager implements DatabaseOperations {
 
         Errors error = ConstraintChecker.getInstance().checkRetrieval(t, filters);
         String query = "Select * from " + t.getTableName() + " " + filters.getFilterClause();
-        return handleDBOperation(t, error, query, false);
+        return handleDBOperation(error, query, false);
     }
 
     @Override
-    public QueryResult retrieve(Table t, AttributeCollection toGet) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, SQLException {
+    public QueryResult retrieve(AttributeCollection toGet) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, SQLException, InvalidJoinException {
 
-        Errors error = ConstraintChecker.getInstance().checkRetrieval(t, toGet);
-        String query = "Select " + toGet.getFormattedAttributes() + " from " + t.getTableName();
-        return handleDBOperation(t, error, query, false);
+        QueryGenerator generator = new QueryGenerator(toGet);
+        Errors error = ConstraintChecker.getInstance().checkRetrieval(toGet);
+        String query = "Select " + toGet.getFormattedAttributes() + " from " + generator.getFromClause();
+        return handleDBOperation(error, query, false);
 
     }
 
     @Override
-    public QueryResult retrieve(Table t, AttributeCollection toGet, Filters filters) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, IncompatibleFilterException, SQLException {
-        Errors error = ConstraintChecker.getInstance().checkRetrieval(t, toGet);
-        error.append(ConstraintChecker.getInstance().checkRetrieval(t, filters));
+    public QueryResult retrieve(AttributeCollection toGet, Filters filters) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, IncompatibleFilterException, SQLException, InvalidJoinException {
+        Errors error = ConstraintChecker.getInstance().checkRetrieval(toGet);
+        error.append(ConstraintChecker.getInstance().checkRetrieval(new AttributeCollection(filters)));
 
-        String query = "Select " + toGet.getFormattedAttributes() + " from " + t.getTableName() + " " + filters.getFilterClause();
+        QueryGenerator generator = new QueryGenerator(toGet);
+        String query =
+                "Select " + toGet.getFormattedAttributes() + " from " + generator.getFromClause() + " " + filters.getFilterClause();
 
-        return handleDBOperation(t, error, query, false);
+        return handleDBOperation(error, query, false);
     }
 
-    private QueryResult handleDBOperation(Table t, Errors error, String query, boolean isUpdate) throws SQLException {
+    private QueryResult handleDBOperation(Errors error, String query, boolean isUpdate) throws SQLException {
         ResultSet rs = null;
         int rows = 0;
         if (error == null || error.noErrors()) {
@@ -147,6 +152,7 @@ public class DatabaseManager implements DatabaseOperations {
     @Override
     public ResultSet executeStatement(String sqlStatement) throws SQLException {
 
+        System.out.println(sqlStatement);
         Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
         return stmt.executeQuery(sqlStatement);
     }
@@ -225,51 +231,61 @@ public class DatabaseManager implements DatabaseOperations {
 
         System.out.println("Established Connection in " + ((endTime - startTime) / 1000.0) + " seconds");
         try {
-            Filters filters = new Filters();
-            AttributeCollection collection = new AttributeCollection();
-
-            Attribute att1 = new Attribute(Attribute.Name.ELECHARGE, "5", Table.UTILITY_CONSUMPTION);
-            Attribute att2 = new Attribute(Attribute.Name.ELECONS, "10", Table.UTILITY_CONSUMPTION);
-            Attribute att3 = new Attribute(Attribute.Name.WASTECHARGE, "3", Table.UTILITY_CONSUMPTION);
-            Attribute att4 = new Attribute(Attribute.Name.WASTEDISPOSED, "4", Table.UTILITY_CONSUMPTION);
-            Attribute att5 = new Attribute(Attribute.Name.WATCHARGE, "5", Table.UTILITY_CONSUMPTION);
-            Attribute att6 = new Attribute(Attribute.Name.WATCONS, "6", Table.UTILITY_CONSUMPTION);
-            Attribute att7 = new Attribute(Attribute.Name.UTILITY_ID, "U234567891", Table.UTILITY_CONSUMPTION);
-
-
+//            Filters filters = new Filters();
+//            AttributeCollection collection = new AttributeCollection();
+//
+//            Attribute att1 = new Attribute(Attribute.Name.ELECHARGE, "5", Table.UTILITY_CONSUMPTION);
+//            Attribute att2 = new Attribute(Attribute.Name.ELECONS, "10", Table.UTILITY_CONSUMPTION);
+//            Attribute att3 = new Attribute(Attribute.Name.WASTECHARGE, "3", Table.UTILITY_CONSUMPTION);
+//            Attribute att4 = new Attribute(Attribute.Name.WASTEDISPOSED, "4", Table.UTILITY_CONSUMPTION);
+//            Attribute att5 = new Attribute(Attribute.Name.WATCHARGE, "5", Table.UTILITY_CONSUMPTION);
+//            Attribute att6 = new Attribute(Attribute.Name.WATCONS, "6", Table.UTILITY_CONSUMPTION);
+//            Attribute att7 = new Attribute(Attribute.Name.UTILITY_ID, "U236567891",
+//                    Table.UTILITY_CONSUMPTION);
+//
+//
+////            collection.add(att2);
+//            collection.add(att1);
 //            collection.add(att2);
-            collection.add(att1);
-            collection.add(att2);
-            collection.add(att3);
-            collection.add(att4);
-            collection.add(att5);
-            collection.add(att6);
-            collection.add(att7);
+//            collection.add(att3);
+//            collection.add(att4);
+//            collection.add(att5);
+//            collection.add(att6);
+//            collection.add(att7);
+//
+//            filters.addIn(att1, new String[]{"A3"});
 
-            filters.addIn(att1, new String[]{"A3"});
+            AttributeCollection collection = new AttributeCollection();
+            collection.add(new Attribute(Attribute.Name.LEASE_NUM, Table.LEASES));
+            collection.add(new Attribute(Attribute.Name.USER_ID, Table.USERS));
+            collection.add(new Attribute(Attribute.Name.LOCATION_NUM, Table.LOCS));
+//            collection.add(new Attribute(Attribute.Name.UTILITY_ID, Table.BILLS));
+//            collection.add(new Attribute(Attribute.Name.BILL_NUM, Table.DISCOUNTS));
+//            collection.add(new Attribute(Attribute.Name.BILL_NUM, Table.BILLS));
 
-            QueryResult res = DB.insert(Table.UTILITY_CONSUMPTION, collection);
+
+            QueryResult res = DB.retrieve(collection);
 //            QueryResult res = DB.delete(Table.USERS, filters);
 //            QueryResult res = DB.modify(Table.USERS, filters, collection);
 //
             if (res.noErrors()) {
                 System.out.println(res.getRowsAffected());
-////                DB.printTable(res.getResult());
+                DB.printTable(res.getResult());
             } else {
-                ArrayList<String> errors = res.getErrors().getErrorByAttribute(att7);
-                for (String error : errors) {
-                    System.out.println(error);
-                }
+//                ArrayList<String> errors = res.getErrors().getErrorByAttribute(att7);
+//                for (String error : errors) {
+//                    System.out.println(error);
+//                }
             }
 
-            startTime = System.currentTimeMillis();
-
-            ConstraintChecker.getInstance();
-            endTime = System.currentTimeMillis();
-
-            System.out.println("Initialized in " + ((endTime - startTime) / 1000.0) + " seconds");
-
-            DB.printTable(DB.retrieve(Table.UTILITY_CONSUMPTION).getResult());
+//            startTime = System.currentTimeMillis();
+//
+//            ConstraintChecker.getInstance();
+//            endTime = System.currentTimeMillis();
+//
+//            System.out.println("Initialized in " + ((endTime - startTime) / 1000.0) + " seconds");
+//
+//            DB.printTable(DB.retrieve(Table.UTILITY_CONSUMPTION).getResult());
 
 
         } catch (

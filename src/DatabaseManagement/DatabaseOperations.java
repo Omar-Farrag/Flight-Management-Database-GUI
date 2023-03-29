@@ -1,10 +1,12 @@
 package DatabaseManagement;
 
+import QueryGeneration.InvalidJoinException;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public interface DatabaseOperations {
-    // Just a simple iterface for our database manager class
+    // Just a simple interface for our database manager class
 
     // Inserts an entry into the database
     public QueryResult insert(Table t, AttributeCollection toInsert) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, InsufficientAttributesException, SQLException;
@@ -24,10 +26,10 @@ public interface DatabaseOperations {
             TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException;
 
     // retrieves data from the database
-    public QueryResult retrieve(Table t, AttributeCollection toGet) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, SQLException;
+    public QueryResult retrieve(AttributeCollection toGet) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, SQLException, InvalidJoinException;
 
     // retrieves data from the database
-    public QueryResult retrieve(Table t, AttributeCollection toGet, Filters filters) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, IncompatibleFilterException, SQLException;
+    public QueryResult retrieve(AttributeCollection toGet, Filters filters) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, IncompatibleFilterException, SQLException, InvalidJoinException;
 
     // executes a given sql statement
     public ResultSet executeStatement(String sqlStatement) throws SQLException;

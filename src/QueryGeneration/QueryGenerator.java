@@ -26,6 +26,22 @@ public class QueryGenerator {
         links = new HashSet<>();
     }
 
+    public QueryGenerator(Filters toFilter) {
+        this.toGet = new AttributeCollection();
+        this.toFilter = toFilter;
+        graph = new Graph();
+        tables_to_join = new ArrayList<>();
+        links = new HashSet<>();
+    }
+
+    public QueryGenerator(AttributeCollection toGet) {
+        this.toGet = toGet;
+        this.toFilter = new Filters();
+        graph = new Graph();
+        tables_to_join = new ArrayList<>();
+        links = new HashSet<>();
+    }
+
     public String getFromClause() throws InvalidJoinException {
         //identify which tables to join;
         init_tables_to_join();

@@ -37,7 +37,7 @@ public class AttributeCollection {
         ArrayList<String> attributes_as_string = new ArrayList<>();
 
         for (Attribute att : attributes)
-            attributes_as_string.add(att.getStringName());
+            attributes_as_string.add(att.getAliasedStringName());
 
         return String.join(" , ", attributes_as_string);
     }

@@ -18,11 +18,11 @@ public interface ConstraintChecks {
 
     public Errors checkUpdate(Table t, Filters filters, AttributeCollection toUpdate) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, SQLException, IncompatibleFilterException;
 
-    public Errors checkRetrieval(Table t, Filters filters, AttributeCollection toGet) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException;
+    public Errors checkRetrieval(Filters filters, AttributeCollection toGet) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException;
 
     public Errors checkRetrieval(Table t, Filters filters) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException;
 
-    public Errors checkRetrieval(Table t, AttributeCollection toGet) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException;
+    public Errors checkRetrieval(AttributeCollection toGet) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException;
 
     public Errors checkDeletion(Table t, Filters filters) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, SQLException, IncompatibleFilterException;
 

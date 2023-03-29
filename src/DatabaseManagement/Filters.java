@@ -57,7 +57,7 @@ public class Filters {
         ArrayList<String> conditions = new ArrayList<>();
 
         for (Map.Entry<Attribute, FilterType> entry : filters.entrySet()) {
-            String condition = entry.getKey().getStringName() + " " + entry.getValue().getOperator();
+            String condition = entry.getKey().getAliasedStringName() + " " + entry.getValue().getOperator();
             if (entry.getKey().getType() == Attribute.Type.STRING)
                 condition += " '" + entry.getKey().getString() + "'";
             else
@@ -66,7 +66,7 @@ public class Filters {
         }
 
         for (Map.Entry<Attribute, String[]> entry : filters_IN_Type.entrySet()) {
-            String condition = entry.getKey().getStringName() + " IN ";
+            String condition = entry.getKey().getAliasedStringName() + " IN ";
             ArrayList<String> acceptedInValues = new ArrayList<>();
 
             if (entry.getKey().getType() == Attribute.Type.STRING)
