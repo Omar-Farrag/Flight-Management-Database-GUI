@@ -1,4 +1,4 @@
-package DatabaseManagement;
+package DatabaseManagement.Tables;
 
 import java.util.ArrayList;
 import java.util.HashMap;

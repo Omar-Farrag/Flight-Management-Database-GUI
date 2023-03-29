@@ -1,6 +1,8 @@
-package DatabaseManagement;
+package DatabaseManagement.Exceptions;
 
-public class MissingUpdatedValuesException extends Exception {
+import DatabaseManagement.Tables.Table;
+
+public class MissingUpdatedValuesException extends DBManagementException {
 
     private Table t;
 

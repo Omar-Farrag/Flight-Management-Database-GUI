@@ -1,6 +1,6 @@
-package DatabaseManagement;
+package DatabaseManagement.Exceptions;
 
-public class TableNotFoundException extends Exception {
+public class TableNotFoundException extends DBManagementException {
 
     @Override
     public String getMessage() {

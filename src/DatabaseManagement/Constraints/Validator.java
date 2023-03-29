@@ -1,6 +1,14 @@
-package DatabaseManagement;
+package DatabaseManagement.Constraints;
 
-import DatabaseManagement.ReferentialResolver.DetailedKey;
+import DatabaseManagement.DatabaseManager;
+import DatabaseManagement.Exceptions.ConstraintNotFoundException;
+import DatabaseManagement.Exceptions.DBManagementException;
+import DatabaseManagement.Exceptions.MissingValidatorException;
+import DatabaseManagement.Constraints.ReferentialResolver.DetailedKey;
+import DatabaseManagement.QueryResult;
+import DatabaseManagement.Tables.Attribute;
+import DatabaseManagement.Tables.AttributeCollection;
+import DatabaseManagement.Tables.Table;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -11,7 +19,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Validator {
+public class Validator implements DatabaseManagement.Interfaces.ValidationChecks {
 
     private ArrayList<Constraint> constraints;
 
@@ -19,9 +27,9 @@ public class Validator {
         initConstraintsToValidatorMap();
     }
 
+    @Override
     public String validate(String constraint, Attribute toValidate,
-                           AttributeCollection allAttributes) throws MissingValidatorException,
-            ConstraintNotFoundException {
+                           AttributeCollection allAttributes) throws DBManagementException {
         ValidationFunction validationFunc = find(constraint);
         return validationFunc.validate(constraint, toValidate, allAttributes);
 
@@ -35,10 +43,10 @@ public class Validator {
         }
         throw new ConstraintNotFoundException(constraintToSearchFor);
     }
-    // ///////////////////////////////////////////VALIDATORS/////////////////////////////////////////////////
 
-    private String validatePRIMARY(String constraint, Attribute toValidate,
-                                   AttributeCollection allAttributes) {
+    @Override
+    public String validatePRIMARY(String constraint, Attribute toValidate,
+                                  AttributeCollection allAttributes) {
         String errorMessage = validateNOT_NULL(constraint, toValidate, allAttributes);
         if (!errorMessage.isEmpty()) return errorMessage;
 
@@ -48,8 +56,9 @@ public class Validator {
         return "";
     }
 
-    private String validateUNIQUE(String constraint, Attribute toValidate,
-                                  AttributeCollection allAttributes) {
+    @Override
+    public String validateUNIQUE(String constraint, Attribute toValidate,
+                                 AttributeCollection allAttributes) {
         try {
             String query = "Select * from " + toValidate.getT().getTableName() +
                     " where " + toValidate.getStringName() + " = " + toValidate.getString();
@@ -62,8 +71,9 @@ public class Validator {
         }
     }
 
-    private String validateFOREIGN(String constraint, Attribute toValidate,
-                                   AttributeCollection allAttributes) {
+    @Override
+    public String validateFOREIGN(String constraint, Attribute toValidate,
+                                  AttributeCollection allAttributes) {
 
         constraint = constraint.replace("R_", "").trim();
         DetailedKey referenced = ReferentialResolver.getInstance().getReferencedTable(constraint);
@@ -82,8 +92,9 @@ public class Validator {
         }
     }
 
-    private String validateLESS_THAN(String constraint, Attribute toValidate,
-                                     AttributeCollection allAttributes) {
+    @Override
+    public String validateLESS_THAN(String constraint, Attribute toValidate,
+                                    AttributeCollection allAttributes) {
         ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes, "<");
 
         if (comparisonResult.fieldIsNull || comparisonResult.result == -1) return "";
@@ -94,8 +105,9 @@ public class Validator {
             return comparisonResult.leftOperand + " must be less than " + comparisonResult.rightOperand;
     }
 
-    private String validateGREATER_THAN(String constraint, Attribute toValidate,
-                                        AttributeCollection allAttributes) {
+    @Override
+    public String validateGREATER_THAN(String constraint, Attribute toValidate,
+                                       AttributeCollection allAttributes) {
         ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes, ">");
 
         if (comparisonResult.fieldIsNull || comparisonResult.result == 1) return "";
@@ -106,8 +118,9 @@ public class Validator {
             return comparisonResult.leftOperand + " must be greater than " + comparisonResult.rightOperand;
     }
 
-    private String validateEQUAL(String constraint, Attribute toValidate,
-                                 AttributeCollection allAttributes) {
+    @Override
+    public String validateEQUAL(String constraint, Attribute toValidate,
+                                AttributeCollection allAttributes) {
         ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes, "=");
 
         if (comparisonResult.fieldIsNull || comparisonResult.result == 0) return "";
@@ -118,8 +131,9 @@ public class Validator {
             return comparisonResult.leftOperand + " must be equal to " + comparisonResult.rightOperand;
     }
 
-    private String validateNOT_EQUAL(String constraint, Attribute toValidate,
-                                     AttributeCollection allAttributes) {
+    @Override
+    public String validateNOT_EQUAL(String constraint, Attribute toValidate,
+                                    AttributeCollection allAttributes) {
         ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes, "!=");
 
         if (comparisonResult.fieldIsNull || comparisonResult.result != 0) return "";
@@ -130,8 +144,9 @@ public class Validator {
             return comparisonResult.leftOperand + " must not be equal to " + comparisonResult.rightOperand;
     }
 
-    private String validateLESS_EQUAL(String constraint, Attribute toValidate,
-                                      AttributeCollection allAttributes) {
+    @Override
+    public String validateLESS_EQUAL(String constraint, Attribute toValidate,
+                                     AttributeCollection allAttributes) {
         ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes, "<=");
 
         if (comparisonResult.fieldIsNull || comparisonResult.result <= 0) return "";
@@ -142,8 +157,9 @@ public class Validator {
             return comparisonResult.leftOperand + " must be less than or equal to " + comparisonResult.rightOperand;
     }
 
-    private String validateGREATER_EQUAL(String constraint, Attribute toValidate,
-                                         AttributeCollection allAttributes) {
+    @Override
+    public String validateGREATER_EQUAL(String constraint, Attribute toValidate,
+                                        AttributeCollection allAttributes) {
         ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes, ">=");
 
         if (comparisonResult.fieldIsNull || comparisonResult.result >= 0) return "";
@@ -194,16 +210,18 @@ public class Validator {
 
     }
 
-    private String validateNOT_NULL(String constraint, Attribute toValidate,
-                                    AttributeCollection allAttributes) {
+    @Override
+    public String validateNOT_NULL(String constraint, Attribute toValidate,
+                                   AttributeCollection allAttributes) {
         if (toValidate.getValue() == null || toValidate.getValue().isEmpty())
             return toValidate.getStringName() + " cannot be null";
         else return "";
     }
 
 
-    private String validateBETWEEN(String constraint, Attribute toValidate,
-                                   AttributeCollection allAttributes) {
+    @Override
+    public String validateBETWEEN(String constraint, Attribute toValidate,
+                                  AttributeCollection allAttributes) {
         try {
             String[] range =
                     constraint.split("BETWEEN")[1].split("AND");
@@ -234,8 +252,9 @@ public class Validator {
         }
     }
 
-    private String validateIN(String constraint, Attribute toValidate,
-                              AttributeCollection allAttributes) {
+    @Override
+    public String validateIN(String constraint, Attribute toValidate,
+                             AttributeCollection allAttributes) {
         String[] acceptedValues =
                 constraint.split("IN")[1].replace("(", "").replace(")", "").trim().split(",");
 
@@ -247,8 +266,9 @@ public class Validator {
                 , acceptedValues);
     }
 
-    private String validateLIKE(String constraint, Attribute toValidate,
-                                AttributeCollection allAttributes) {
+    @Override
+    public String validateLIKE(String constraint, Attribute toValidate,
+                               AttributeCollection allAttributes) {
 
         String value = toValidate.getValue();
         String pattern = constraint.split("LIKE")[1].trim().replace("'", "");
@@ -257,8 +277,9 @@ public class Validator {
         else return toValidate.getStringName() + " must be in the following format: " + pattern;
     }
 
-    private String validateREGEXP_LIKE(String constraint, Attribute toValidate,
-                                       AttributeCollection allAttributes) {
+    @Override
+    public String validateREGEXP_LIKE(String constraint, Attribute toValidate,
+                                      AttributeCollection allAttributes) {
         String value = toValidate.getValue();
         String pattern = constraint.split(",")[1].trim().replace("'", "").replace(")", "");
 
@@ -273,8 +294,9 @@ public class Validator {
         return matcher.matches();
     }
 
-    private String validateNUMBER(String constraint, Attribute toValidate,
-                                  AttributeCollection allAttributes) {
+    @Override
+    public String validateNUMBER(String constraint, Attribute toValidate,
+                                 AttributeCollection allAttributes) {
         try {
             // tries converting userInput to a BigDecimal
             // throws an exception if it can't
@@ -312,8 +334,9 @@ public class Validator {
         }
     }
 
-    private String validateFLOAT(String constraint, Attribute toValidate,
-                                 AttributeCollection allAttributes) {
+    @Override
+    public String validateFLOAT(String constraint, Attribute toValidate,
+                                AttributeCollection allAttributes) {
         try {
             Float.parseFloat(toValidate.getValue());
             return "";
@@ -325,8 +348,9 @@ public class Validator {
         }
     }
 
-    private String validateCHAR(String constraint, Attribute toValidate,
-                                AttributeCollection allAttributes) {
+    @Override
+    public String validateCHAR(String constraint, Attribute toValidate,
+                               AttributeCollection allAttributes) {
         int length = Integer.parseInt(constraint.split("_")[1]);
         try {
             if (toValidate.getValue().isEmpty()) return "";
@@ -338,8 +362,9 @@ public class Validator {
         }
     }
 
-    private String validateVARCHAR2(String constraint, Attribute toValidate,
-                                    AttributeCollection allAttributes) {
+    @Override
+    public String validateVARCHAR2(String constraint, Attribute toValidate,
+                                   AttributeCollection allAttributes) {
         int maxLength = Integer.parseInt(constraint.split("_")[1]);
         try {
             if (toValidate.getValue().length() > maxLength)
@@ -350,8 +375,9 @@ public class Validator {
         }
     }
 
-    private String validateDATE(String constraint, Attribute toValidate,
-                                AttributeCollection allAttributes) {
+    @Override
+    public String validateDATE(String constraint, Attribute toValidate,
+                               AttributeCollection allAttributes) {
         // The main logic of this function, is to match the userInput with the
         // dateFormat specified below. If SimpleDateFormat object can parse a date with
         // the specified dateFormat from the userInput, then the userInput is a valid

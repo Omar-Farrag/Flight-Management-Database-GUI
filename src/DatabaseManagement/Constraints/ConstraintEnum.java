@@ -1,4 +1,4 @@
-package DatabaseManagement;
+package DatabaseManagement.Constraints;
 
 public enum ConstraintEnum {
     // Names of constraints come here.

@@ -5,9 +5,16 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import DatabaseManagement.ConstraintChecker.Errors;
-import DatabaseManagement.QueryGeneration.InvalidJoinException;
+import DatabaseManagement.Constraints.ConstraintChecker;
+import DatabaseManagement.Constraints.ConstraintChecker.Errors;
+import DatabaseManagement.Constraints.ReferentialResolver;
+import DatabaseManagement.Exceptions.*;
+import DatabaseManagement.Interfaces.DatabaseOperations;
 import DatabaseManagement.QueryGeneration.QueryGenerator;
+import DatabaseManagement.Tables.Attribute;
+import DatabaseManagement.Tables.AttributeCollection;
+import DatabaseManagement.Tables.Filters;
+import DatabaseManagement.Tables.Table;
 
 public class DatabaseManager implements DatabaseOperations {
 
@@ -37,6 +44,7 @@ public class DatabaseManager implements DatabaseOperations {
         return instance;
     }
 
+    @Override
     public Connection getConn() {
         return conn;
     }
@@ -45,34 +53,53 @@ public class DatabaseManager implements DatabaseOperations {
         return username.toUpperCase();
     }
 
+    @Override
     public DatabaseMetaData getMetaData() throws SQLException {
         return conn.getMetaData();
     }
 
+
     @Override
-    public QueryResult insert(Table t, AttributeCollection toInsert) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, InsufficientAttributesException, SQLException {
-        Errors error = ConstraintChecker.getInstance().checkInsertion(t, toInsert);
+    public QueryResult insert(Table t, AttributeCollection toInsert) throws SQLException, DBManagementException {
+        Errors error = null;
+        try {
+            error = ConstraintChecker.getInstance().checkInsertion(t, toInsert);
+        } catch (DBManagementException e) {
+            throw new RuntimeException(e);
+        }
         String query = "Insert into " + t.getTableName() + "(" + toInsert.getFormattedAtt() + ") " +
                 "values(" + toInsert.getFormattedValues() + ")";
 
         return handleDBOperation(error, query, true);
     }
 
+
     @Override
-    public QueryResult delete(Table t, Filters filters) throws IncompatibleFilterException, TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, SQLException {
-        Errors error = ConstraintChecker.getInstance().checkDeletion(t, filters);
+    public QueryResult delete(Table t, Filters filters) throws SQLException, DBManagementException {
+        Errors error = null;
+        try {
+            error = ConstraintChecker.getInstance().checkDeletion(t, filters);
+        } catch (DBManagementException e) {
+            throw new RuntimeException(e);
+        }
         String query = "Delete From " + t.getTableName() + " " + filters.getFilterClause();
 
 
         return handleDBOperation(error, query, true);
     }
 
+
     @Override
-    public QueryResult modify(Table t, Filters filters, AttributeCollection toModify) throws TableNotFoundException, AttributeNotFoundException, SQLException, IncompatibleFilterException, ConstraintNotFoundException, MissingUpdatedValuesException {
+    public QueryResult modify(Table t, Filters filters, AttributeCollection toModify) throws SQLException, DBManagementException {
 
         if (toModify.isEmpty()) throw new MissingUpdatedValuesException(t);
 
-        Errors error = ConstraintChecker.getInstance().checkUpdate(t, filters, toModify);
+        Errors error = null;
+        try {
+            error = ConstraintChecker.getInstance().checkUpdate(t, filters, toModify);
+        } catch (DBManagementException e) {
+            throw new RuntimeException(e);
+        }
         String query =
                 "Update " + t.getTableName() + " " + getModificationClause(toModify) + " " + filters.getFilterClause();
 
@@ -92,6 +119,7 @@ public class DatabaseManager implements DatabaseOperations {
 
     }
 
+
     @Override
     public QueryResult retrieve(Table t) throws SQLException {
 
@@ -100,29 +128,50 @@ public class DatabaseManager implements DatabaseOperations {
 
     }
 
-    @Override
-    public QueryResult retrieve(Table t, Filters filters) throws IncompatibleFilterException, SQLException,
-            TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
 
-        Errors error = ConstraintChecker.getInstance().checkRetrieval(t, filters);
+    @Override
+    public QueryResult retrieve(Table t, Filters filters) throws SQLException, DBManagementException {
+
+        Errors error = null;
+        try {
+            error = ConstraintChecker.getInstance().checkRetrieval(t, filters);
+        } catch (DBManagementException e) {
+            throw new RuntimeException(e);
+        }
         String query = "Select * from " + t.getAliasedName() + " " + filters.getFilterClause();
         return handleDBOperation(error, query, false);
     }
 
+
     @Override
-    public QueryResult retrieve(AttributeCollection toGet) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, SQLException, InvalidJoinException {
+    public QueryResult retrieve(AttributeCollection toGet) throws SQLException, DBManagementException {
 
         QueryGenerator generator = new QueryGenerator(toGet);
-        Errors error = ConstraintChecker.getInstance().checkRetrieval(toGet);
+        Errors error = null;
+        try {
+            error = ConstraintChecker.getInstance().checkRetrieval(toGet);
+        } catch (DBManagementException e) {
+            throw new RuntimeException(e);
+        }
         String query = "Select " + toGet.getAliasedFormattedAtt() + " from " + generator.getFromClause();
         return handleDBOperation(error, query, false);
 
     }
 
+
     @Override
-    public QueryResult retrieve(AttributeCollection toGet, Filters filters) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, IncompatibleFilterException, SQLException, InvalidJoinException {
-        Errors error = ConstraintChecker.getInstance().checkRetrieval(toGet);
-        error.append(ConstraintChecker.getInstance().checkRetrieval(new AttributeCollection(filters)));
+    public QueryResult retrieve(AttributeCollection toGet, Filters filters) throws SQLException, DBManagementException {
+        Errors error = null;
+        try {
+            error = ConstraintChecker.getInstance().checkRetrieval(toGet);
+        } catch (DBManagementException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            error.append(ConstraintChecker.getInstance().checkRetrieval(new AttributeCollection(filters)));
+        } catch (DBManagementException e) {
+            throw new RuntimeException(e);
+        }
 
         QueryGenerator generator = new QueryGenerator(toGet);
         String query =
@@ -146,6 +195,7 @@ public class DatabaseManager implements DatabaseOperations {
         return new QueryResult(rs, rows, error);
     }
 
+
     @Override
     public ResultSet executeStatement(String sqlStatement) throws SQLException {
 
@@ -153,6 +203,7 @@ public class DatabaseManager implements DatabaseOperations {
         Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
         return stmt.executeQuery(sqlStatement);
     }
+
 
     @Override
     public int executePreparedStatement(String sqlPreparedStatement) throws SQLException {
@@ -167,6 +218,7 @@ public class DatabaseManager implements DatabaseOperations {
      * @param employees ResultSet to be displayed to the console.
      * @throws SQLException
      */
+    @Override
     public void printTable(ResultSet employees) throws SQLException {
         System.out.println();
 

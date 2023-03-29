@@ -1,11 +1,14 @@
 package DatabaseManagement;
 
-import DatabaseManagement.ConstraintChecker.Errors;
+import DatabaseManagement.Constraints.ConstraintChecker.Errors;
+import DatabaseManagement.Exceptions.DBManagementException;
+import DatabaseManagement.Interfaces.QueryResultInterace;
+import DatabaseManagement.Tables.Attribute;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
-public class QueryResult {
+public class QueryResult implements QueryResultInterace {
     private ResultSet result;
     private int rows;
     private Errors errors;
@@ -16,23 +19,28 @@ public class QueryResult {
         this.errors = errors;
     }
 
+    @Override
     public ResultSet getResult() {
         return result;
     }
 
+    @Override
     public int getRowsAffected() {
         return rows;
     }
 
+    @Override
     public Errors getErrors() {
         return errors;
     }
 
+    @Override
     public boolean noErrors() {
         return errors == null || errors.noErrors();
     }
 
-    public ArrayList<String> getErrorByAttribute(Attribute attribute) throws UnvalidatedAttributeException {
+    @Override
+    public ArrayList<String> getErrorByAttribute(Attribute attribute) throws DBManagementException {
         return errors.getErrorByAttribute(attribute);
     }
 }

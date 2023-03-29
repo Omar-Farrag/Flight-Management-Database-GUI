@@ -1,6 +1,8 @@
-package DatabaseManagement;
+package DatabaseManagement.Exceptions;
 
-public class InsufficientAttributesException extends Exception {
+import DatabaseManagement.Tables.Table;
+
+public class InsufficientAttributesException extends DBManagementException {
     private Table t;
     private int numTableAttributes;
     private int sizeInserted;

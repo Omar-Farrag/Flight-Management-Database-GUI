@@ -1,6 +1,6 @@
-package DatabaseManagement;
+package DatabaseManagement.Exceptions;
 
-public class EmptyFileException extends Exception {
+public class EmptyFileException extends DBManagementException {
 
     private String fileName;
 

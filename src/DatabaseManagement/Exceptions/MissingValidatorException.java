@@ -1,6 +1,6 @@
-package DatabaseManagement;
+package DatabaseManagement.Exceptions;
 
-public class MissingValidatorException extends Exception {
+public class MissingValidatorException extends DBManagementException {
 
     @Override
     public String getMessage() {

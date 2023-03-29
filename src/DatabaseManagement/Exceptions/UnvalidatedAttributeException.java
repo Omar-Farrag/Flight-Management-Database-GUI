@@ -1,6 +1,8 @@
-package DatabaseManagement;
+package DatabaseManagement.Exceptions;
 
-public class UnvalidatedAttributeException extends Exception {
+import DatabaseManagement.Tables.Attribute;
+
+public class UnvalidatedAttributeException extends DBManagementException {
     private Attribute attribute;
 
     public UnvalidatedAttributeException(Attribute attribute) {

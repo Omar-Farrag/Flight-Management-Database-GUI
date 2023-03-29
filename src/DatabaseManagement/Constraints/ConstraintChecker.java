@@ -1,4 +1,4 @@
-package DatabaseManagement;
+package DatabaseManagement.Constraints;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,13 +11,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
-import DatabaseManagement.Attribute.Name;
+import DatabaseManagement.DatabaseManager;
+import DatabaseManagement.Exceptions.EmptyFileException;
+import DatabaseManagement.Tables.*;
+import DatabaseManagement.Tables.Attribute.Name;
+import DatabaseManagement.Exceptions.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import org.json.simple.parser.*;
 
-public class ConstraintChecker implements ConstraintChecks {
+public class ConstraintChecker implements DatabaseManagement.Interfaces.ConstraintChecks {
 
     private static ConstraintChecker instance;
     private String metaDataFile = "Metadata.json";
@@ -114,9 +118,10 @@ public class ConstraintChecker implements ConstraintChecks {
         }
     }
 
+
     @Override
     public Errors checkInsertion(Table t, AttributeCollection toInsert)
-            throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, InsufficientAttributesException {
+            throws DBManagementException {
         checkAttributeExistence(t, toInsert);
         int numAttributes = getTableAttributes(t).size();
         if (numAttributes != toInsert.size())
@@ -125,9 +130,10 @@ public class ConstraintChecker implements ConstraintChecks {
 
     }
 
+
     @Override
     public Errors checkRetrieval(Filters filters, AttributeCollection toGet)
-            throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
+            throws DBManagementException {
 
         checkAttributeExistence(toGet);
         AttributeCollection filterCollection = new AttributeCollection(filters);
@@ -136,22 +142,25 @@ public class ConstraintChecker implements ConstraintChecks {
 
     }
 
+
     @Override
-    public Errors checkRetrieval(Table t, Filters filters) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
+    public Errors checkRetrieval(Table t, Filters filters) throws DBManagementException {
         AttributeCollection filterCollection = new AttributeCollection(filters);
         checkAttributeExistence(t, filterCollection);
         return checkConstraints(t, filterCollection);
     }
 
+
     @Override
-    public Errors checkRetrieval(AttributeCollection toGet) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
+    public Errors checkRetrieval(AttributeCollection toGet) throws DBManagementException {
 
         checkAttributeExistence(toGet);
         return new Errors();
     }
 
+
     @Override
-    public Errors checkDeletion(Table t, Filters filters) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, SQLException, IncompatibleFilterException {
+    public Errors checkDeletion(Table t, Filters filters) throws SQLException, DBManagementException {
         AttributeCollection filterCollection = new AttributeCollection(filters);
         checkAttributeExistence(t, filterCollection);
         Errors constraintErrors = checkConstraints(t, filterCollection);
@@ -159,9 +168,10 @@ public class ConstraintChecker implements ConstraintChecks {
         return constraintErrors.append(referentialErrors);
     }
 
+
     @Override
     public Errors checkUpdate(Table t, Filters filters, AttributeCollection newValues)
-            throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, SQLException, IncompatibleFilterException {
+            throws SQLException, DBManagementException {
 
         checkAttributeExistence(t, new AttributeCollection(filters));
         checkAttributeExistence(t, newValues);
@@ -178,7 +188,12 @@ public class ConstraintChecker implements ConstraintChecks {
 
     private Errors checkReferencingTables(Table t, Filters f) throws TableNotFoundException, AttributeNotFoundException, SQLException, IncompatibleFilterException, ConstraintNotFoundException {
         Errors errors = new Errors();
-        ResultSet toDelete = DB.retrieve(t, f).getResult();
+        ResultSet toDelete = null;
+        try {
+            toDelete = DB.retrieve(t, f).getResult();
+        } catch (DBManagementException e) {
+            throw new RuntimeException(e);
+        }
         AttributeCollection referencedAttributes = resolver.getReferencedAttributes(t);
 
         while (toDelete.next()) {
@@ -190,13 +205,17 @@ public class ConstraintChecker implements ConstraintChecks {
                 HashMap<Table, Filters> referencingAttributes = resolver.getReferencingAttributes(t, toFindReferences);
 
                 for (Map.Entry<Table, Filters> entry : referencingAttributes.entrySet()) {
-                    if (DB.retrieve(entry.getKey(), entry.getValue()).getRowsAffected() > 0) {
-                        String errorMessage =
-                                "Cannot Delete/Modify Entry With " + attribute.getStringName() +
-                                        " = " +
-                                        toDeleteValue + " because it is referenced by table " + entry.getKey().getTableName();
+                    try {
+                        if (DB.retrieve(entry.getKey(), entry.getValue()).getRowsAffected() > 0) {
+                            String errorMessage =
+                                    "Cannot Delete/Modify Entry With " + attribute.getStringName() +
+                                            " = " +
+                                            toDeleteValue + " because it is referenced by table " + entry.getKey().getTableName();
 
-                        errors.add(attribute, errorMessage);
+                            errors.add(attribute, errorMessage);
+                        }
+                    } catch (DBManagementException e) {
+                        throw new RuntimeException(e);
                     }
                 }
             }
@@ -219,6 +238,8 @@ public class ConstraintChecker implements ConstraintChecks {
                         MissingValidatorException e) {
                     System.out.println(e.getMessage());
                     e.printStackTrace();
+                } catch (DBManagementException e) {
+                    throw new RuntimeException(e);
                 }
             }
         }
@@ -241,6 +262,8 @@ public class ConstraintChecker implements ConstraintChecks {
                         MissingValidatorException e) {
                     System.out.println(e.getMessage());
                     e.printStackTrace();
+                } catch (DBManagementException e) {
+                    throw new RuntimeException(e);
                 }
             }
         }

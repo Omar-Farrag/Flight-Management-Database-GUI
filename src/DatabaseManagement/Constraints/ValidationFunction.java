@@ -1,4 +1,7 @@
-package DatabaseManagement;
+package DatabaseManagement.Constraints;
+
+import DatabaseManagement.Tables.Attribute;
+import DatabaseManagement.Tables.AttributeCollection;
 
 @FunctionalInterface
 public interface ValidationFunction {

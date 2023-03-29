@@ -1,6 +1,6 @@
-package DatabaseManagement;
+package DatabaseManagement.Exceptions;
 
-public class AttributeNotFoundException extends Exception {
+public class AttributeNotFoundException extends DBManagementException {
 
     private String attributeName;
     private String tableName;

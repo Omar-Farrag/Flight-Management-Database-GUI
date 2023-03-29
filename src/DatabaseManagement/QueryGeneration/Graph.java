@@ -1,6 +1,10 @@
 package DatabaseManagement.QueryGeneration;
 
-import DatabaseManagement.*;
+import DatabaseManagement.Constraints.ReferentialResolver;
+import DatabaseManagement.Tables.Attribute;
+import DatabaseManagement.Tables.AttributeCollection;
+import DatabaseManagement.Tables.Filters;
+import DatabaseManagement.Tables.Table;
 
 import java.util.*;
 

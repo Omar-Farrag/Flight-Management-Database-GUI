@@ -1,4 +1,7 @@
-package DatabaseManagement;
+package DatabaseManagement.Tables;
+
+import DatabaseManagement.Exceptions.AttributeMismatchException;
+import DatabaseManagement.Exceptions.IncompatibleFilterException;
 
 import java.util.*;
 

@@ -1,4 +1,6 @@
-package DatabaseManagement;
+package DatabaseManagement.Constraints;
+
+import DatabaseManagement.Exceptions.MissingValidatorException;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,12 +14,13 @@ public class Constraint {
         this.constraintEnum = constraintEnum;
         this.vFunction = vFunction;
     }
+
     public Constraint(ConstraintEnum constraintEnum) {
         this.constraintEnum = constraintEnum;
     }
 
     public ValidationFunction getValidationFunction() throws MissingValidatorException {
-        if(vFunction == null) throw new MissingValidatorException();
+        if (vFunction == null) throw new MissingValidatorException();
         else return vFunction;
     }
 

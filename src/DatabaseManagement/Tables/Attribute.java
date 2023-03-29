@@ -1,4 +1,4 @@
-package DatabaseManagement;
+package DatabaseManagement.Tables;
 
 public class Attribute {
     private final Attribute.Name attributeName;

@@ -1,9 +1,9 @@
 package DatabaseManagement.QueryGeneration;
 
-import DatabaseManagement.Attribute;
-import DatabaseManagement.AttributeCollection;
-import DatabaseManagement.Filters;
-import DatabaseManagement.Table;
+import DatabaseManagement.Tables.Attribute;
+import DatabaseManagement.Tables.AttributeCollection;
+import DatabaseManagement.Tables.Filters;
+import DatabaseManagement.Tables.Table;
 import DatabaseManagement.QueryGeneration.Graph.Link;
 import DatabaseManagement.QueryGeneration.Graph.Node;
 

@@ -1,6 +1,8 @@
-package DatabaseManagement;
+package DatabaseManagement.Exceptions;
 
-public class InvalidAttributeValueException extends Exception {
+import DatabaseManagement.Tables.Attribute;
+
+public class InvalidAttributeValueException extends DBManagementException {
 
 
     private Attribute attribute;
