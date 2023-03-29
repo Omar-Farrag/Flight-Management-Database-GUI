@@ -52,7 +52,8 @@ public class DatabaseManager implements DatabaseOperations {
     @Override
     public QueryResult insert(Table t, AttributeCollection toInsert) throws TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, InsufficientAttributesException, SQLException {
         Errors error = ConstraintChecker.getInstance().checkInsertion(t, toInsert);
-        String query = "Insert into " + t.getTableName() + "(" + toInsert.getFormattedAttributes() + ") values(" + toInsert.getFormattedValues() + ")";
+        String query = "Insert into " + t.getTableName() + "(" + toInsert.getFormattedAtt() + ") " +
+                "values(" + toInsert.getFormattedValues() + ")";
 
         return handleDBOperation(error, query, true);
     }
@@ -60,7 +61,7 @@ public class DatabaseManager implements DatabaseOperations {
     @Override
     public QueryResult delete(Table t, Filters filters) throws IncompatibleFilterException, TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException, SQLException {
         Errors error = ConstraintChecker.getInstance().checkDeletion(t, filters);
-        String query = "Delete From " + t + " " + filters.getFilterClause();
+        String query = "Delete From " + t.getTableName() + " " + filters.getFilterClause();
 
 
         return handleDBOperation(error, query, true);
@@ -84,11 +85,7 @@ public class DatabaseManager implements DatabaseOperations {
         String clause = "set ";
         ArrayList<String> updates = new ArrayList<>();
         for (Attribute attribute : toModify.attributes()) {
-            String update = attribute.getStringName() + " = ";
-            if (attribute.getType().equals(Attribute.Type.STRING))
-                update += "'" + attribute.getString() + "'";
-            else if (attribute.getString() == null) update += "NULL";
-            else update += attribute.getString();
+            String update = attribute.getStringName() + " = " + attribute.getString();
             updates.add(update);
         }
         return clause + String.join(",", updates);
@@ -98,7 +95,7 @@ public class DatabaseManager implements DatabaseOperations {
     @Override
     public QueryResult retrieve(Table t) throws SQLException {
 
-        String query = "Select * from " + t.getTableName();
+        String query = "Select * from " + t.getAliasedName();
         return handleDBOperation(null, query, false);
 
     }
@@ -108,7 +105,7 @@ public class DatabaseManager implements DatabaseOperations {
             TableNotFoundException, AttributeNotFoundException, ConstraintNotFoundException {
 
         Errors error = ConstraintChecker.getInstance().checkRetrieval(t, filters);
-        String query = "Select * from " + t.getTableName() + " " + filters.getFilterClause();
+        String query = "Select * from " + t.getAliasedName() + " " + filters.getFilterClause();
         return handleDBOperation(error, query, false);
     }
 
@@ -117,7 +114,7 @@ public class DatabaseManager implements DatabaseOperations {
 
         QueryGenerator generator = new QueryGenerator(toGet);
         Errors error = ConstraintChecker.getInstance().checkRetrieval(toGet);
-        String query = "Select " + toGet.getFormattedAttributes() + " from " + generator.getFromClause();
+        String query = "Select " + toGet.getAliasedFormattedAtt() + " from " + generator.getFromClause();
         return handleDBOperation(error, query, false);
 
     }
@@ -129,7 +126,7 @@ public class DatabaseManager implements DatabaseOperations {
 
         QueryGenerator generator = new QueryGenerator(toGet);
         String query =
-                "Select " + toGet.getFormattedAttributes() + " from " + generator.getFromClause() + " " + filters.getFilterClause();
+                "Select " + toGet.getAliasedFormattedAtt() + " from " + generator.getFromClause() + " " + filters.getFilterClause();
 
         return handleDBOperation(error, query, false);
     }
@@ -231,52 +228,44 @@ public class DatabaseManager implements DatabaseOperations {
 
         System.out.println("Established Connection in " + ((endTime - startTime) / 1000.0) + " seconds");
         try {
-//            Filters filters = new Filters();
-//            AttributeCollection collection = new AttributeCollection();
-//
-//            Attribute att1 = new Attribute(Attribute.Name.ELECHARGE, "5", Table.UTILITY_CONSUMPTION);
-//            Attribute att2 = new Attribute(Attribute.Name.ELECONS, "10", Table.UTILITY_CONSUMPTION);
-//            Attribute att3 = new Attribute(Attribute.Name.WASTECHARGE, "3", Table.UTILITY_CONSUMPTION);
-//            Attribute att4 = new Attribute(Attribute.Name.WASTEDISPOSED, "4", Table.UTILITY_CONSUMPTION);
-//            Attribute att5 = new Attribute(Attribute.Name.WATCHARGE, "5", Table.UTILITY_CONSUMPTION);
-//            Attribute att6 = new Attribute(Attribute.Name.WATCONS, "6", Table.UTILITY_CONSUMPTION);
-//            Attribute att7 = new Attribute(Attribute.Name.UTILITY_ID, "U236567891",
-//                    Table.UTILITY_CONSUMPTION);
-//
-//
-////            collection.add(att2);
-//            collection.add(att1);
-//            collection.add(att2);
-//            collection.add(att3);
-//            collection.add(att4);
-//            collection.add(att5);
-//            collection.add(att6);
-//            collection.add(att7);
-//
-//            filters.addIn(att1, new String[]{"A3"});
-
             AttributeCollection collection = new AttributeCollection();
-            collection.add(new Attribute(Attribute.Name.LEASE_NUM, Table.LEASES));
-            collection.add(new Attribute(Attribute.Name.USER_ID, Table.USERS));
-            collection.add(new Attribute(Attribute.Name.LOCATION_NUM, Table.LOCS));
-            collection.add(new Attribute(Attribute.Name.ROLE_ID, Table.ROLES));
-//            collection.add(new Attribute(Attribute.Name.UTILITY_ID, Table.BILLS));
-//            collection.add(new Attribute(Attribute.Name.BILL_NUM, Table.DISCOUNTS));
-//            collection.add(new Attribute(Attribute.Name.BILL_NUM, Table.BILLS));
+
+            Attribute x1 = new Attribute(Attribute.Name.LEASE_NUM, "L223456789", Table.LEASES);
+            Attribute x2 = new Attribute(Attribute.Name.LOCATION_NUM, "1234567890", Table.LEASES);
+            Attribute x3 = new Attribute(Attribute.Name.END_DATE, "22-MAR-2023", Table.LEASES);
+            Attribute x4 = new Attribute(Attribute.Name.START_DATE, "20-MAR-2022", Table.LEASES);
+            Attribute x5 = new Attribute(Attribute.Name.PAYMENT_OPTION, "QUARTERLY", Table.LEASES);
+            Attribute x6 = new Attribute(Attribute.Name.LEASER_ID, "A1", Table.LEASES);
 
 
-            QueryResult res = DB.retrieve(collection);
-//            QueryResult res = DB.delete(Table.USERS, filters);
-//            QueryResult res = DB.modify(Table.USERS, filters, collection);
+            Attribute x7 = new Attribute(Attribute.Name.MALL_NUM, "M12", Table.LOCS);
+            Attribute x8 = new Attribute(Attribute.Name.LOCATION_NUM, "1234567890", Table.LOCS);
+            Attribute x9 = new Attribute(Attribute.Name.STORE_NUM, "G20", Table.LOCS);
+
+
+            collection.add(x1);
+            collection.add(x2);
+            collection.add(x3);
+            collection.add(x4);
+            collection.add(x5);
+            collection.add(x6);
+
+//            collection.add(x7);
+//            collection.add(x8);
+//            collection.add(x9);
+
+            QueryResult res = DB.insert(Table.LEASES, collection);
 //
             if (res.noErrors()) {
                 System.out.println(res.getRowsAffected());
-                DB.printTable(res.getResult());
+                DB.printTable(DB.retrieve(Table.LEASES).getResult());
+//                DB.printTable(res.getResult());
             } else {
-//                ArrayList<String> errors = res.getErrors().getErrorByAttribute(att7);
-//                for (String error : errors) {
-//                    System.out.println(error);
-//                }
+                for (Attribute attribute : collection.attributes()) {
+                    for (String error : res.getErrors().getErrorByAttribute(attribute)) {
+                        System.out.println(error);
+                    }
+                }
             }
 
 //            startTime = System.currentTimeMillis();
@@ -286,7 +275,6 @@ public class DatabaseManager implements DatabaseOperations {
 //
 //            System.out.println("Initialized in " + ((endTime - startTime) / 1000.0) + " seconds");
 //
-//            DB.printTable(DB.retrieve(Table.UTILITY_CONSUMPTION).getResult());
 
 
         } catch (

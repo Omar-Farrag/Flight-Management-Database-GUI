@@ -57,11 +57,8 @@ public class Filters {
         ArrayList<String> conditions = new ArrayList<>();
 
         for (Map.Entry<Attribute, FilterType> entry : filters.entrySet()) {
-            String condition = entry.getKey().getAliasedStringName() + " " + entry.getValue().getOperator();
-            if (entry.getKey().getType() == Attribute.Type.STRING)
-                condition += " '" + entry.getKey().getString() + "'";
-            else
-                condition += " " + entry.getKey().getString();
+            String condition =
+                    entry.getKey().getAliasedStringName() + " " + entry.getValue().getOperator() + " " + entry.getKey().getString();
             conditions.add(condition);
         }
 

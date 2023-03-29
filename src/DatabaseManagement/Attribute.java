@@ -46,8 +46,16 @@ public class Attribute {
     // return Boolean.parseBoolean(attributeValue);
     // }
 
-    public String getString() {
+    public String getValue() {
         return attributeValue;
+    }
+
+    public String getString() {
+        if (type.equals(Type.STRING) || type.equals((Type.DATE)))
+            return "'" + attributeValue + "'";
+        else if (attributeValue == null) return "NULL";
+        else return attributeValue;
+
     }
 
     public Type getType() {

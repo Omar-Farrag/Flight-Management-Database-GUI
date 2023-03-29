@@ -1,7 +1,6 @@
 package DatabaseManagement;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -33,7 +32,7 @@ public class AttributeCollection {
         return attributes;
     }
 
-    public String getFormattedAttributes() {
+    public String getAliasedFormattedAtt() {
         ArrayList<String> attributes_as_string = new ArrayList<>();
 
         for (Attribute att : attributes)
@@ -42,14 +41,20 @@ public class AttributeCollection {
         return String.join(" , ", attributes_as_string);
     }
 
+    public String getFormattedAtt() {
+        ArrayList<String> attributes_as_string = new ArrayList<>();
+
+        for (Attribute att : attributes)
+            attributes_as_string.add(att.getStringName());
+
+        return String.join(" , ", attributes_as_string);
+    }
+
     public String getFormattedValues() {
         ArrayList<String> values_as_string = new ArrayList<>();
 
         for (Attribute att : attributes) {
-            if (att.getType().equals(Attribute.Type.STRING))
-                values_as_string.add("'" + att.getString() + "'");
-            else if (att.getString() == null) values_as_string.add("NULL");
-            else values_as_string.add(att.getString());
+            values_as_string.add(att.getString());
         }
 
         return String.join(" , ", values_as_string);

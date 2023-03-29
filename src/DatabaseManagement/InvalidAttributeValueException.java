@@ -11,6 +11,6 @@ public class InvalidAttributeValueException extends Exception {
 
     @Override
     public String getMessage() {
-        return "The value " + attribute.getString() + " is invalid for attribute " + attribute.getStringName();
+        return "The value " + attribute.getValue() + " is invalid for attribute " + attribute.getStringName();
     }
 }

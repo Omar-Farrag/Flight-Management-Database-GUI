@@ -50,14 +50,11 @@ public class Validator {
                                   AttributeCollection allAttributes) {
         try {
             String query = "Select * from " + toValidate.getT().getTableName() +
-                    " where " + toValidate.getStringName() + " = ";
-            if (toValidate.getType() == Attribute.Type.STRING)
-                query += "'" + toValidate.getString() + "'";
-            else query += toValidate.getString();
+                    " where " + toValidate.getStringName() + " = " + toValidate.getString();
             ResultSet result = DatabaseManager.getInstance().executeStatement(query);
 
             if (!result.next()) return "";
-            else return toValidate.getString() + " must be unique...value already used";
+            else return toValidate.getValue() + " must be unique...value already used";
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -70,7 +67,7 @@ public class Validator {
 
     private String validateLESS_THAN(String constraint, Attribute toValidate,
                                      AttributeCollection allAttributes) {
-        ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes);
+        ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes, "<");
         if (comparisonResult.testFailed || comparisonResult.result == -1) return "";
         else
             return comparisonResult.leftOperand + " must be less than " + comparisonResult.rightOperand;
@@ -78,7 +75,7 @@ public class Validator {
 
     private String validateGREATER_THAN(String constraint, Attribute toValidate,
                                         AttributeCollection allAttributes) {
-        ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes);
+        ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes, ">");
         if (comparisonResult.testFailed || comparisonResult.result == 1) return "";
         else
             return comparisonResult.leftOperand + " must be greater than " + comparisonResult.rightOperand;
@@ -86,7 +83,7 @@ public class Validator {
 
     private String validateEQUAL(String constraint, Attribute toValidate,
                                  AttributeCollection allAttributes) {
-        ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes);
+        ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes, "=");
         if (comparisonResult.testFailed || comparisonResult.result == 0) return "";
         else
             return comparisonResult.leftOperand + " must be equal to " + comparisonResult.rightOperand;
@@ -94,7 +91,7 @@ public class Validator {
 
     private String validateNOT_EQUAL(String constraint, Attribute toValidate,
                                      AttributeCollection allAttributes) {
-        ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes);
+        ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes, "!=");
         if (comparisonResult.testFailed || comparisonResult.result != 0) return "";
         else
             return comparisonResult.leftOperand + " must not be equal to " + comparisonResult.rightOperand;
@@ -102,7 +99,7 @@ public class Validator {
 
     private String validateLESS_EQUAL(String constraint, Attribute toValidate,
                                       AttributeCollection allAttributes) {
-        ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes);
+        ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes, "<=");
         if (comparisonResult.testFailed || comparisonResult.result <= 0) return "";
         else
             return comparisonResult.leftOperand + " must be less than or equal to " + comparisonResult.rightOperand;
@@ -110,21 +107,21 @@ public class Validator {
 
     private String validateGREATER_EQUAL(String constraint, Attribute toValidate,
                                          AttributeCollection allAttributes) {
-        ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes);
+        ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes, ">=");
         if (comparisonResult.testFailed || comparisonResult.result >= 0) return "";
         else
             return comparisonResult.leftOperand + " must be greater than or equal to " + comparisonResult.rightOperand;
     }
 
     private ComparisonResult compare(String constraint, Attribute toValidate,
-                                     AttributeCollection allAttributes) {
+                                     AttributeCollection allAttributes, String operand) {
         try {
 
             Comparable lvalue = null;
             Comparable rvalue = null;
 
             constraint = constraint.replace("C_", "");
-            String[] operands = constraint.split(">=");
+            String[] operands = constraint.split(operand);
             operands[0] = operands[0].trim();
             operands[1] = operands[1].trim();
 
@@ -156,13 +153,13 @@ public class Validator {
                 String dateFormat = "dd-MMM-yyyy";
                 SimpleDateFormat simpleFormat = new SimpleDateFormat(dateFormat);
                 simpleFormat.setLenient(false);
-                return simpleFormat.parse(attribute.getString());
+                return simpleFormat.parse(attribute.getValue());
             }
             case NUMBER -> {
-                return Double.parseDouble(attribute.getString());
+                return Double.parseDouble(attribute.getValue());
             }
             default -> {
-                return attribute.getString();
+                return attribute.getValue();
             }
         }
 
@@ -171,7 +168,7 @@ public class Validator {
 
     private String validateNOT_NULL(String constraint, Attribute toValidate,
                                     AttributeCollection allAttributes) {
-        if (toValidate.getString() == null || toValidate.getString().isEmpty())
+        if (toValidate.getValue() == null || toValidate.getValue().isEmpty())
             return toValidate.getStringName() + " cannot be null";
         else return "";
     }
@@ -189,7 +186,7 @@ public class Validator {
                 constraint.split("IN")[1].replace("(", "").replace(")", "").trim().split(",");
         for (String value : acceptedValues) {
             value = value.replace("'", "");
-            if (value.equals(toValidate.getString())) return "";
+            if (value.equals(toValidate.getValue())) return "";
         }
         return toValidate.getStringName() + " must be in one of these values: " + String.join(","
                 , acceptedValues);
@@ -198,7 +195,7 @@ public class Validator {
     private String validateLIKE(String constraint, Attribute toValidate,
                                 AttributeCollection allAttributes) {
 
-        String value = toValidate.getString();
+        String value = toValidate.getValue();
         String pattern = constraint.split("LIKE")[1].trim().replace("'", "");
 
         if (value == null || value.isEmpty() || regexMatch(value, pattern)) return "";
@@ -207,7 +204,7 @@ public class Validator {
 
     private String validateREGEXP_LIKE(String constraint, Attribute toValidate,
                                        AttributeCollection allAttributes) {
-        String value = toValidate.getString();
+        String value = toValidate.getValue();
         String pattern = constraint.split(",")[1].trim().replace("'", "").replace(")", "");
 
         if (value == null || value.isEmpty() || regexMatch(value, pattern)) return "";
@@ -227,7 +224,7 @@ public class Validator {
             // tries converting userInput to a BigDecimal
             // throws an exception if it can't
             // An exception means userInput is not a valid NUMBER(precision, scale)
-            BigDecimal number = new BigDecimal(toValidate.getString());
+            BigDecimal number = new BigDecimal(toValidate.getValue());
 
             String[] decomposedConstraint = constraint.split("_");
 
@@ -253,7 +250,7 @@ public class Validator {
 
             return "";
         } catch (NumberFormatException e) {
-            if (toValidate.getString().isEmpty()) return "";
+            if (toValidate.getValue().isEmpty()) return "";
             else return "Value entered is not a number";
         } catch (NullPointerException e) {
             return "";
@@ -263,10 +260,10 @@ public class Validator {
     private String validateFLOAT(String constraint, Attribute toValidate,
                                  AttributeCollection allAttributes) {
         try {
-            Float.parseFloat(toValidate.getString());
+            Float.parseFloat(toValidate.getValue());
             return "";
         } catch (NumberFormatException e) {
-            if (toValidate.getString().isEmpty()) return "";
+            if (toValidate.getValue().isEmpty()) return "";
             else return "Value entered is not a floating point number";
         } catch (NullPointerException e) {
             return "";
@@ -277,8 +274,8 @@ public class Validator {
                                 AttributeCollection allAttributes) {
         int length = Integer.parseInt(constraint.split("_")[1]);
         try {
-            if (toValidate.getString().isEmpty()) return "";
-            if (toValidate.getString().length() != length)
+            if (toValidate.getValue().isEmpty()) return "";
+            if (toValidate.getValue().length() != length)
                 return "Value must have " + length + " characters exactly";
             else return "";
         } catch (NullPointerException e) {
@@ -290,7 +287,7 @@ public class Validator {
                                     AttributeCollection allAttributes) {
         int maxLength = Integer.parseInt(constraint.split("_")[1]);
         try {
-            if (toValidate.getString().length() > maxLength)
+            if (toValidate.getValue().length() > maxLength)
                 return "Value too long. A maximum of " + maxLength + " characters is allowed";
             else return "";
         } catch (NullPointerException e) {
@@ -312,7 +309,7 @@ public class Validator {
         try {
             String regex = "\\d{1,2}-.{3}-\\d{1,4}";
             Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(toValidate.getString());
+            Matcher matcher = pattern.matcher(toValidate.getValue());
             if (!matcher.matches())
                 return "Invalid Date Format. Date must be in this format: dd-MMM-yyyy (eg. " +
                         "01-JAN-1970)";
@@ -324,10 +321,10 @@ public class Validator {
                 simpleFormat.setLenient(false);
                 // if the date cannot be parsed from userInput, an exception is thrown
                 // indicating userInput is invalid Date
-                simpleFormat.parse(toValidate.getString());
+                simpleFormat.parse(toValidate.getValue());
                 return "";
             } catch (ParseException e) {
-                if (toValidate.getString().isEmpty()) return "";
+                if (toValidate.getValue().isEmpty()) return "";
                 else return "Invalid Date Format. Date must be in this format: dd-MMM-yyyy (eg. " +
                         "01-JAN-1970)";
             }
@@ -376,18 +373,43 @@ public class Validator {
 
 
     public static void main(String[] args) {
-//        AttributeCollection collection = new AttributeCollection();
+        AttributeCollection collection = new AttributeCollection();
 //
-//        ConstraintChecker checker = ConstraintChecker.getInstance();
-//        System.out.println("Done initializing");
+        ConstraintChecker checker = ConstraintChecker.getInstance();
+        System.out.println("Done initializing");
 //        new Scanner(System.in).nextLine();
 //
-//        try {
-//            Attribute x = new Attribute(Attribute.Name.MALL_NUM, "ABC");
+        try {
+            Attribute x1 = new Attribute(Attribute.Name.LEASE_NUM, "L123456789", Table.LEASES);
+            Attribute x2 = new Attribute(Attribute.Name.LOCATION_NUM, "", Table.LEASES);
+            Attribute x3 = new Attribute(Attribute.Name.END_DATE, "", Table.LEASES);
+            Attribute x4 = new Attribute(Attribute.Name.START_DATE, "", Table.LEASES);
+            Attribute x5 = new Attribute(Attribute.Name.PAYMENT_OPTION, "", Table.LEASES);
+            Attribute x6 = new Attribute(Attribute.Name.LEASER_ID, "", Table.LEASES);
+
+
+            Attribute x7 = new Attribute(Attribute.Name.MALL_NUM, "M12", Table.LOCS);
+            Attribute x8 = new Attribute(Attribute.Name.LOCATION_NUM, "1234567890", Table.LOCS);
+            Attribute x9 = new Attribute(Attribute.Name.STORE_NUM, "G20", Table.LOCS);
+
+
 //            Attribute y = new Attribute(Attribute.Name.ADDRESS, "ABC");
 //            // Attribute z = new Attribute(Attribute.Name.STORE_NUM, "ABC");
 //
-//            collection.add(x);
+            collection.add(x1);
+            collection.add(x2);
+            collection.add(x3);
+            collection.add(x4);
+            collection.add(x5);
+            collection.add(x6);
+
+            QueryResult res = DatabaseManager.getInstance().insert(Table.LEASES, collection);
+            if (res.noErrors()) {
+                System.out.println(res.getRowsAffected());
+            } else {
+                for (Attribute attribute : collection.attributes())
+                    printList(res.getErrors().getErrorByAttribute(attribute));
+            }
 //            collection.add(y);
 //            // collection.add(z);
 //
@@ -400,13 +422,10 @@ public class Validator {
 //            printList(errorsList2);
 //            // printList(errorsList3);
 //
-//        } catch (TableNotFoundException | AttributeNotFoundException | ConstraintNotFoundException |
-//                 UnvalidatedAttributeException e) {
-//            System.out.println(e.getMessage());
-//            e.printStackTrace();
-//        } catch (InsufficientAttributesException e) {
-//            throw new RuntimeException(e);
-//        }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
 
 //        String dateTimeString1 = "29-MAR-2023";
 //        String dateTimeString2 = "29-MAR-2023";

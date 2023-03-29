@@ -29,7 +29,7 @@ public class QueryResult {
     }
 
     public boolean noErrors() {
-        return errors != null && errors.noErrors();
+        return errors == null || errors.noErrors();
     }
 
     public ArrayList<String> getErrorByAttribute(Attribute attribute) throws UnvalidatedAttributeException {
