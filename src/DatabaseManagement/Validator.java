@@ -68,7 +68,11 @@ public class Validator {
     private String validateLESS_THAN(String constraint, Attribute toValidate,
                                      AttributeCollection allAttributes) {
         ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes, "<");
-        if (comparisonResult.testFailed || comparisonResult.result == -1) return "";
+
+        if (comparisonResult.fieldIsNull || comparisonResult.result == -1) return "";
+        else if (comparisonResult.testFailed)
+            return "Value you entered could not be compared with" +
+                    " stored ranges";
         else
             return comparisonResult.leftOperand + " must be less than " + comparisonResult.rightOperand;
     }
@@ -76,7 +80,11 @@ public class Validator {
     private String validateGREATER_THAN(String constraint, Attribute toValidate,
                                         AttributeCollection allAttributes) {
         ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes, ">");
-        if (comparisonResult.testFailed || comparisonResult.result == 1) return "";
+
+        if (comparisonResult.fieldIsNull || comparisonResult.result == 1) return "";
+        else if (comparisonResult.testFailed)
+            return "Value you entered could not be compared with" +
+                    " stored ranges";
         else
             return comparisonResult.leftOperand + " must be greater than " + comparisonResult.rightOperand;
     }
@@ -84,7 +92,11 @@ public class Validator {
     private String validateEQUAL(String constraint, Attribute toValidate,
                                  AttributeCollection allAttributes) {
         ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes, "=");
-        if (comparisonResult.testFailed || comparisonResult.result == 0) return "";
+
+        if (comparisonResult.fieldIsNull || comparisonResult.result == 0) return "";
+        else if (comparisonResult.testFailed)
+            return "Value you entered could not be compared with" +
+                    " stored ranges";
         else
             return comparisonResult.leftOperand + " must be equal to " + comparisonResult.rightOperand;
     }
@@ -92,7 +104,11 @@ public class Validator {
     private String validateNOT_EQUAL(String constraint, Attribute toValidate,
                                      AttributeCollection allAttributes) {
         ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes, "!=");
-        if (comparisonResult.testFailed || comparisonResult.result != 0) return "";
+
+        if (comparisonResult.fieldIsNull || comparisonResult.result != 0) return "";
+        else if (comparisonResult.testFailed)
+            return "Value you entered could not be compared with" +
+                    " stored ranges";
         else
             return comparisonResult.leftOperand + " must not be equal to " + comparisonResult.rightOperand;
     }
@@ -100,7 +116,11 @@ public class Validator {
     private String validateLESS_EQUAL(String constraint, Attribute toValidate,
                                       AttributeCollection allAttributes) {
         ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes, "<=");
-        if (comparisonResult.testFailed || comparisonResult.result <= 0) return "";
+
+        if (comparisonResult.fieldIsNull || comparisonResult.result <= 0) return "";
+        else if (comparisonResult.testFailed)
+            return "Value you entered could not be compared with" +
+                    " stored ranges";
         else
             return comparisonResult.leftOperand + " must be less than or equal to " + comparisonResult.rightOperand;
     }
@@ -108,42 +128,33 @@ public class Validator {
     private String validateGREATER_EQUAL(String constraint, Attribute toValidate,
                                          AttributeCollection allAttributes) {
         ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes, ">=");
-        if (comparisonResult.testFailed || comparisonResult.result >= 0) return "";
+
+        if (comparisonResult.fieldIsNull || comparisonResult.result >= 0) return "";
+        else if (comparisonResult.testFailed)
+            return "Value you entered could not be compared with" +
+                    " stored ranges";
         else
             return comparisonResult.leftOperand + " must be greater than or equal to " + comparisonResult.rightOperand;
     }
 
     private ComparisonResult compare(String constraint, Attribute toValidate,
-                                     AttributeCollection allAttributes, String operand) {
+                                     AttributeCollection allAttributes, String operator) {
         try {
 
-            Comparable lvalue = null;
-            Comparable rvalue = null;
-
             constraint = constraint.replace("C_", "");
-            String[] operands = constraint.split(operand);
+            String[] operands = constraint.split(operator);
             operands[0] = operands[0].trim();
             operands[1] = operands[1].trim();
 
-            //look for operand in list of remaining attributes;
-            for (Attribute attribute : allAttributes.attributes()) {
-                String attributeName = attribute.getStringName();
-                if (attributeName.equals(operands[0])) {
-                    lvalue = convert(attribute);
-                } else if (attributeName.equals(operands[1])) {
-                    rvalue = convert(attribute);
-                }
-            }
+            Operands resolvedOperands = new Operands(operands, toValidate, allAttributes);
+            return new ComparisonResult(operands[0], operands[1], resolvedOperands.compare(),
+                    false, false);
 
-            if (lvalue == null) lvalue = convert(new Attribute(toValidate.getAttributeName(),
-                    operands[0], toValidate.getT()));
+        } catch (ParseException | NumberFormatException e) {
+            return new ComparisonResult(null, null, -2, false, true);
+        } catch (NullPointerException e) {
+            return new ComparisonResult(null, null, -2, true, false);
 
-            if (rvalue == null) rvalue = convert(new Attribute(toValidate.getAttributeName(),
-                    operands[1], toValidate.getT()));
-
-            return new ComparisonResult(operands[0], operands[1], lvalue.compareTo(rvalue), false);
-        } catch (ParseException | NumberFormatException | NullPointerException e) {
-            return new ComparisonResult(null, null, -2, true);
         }
     }
 
@@ -176,14 +187,41 @@ public class Validator {
 
     private String validateBETWEEN(String constraint, Attribute toValidate,
                                    AttributeCollection allAttributes) {
+        try {
+            String[] range =
+                    constraint.split("BETWEEN")[1].split("AND");
 
-        return "";
+            range[0] = range[0].trim();
+            range[1] = range[1].trim();
+
+            Operands firstOperation = new Operands(new String[]{toValidate.getStringName(), range[0]}, toValidate,
+                    allAttributes);
+
+            Operands secondOperation = new Operands(new String[]{toValidate.getStringName(), range[1]}, toValidate,
+                    allAttributes);
+
+            int result1 = firstOperation.compare();
+            int result2 = secondOperation.compare();
+
+            if (result1 >= 0 && result2 <= 0) return "";
+
+            for (String value : range) {
+                value = value.replace("'", "");
+                if (value.equals(toValidate.getValue())) return "";
+            }
+            return toValidate.getStringName() + " must be between " + range[0] + " and " + range[1];
+        } catch (ParseException | NumberFormatException e) {
+            return "Value entered could not be compared with stored ranges";
+        } catch (NullPointerException e) {
+            return "";
+        }
     }
 
     private String validateIN(String constraint, Attribute toValidate,
                               AttributeCollection allAttributes) {
         String[] acceptedValues =
                 constraint.split("IN")[1].replace("(", "").replace(")", "").trim().split(",");
+
         for (String value : acceptedValues) {
             value = value.replace("'", "");
             if (value.equals(toValidate.getValue())) return "";
@@ -337,13 +375,49 @@ public class Validator {
         private String leftOperand;
         private String rightOperand;
         private int result;
+        private boolean fieldIsNull;
         private boolean testFailed;
 
-        public ComparisonResult(String leftOperand, String rightOperand, int result, boolean testFailed) {
+        public ComparisonResult(String leftOperand, String rightOperand, int result,
+                                boolean fieldIsNull, boolean testFailed) {
             this.leftOperand = leftOperand;
             this.rightOperand = rightOperand;
             this.result = result;
+            this.fieldIsNull = fieldIsNull;
             this.testFailed = testFailed;
+        }
+    }
+
+    private class Operands {
+        private Comparable lvalue = null;
+        private Comparable rvalue = null;
+
+
+        private Operands(String[] operands,
+                         Attribute toValidate, AttributeCollection allAttributes) throws ParseException, NumberFormatException, NullPointerException {
+            prepareOperands(operands, toValidate, allAttributes);
+        }
+
+        private void prepareOperands(String[] operands,
+                                     Attribute toValidate, AttributeCollection allAttributes) throws ParseException, NumberFormatException, NullPointerException {
+            for (Attribute attribute : allAttributes.attributes()) {
+                String attributeName = attribute.getStringName();
+                if (attributeName.equals(operands[0])) {
+                    lvalue = convert(attribute);
+                } else if (attributeName.equals(operands[1])) {
+                    rvalue = convert(attribute);
+                }
+            }
+
+            if (lvalue == null) lvalue = convert(new Attribute(toValidate.getAttributeName(),
+                    operands[0], toValidate.getT()));
+
+            if (rvalue == null) rvalue = convert(new Attribute(toValidate.getAttributeName(),
+                    operands[1], toValidate.getT()));
+        }
+
+        private int compare() {
+            return lvalue.compareTo(rvalue);
         }
     }
 

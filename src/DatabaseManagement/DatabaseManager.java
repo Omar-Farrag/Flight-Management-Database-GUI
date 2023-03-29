@@ -230,17 +230,23 @@ public class DatabaseManager implements DatabaseOperations {
         try {
             AttributeCollection collection = new AttributeCollection();
 
-            Attribute x1 = new Attribute(Attribute.Name.LEASE_NUM, "L223456789", Table.LEASES);
-            Attribute x2 = new Attribute(Attribute.Name.LOCATION_NUM, "1234567890", Table.LEASES);
-            Attribute x3 = new Attribute(Attribute.Name.END_DATE, "22-MAR-2023", Table.LEASES);
-            Attribute x4 = new Attribute(Attribute.Name.START_DATE, "20-MAR-2022", Table.LEASES);
-            Attribute x5 = new Attribute(Attribute.Name.PAYMENT_OPTION, "QUARTERLY", Table.LEASES);
-            Attribute x6 = new Attribute(Attribute.Name.LEASER_ID, "A1", Table.LEASES);
+            Attribute x1 = new Attribute(Attribute.Name.UTILITY_PERCENTAGE, "99",
+                    Table.DISCOUNTS);
+            Attribute x2 = new Attribute(Attribute.Name.MAINTENANCE_PERCENTAGE, "23",
+                    Table.DISCOUNTS);
+            Attribute x3 = new Attribute(Attribute.Name.LEASE_PERCENTAGE, "34", Table.DISCOUNTS);
+            Attribute x4 = new Attribute(Attribute.Name.DISCOUNT_NUM, "D122456789",
+                    Table.DISCOUNTS);
+            Attribute x5 = new Attribute(Attribute.Name.BILL_NUM, "B123456789",
+                    Table.DISCOUNTS);
 
 
-            Attribute x7 = new Attribute(Attribute.Name.MALL_NUM, "M12", Table.LOCS);
-            Attribute x8 = new Attribute(Attribute.Name.LOCATION_NUM, "1234567890", Table.LOCS);
-            Attribute x9 = new Attribute(Attribute.Name.STORE_NUM, "G20", Table.LOCS);
+            Attribute y1 = new Attribute(Attribute.Name.BILL_NUM, "B123456789", Table.BILLS);
+            Attribute y2 = new Attribute(Attribute.Name.TOTAL_AMOUNT, "5000", Table.BILLS);
+            Attribute y3 = new Attribute(Attribute.Name.UTILITY_ID, "U236567891", Table.BILLS);
+            Attribute y4 = new Attribute(Attribute.Name.LEASE_NUM, "L123456789", Table.BILLS);
+            Attribute y5 = new Attribute(Attribute.Name.DUE_DATE, "22-MAR-2024", Table.BILLS);
+            Attribute y6 = new Attribute(Attribute.Name.PAID, "0", Table.BILLS);
 
 
             collection.add(x1);
@@ -248,17 +254,24 @@ public class DatabaseManager implements DatabaseOperations {
             collection.add(x3);
             collection.add(x4);
             collection.add(x5);
-            collection.add(x6);
 
 //            collection.add(x7);
 //            collection.add(x8);
 //            collection.add(x9);
 
-            QueryResult res = DB.insert(Table.LEASES, collection);
+
+            QueryResult res = DB.insert(Table.DISCOUNTS, collection);
+//            QueryResult res = DB.retrieve(Table.BILLS);
 //
             if (res.noErrors()) {
                 System.out.println(res.getRowsAffected());
+                DB.printTable(DB.retrieve(Table.DISCOUNTS).getResult());
+                System.out.println();
+                DB.printTable(DB.retrieve(Table.BILLS).getResult());
+                System.out.println();
                 DB.printTable(DB.retrieve(Table.LEASES).getResult());
+                System.out.println();
+                DB.printTable(DB.retrieve(Table.UTILITY_CONSUMPTION).getResult());
 //                DB.printTable(res.getResult());
             } else {
                 for (Attribute attribute : collection.attributes()) {
