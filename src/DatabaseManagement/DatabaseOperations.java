@@ -1,6 +1,6 @@
 package DatabaseManagement;
 
-import QueryGeneration.InvalidJoinException;
+import DatabaseManagement.QueryGeneration.InvalidJoinException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

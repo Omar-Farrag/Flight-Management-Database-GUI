@@ -1,4 +1,4 @@
-package QueryGeneration;
+package DatabaseManagement.QueryGeneration;
 
 import DatabaseManagement.*;
 

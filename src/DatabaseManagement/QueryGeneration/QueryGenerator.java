@@ -1,11 +1,11 @@
-package QueryGeneration;
+package DatabaseManagement.QueryGeneration;
 
 import DatabaseManagement.Attribute;
 import DatabaseManagement.AttributeCollection;
 import DatabaseManagement.Filters;
 import DatabaseManagement.Table;
-import QueryGeneration.Graph.Link;
-import QueryGeneration.Graph.Node;
+import DatabaseManagement.QueryGeneration.Graph.Link;
+import DatabaseManagement.QueryGeneration.Graph.Node;
 
 import java.util.*;
 

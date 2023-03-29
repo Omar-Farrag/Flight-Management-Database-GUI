@@ -6,8 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import DatabaseManagement.ConstraintChecker.Errors;
-import QueryGeneration.InvalidJoinException;
-import QueryGeneration.QueryGenerator;
+import DatabaseManagement.QueryGeneration.InvalidJoinException;
+import DatabaseManagement.QueryGeneration.QueryGenerator;
 
 public class DatabaseManager implements DatabaseOperations {
 

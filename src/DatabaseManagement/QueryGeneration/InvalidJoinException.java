@@ -1,10 +1,9 @@
-package QueryGeneration;
+package DatabaseManagement.QueryGeneration;
 
-import java.util.ArrayList;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import QueryGeneration.Graph.Node;
+import DatabaseManagement.QueryGeneration.Graph.Node;
 
 public class InvalidJoinException extends Exception {
     private Set<Node> tables;
