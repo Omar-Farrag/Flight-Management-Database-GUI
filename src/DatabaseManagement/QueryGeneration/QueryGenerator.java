@@ -4,7 +4,6 @@ import DatabaseManagement.Exceptions.InvalidJoinException;
 import DatabaseManagement.Attribute;
 import DatabaseManagement.AttributeCollection;
 import DatabaseManagement.Filters;
-import DatabaseManagement.Table;
 import DatabaseManagement.QueryGeneration.Graph.Link;
 import DatabaseManagement.QueryGeneration.Graph.Node;
 
@@ -78,7 +77,7 @@ public class QueryGenerator {
                     if (current.getParent() == null)
                         links.add(graph.getLinkTo(current, current));
                     if (tables_to_join.size() == 0)
-                        return generatedClause();
+                        return generatedFromClause();
                 }
                 for (Node neighbor : graph.getNeighbors(current)) {
                     if (!neighbor.isVisited()) {
@@ -92,7 +91,18 @@ public class QueryGenerator {
         throw new InvalidJoinException(tables_to_join);
     }
 
-    private String generatedClause() {
+    public static String getSetClause(AttributeCollection toModify) {
+        String clause = "set ";
+        ArrayList<String> updates = new ArrayList<>();
+        for (Attribute attribute : toModify.attributes()) {
+            String update = attribute.getStringName() + " = " + attribute.getString();
+            updates.add(update);
+        }
+        return clause + String.join(",", updates);
+
+    }
+
+    private String generatedFromClause() {
         Iterator<Link> linksIterator = links.iterator();
 
         String clause = "";
@@ -117,21 +127,22 @@ public class QueryGenerator {
             tables_to_join.add(new Node(attribute.getT()));
     }
 
-    public static void main(String[] args) {
-        AttributeCollection toGet = new AttributeCollection();
-        toGet.add(new Attribute(Attribute.Name.LEASE_NUM, Table.LEASES));
-//        toGet.add(new Attribute(Attribute.Name.USER_ID, Table.USERS));
-        toGet.add(new Attribute(Attribute.Name.LOCATION_NUM, Table.LOCS));
-        toGet.add(new Attribute(Attribute.Name.UTILITY_ID, Table.BILLS));
-        toGet.add(new Attribute(Attribute.Name.BILL_NUM, Table.DISCOUNTS));
-        toGet.add(new Attribute(Attribute.Name.BILL_NUM, Table.BILLS));
 
-        QueryGenerator qg = new QueryGenerator(toGet, new Filters());
-        try {
-
-            System.out.println(qg.getFromClause());
-        } catch (InvalidJoinException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    public static void main(String[] args) {
+//        AttributeCollection toGet = new AttributeCollection();
+//        toGet.add(new Attribute(Attribute.Name.LEASE_NUM, Table.LEASES));
+////        toGet.add(new Attribute(Attribute.Name.USER_ID, Table.USERS));
+//        toGet.add(new Attribute(Attribute.Name.LOCATION_NUM, Table.LOCS));
+//        toGet.add(new Attribute(Attribute.Name.UTILITY_ID, Table.BILLS));
+//        toGet.add(new Attribute(Attribute.Name.BILL_NUM, Table.DISCOUNTS));
+//        toGet.add(new Attribute(Attribute.Name.BILL_NUM, Table.BILLS));
+//
+//        QueryGenerator qg = new QueryGenerator(toGet, new Filters());
+//        try {
+//
+//            System.out.println(qg.getFromClause());
+//        } catch (InvalidJoinException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 }

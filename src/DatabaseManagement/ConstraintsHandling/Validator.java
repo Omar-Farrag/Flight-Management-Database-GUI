@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Validator implements DatabaseManagement.Interfaces.ValidationChecks {
+public class Validator {
 
     private ArrayList<Constraint> constraints;
 
@@ -27,7 +27,6 @@ public class Validator implements DatabaseManagement.Interfaces.ValidationChecks
         initConstraintsToValidatorMap();
     }
 
-    @Override
     public String validate(String constraint, Attribute toValidate,
                            AttributeCollection allAttributes) throws DBManagementException {
         ValidationFunction validationFunc = find(constraint);
@@ -44,7 +43,6 @@ public class Validator implements DatabaseManagement.Interfaces.ValidationChecks
         throw new ConstraintNotFoundException(constraintToSearchFor);
     }
 
-    @Override
     public String validatePRIMARY(String constraint, Attribute toValidate,
                                   AttributeCollection allAttributes) {
         String errorMessage = validateNOT_NULL(constraint, toValidate, allAttributes);
@@ -56,7 +54,6 @@ public class Validator implements DatabaseManagement.Interfaces.ValidationChecks
         return "";
     }
 
-    @Override
     public String validateUNIQUE(String constraint, Attribute toValidate,
                                  AttributeCollection allAttributes) {
         try {
@@ -71,7 +68,6 @@ public class Validator implements DatabaseManagement.Interfaces.ValidationChecks
         }
     }
 
-    @Override
     public String validateFOREIGN(String constraint, Attribute toValidate,
                                   AttributeCollection allAttributes) {
 
@@ -92,7 +88,6 @@ public class Validator implements DatabaseManagement.Interfaces.ValidationChecks
         }
     }
 
-    @Override
     public String validateLESS_THAN(String constraint, Attribute toValidate,
                                     AttributeCollection allAttributes) {
         ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes, "<");
@@ -105,7 +100,6 @@ public class Validator implements DatabaseManagement.Interfaces.ValidationChecks
             return comparisonResult.leftOperand + " must be less than " + comparisonResult.rightOperand;
     }
 
-    @Override
     public String validateGREATER_THAN(String constraint, Attribute toValidate,
                                        AttributeCollection allAttributes) {
         ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes, ">");
@@ -118,7 +112,6 @@ public class Validator implements DatabaseManagement.Interfaces.ValidationChecks
             return comparisonResult.leftOperand + " must be greater than " + comparisonResult.rightOperand;
     }
 
-    @Override
     public String validateEQUAL(String constraint, Attribute toValidate,
                                 AttributeCollection allAttributes) {
         ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes, "=");
@@ -131,7 +124,6 @@ public class Validator implements DatabaseManagement.Interfaces.ValidationChecks
             return comparisonResult.leftOperand + " must be equal to " + comparisonResult.rightOperand;
     }
 
-    @Override
     public String validateNOT_EQUAL(String constraint, Attribute toValidate,
                                     AttributeCollection allAttributes) {
         ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes, "!=");
@@ -144,7 +136,6 @@ public class Validator implements DatabaseManagement.Interfaces.ValidationChecks
             return comparisonResult.leftOperand + " must not be equal to " + comparisonResult.rightOperand;
     }
 
-    @Override
     public String validateLESS_EQUAL(String constraint, Attribute toValidate,
                                      AttributeCollection allAttributes) {
         ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes, "<=");
@@ -157,7 +148,6 @@ public class Validator implements DatabaseManagement.Interfaces.ValidationChecks
             return comparisonResult.leftOperand + " must be less than or equal to " + comparisonResult.rightOperand;
     }
 
-    @Override
     public String validateGREATER_EQUAL(String constraint, Attribute toValidate,
                                         AttributeCollection allAttributes) {
         ComparisonResult comparisonResult = compare(constraint, toValidate, allAttributes, ">=");
@@ -210,7 +200,6 @@ public class Validator implements DatabaseManagement.Interfaces.ValidationChecks
 
     }
 
-    @Override
     public String validateNOT_NULL(String constraint, Attribute toValidate,
                                    AttributeCollection allAttributes) {
         if (toValidate.getValue() == null || toValidate.getValue().isEmpty())
@@ -219,7 +208,6 @@ public class Validator implements DatabaseManagement.Interfaces.ValidationChecks
     }
 
 
-    @Override
     public String validateBETWEEN(String constraint, Attribute toValidate,
                                   AttributeCollection allAttributes) {
         try {
@@ -252,7 +240,6 @@ public class Validator implements DatabaseManagement.Interfaces.ValidationChecks
         }
     }
 
-    @Override
     public String validateIN(String constraint, Attribute toValidate,
                              AttributeCollection allAttributes) {
         String[] acceptedValues =
@@ -266,7 +253,6 @@ public class Validator implements DatabaseManagement.Interfaces.ValidationChecks
                 , acceptedValues);
     }
 
-    @Override
     public String validateLIKE(String constraint, Attribute toValidate,
                                AttributeCollection allAttributes) {
 
@@ -277,7 +263,6 @@ public class Validator implements DatabaseManagement.Interfaces.ValidationChecks
         else return toValidate.getStringName() + " must be in the following format: " + pattern;
     }
 
-    @Override
     public String validateREGEXP_LIKE(String constraint, Attribute toValidate,
                                       AttributeCollection allAttributes) {
         String value = toValidate.getValue();
@@ -294,7 +279,6 @@ public class Validator implements DatabaseManagement.Interfaces.ValidationChecks
         return matcher.matches();
     }
 
-    @Override
     public String validateNUMBER(String constraint, Attribute toValidate,
                                  AttributeCollection allAttributes) {
         try {
@@ -334,7 +318,6 @@ public class Validator implements DatabaseManagement.Interfaces.ValidationChecks
         }
     }
 
-    @Override
     public String validateFLOAT(String constraint, Attribute toValidate,
                                 AttributeCollection allAttributes) {
         try {
@@ -348,7 +331,6 @@ public class Validator implements DatabaseManagement.Interfaces.ValidationChecks
         }
     }
 
-    @Override
     public String validateCHAR(String constraint, Attribute toValidate,
                                AttributeCollection allAttributes) {
         int length = Integer.parseInt(constraint.split("_")[1]);
@@ -362,7 +344,6 @@ public class Validator implements DatabaseManagement.Interfaces.ValidationChecks
         }
     }
 
-    @Override
     public String validateVARCHAR2(String constraint, Attribute toValidate,
                                    AttributeCollection allAttributes) {
         int maxLength = Integer.parseInt(constraint.split("_")[1]);
@@ -375,7 +356,6 @@ public class Validator implements DatabaseManagement.Interfaces.ValidationChecks
         }
     }
 
-    @Override
     public String validateDATE(String constraint, Attribute toValidate,
                                AttributeCollection allAttributes) {
         // The main logic of this function, is to match the userInput with the

@@ -80,7 +80,6 @@ public class Filters {
         return clause + String.join(" AND ", conditions);
     }
 
-
     public Set<Attribute> getAttributes() {
         return filters.keySet();
     }

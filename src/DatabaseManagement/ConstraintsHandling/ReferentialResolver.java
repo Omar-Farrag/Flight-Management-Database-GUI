@@ -8,7 +8,7 @@ import org.json.simple.JSONObject;
 
 import java.util.*;
 
-public class ReferentialResolver implements DatabaseManagement.Interfaces.ForeignIntegrityInterface {
+public class ReferentialResolver {
     private HashMap<Key, String> column_to_P_Constraint;
     private HashMap<DetailedKey, ArrayList<DetailedKey>> referenced_to_referencers;
     private ArrayList<DetailedKey> primaryKeys;
@@ -31,7 +31,6 @@ public class ReferentialResolver implements DatabaseManagement.Interfaces.Foreig
         return instance == null ? instance = new ReferentialResolver() : instance;
     }
 
-    @Override
     public DetailedKey getReferencedTable(String constraintName) {
         DetailedKey toFind = new DetailedKey(null, null, constraintName);
         for (DetailedKey key : referenced_to_referencers.keySet())
@@ -40,7 +39,6 @@ public class ReferentialResolver implements DatabaseManagement.Interfaces.Foreig
         throw new NullPointerException();
     }
 
-    @Override
     public AttributeCollection getReferencedAttributes(Table t) {
         AttributeCollection collection = new AttributeCollection();
         JSONObject attributes = MetaDataExtractor.getInstance().getTableAttributes(t);
@@ -56,7 +54,6 @@ public class ReferentialResolver implements DatabaseManagement.Interfaces.Foreig
         return collection;
     }
 
-    @Override
     public HashMap<Table, Filters> getReferencingAttributes(Table t, Attribute attribute) {
         ArrayList<DetailedKey> references = getReferences(t, attribute.getAttributeName());
         HashMap<Table, Filters> table_to_filters = new HashMap<>();
@@ -85,25 +82,21 @@ public class ReferentialResolver implements DatabaseManagement.Interfaces.Foreig
         else return referenced_to_referencers.get(key);
     }
 
-    @Override
     public void insertPrimary(Table t, Attribute.Name column, String constraintName) {
         primaryKeys.add(new DetailedKey(t, column, constraintName));
         column_to_P_Constraint.put(new Key(t, column), constraintName);
     }
 
-    @Override
     public void insertForeign(Table t, Attribute.Name column, String constraintName) {
         foreignKeys.add(new DetailedKey(t, column, constraintName));
 
     }
 
-    @Override
     public void insertUnique(Table t, Attribute.Name column, String constraintName) {
         uniqueKeys.add(new DetailedKey(t, column, constraintName));
         column_to_P_Constraint.put(new Key(t, column), constraintName);
     }
 
-    @Override
     public void initResolver() {
         if (initialized) return;
         for (DetailedKey key : primaryKeys)

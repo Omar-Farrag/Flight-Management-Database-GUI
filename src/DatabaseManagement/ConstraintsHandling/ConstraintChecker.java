@@ -12,7 +12,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 
-public class ConstraintChecker implements DatabaseManagement.Interfaces.ConstraintChecks {
+public class ConstraintChecker {
 
     private static ConstraintChecker instance;
 
@@ -36,7 +36,6 @@ public class ConstraintChecker implements DatabaseManagement.Interfaces.Constrai
     }
 
 
-    @Override
     public Errors checkInsertion(Table t, AttributeCollection toInsert)
             throws DBManagementException {
         checkAttributeExistence(t, toInsert);
@@ -48,7 +47,6 @@ public class ConstraintChecker implements DatabaseManagement.Interfaces.Constrai
     }
 
 
-    @Override
     public Errors checkRetrieval(Filters filters, AttributeCollection toGet)
             throws DBManagementException {
 
@@ -60,7 +58,6 @@ public class ConstraintChecker implements DatabaseManagement.Interfaces.Constrai
     }
 
 
-    @Override
     public Errors checkRetrieval(Table t, Filters filters) throws DBManagementException {
         AttributeCollection filterCollection = new AttributeCollection(filters);
         checkAttributeExistence(t, filterCollection);
@@ -68,7 +65,6 @@ public class ConstraintChecker implements DatabaseManagement.Interfaces.Constrai
     }
 
 
-    @Override
     public Errors checkRetrieval(AttributeCollection toGet) throws DBManagementException {
 
         checkAttributeExistence(toGet);
@@ -76,7 +72,6 @@ public class ConstraintChecker implements DatabaseManagement.Interfaces.Constrai
     }
 
 
-    @Override
     public Errors checkDeletion(Table t, Filters filters) throws SQLException, DBManagementException {
         AttributeCollection filterCollection = new AttributeCollection(filters);
         checkAttributeExistence(t, filterCollection);
@@ -86,7 +81,6 @@ public class ConstraintChecker implements DatabaseManagement.Interfaces.Constrai
     }
 
 
-    @Override
     public Errors checkUpdate(Table t, Filters filters, AttributeCollection newValues)
             throws SQLException, DBManagementException {
 
