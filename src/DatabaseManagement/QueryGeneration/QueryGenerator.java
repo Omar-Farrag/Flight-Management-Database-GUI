@@ -1,9 +1,10 @@
 package DatabaseManagement.QueryGeneration;
 
-import DatabaseManagement.Tables.Attribute;
-import DatabaseManagement.Tables.AttributeCollection;
-import DatabaseManagement.Tables.Filters;
-import DatabaseManagement.Tables.Table;
+import DatabaseManagement.Exceptions.InvalidJoinException;
+import DatabaseManagement.Attribute;
+import DatabaseManagement.AttributeCollection;
+import DatabaseManagement.Filters;
+import DatabaseManagement.Table;
 import DatabaseManagement.QueryGeneration.Graph.Link;
 import DatabaseManagement.QueryGeneration.Graph.Node;
 
@@ -118,15 +119,16 @@ public class QueryGenerator {
 
     public static void main(String[] args) {
         AttributeCollection toGet = new AttributeCollection();
-//        toGet.add(new Attribute(Attribute.Name.LEASE_NUM, Table.LEASES));
+        toGet.add(new Attribute(Attribute.Name.LEASE_NUM, Table.LEASES));
 //        toGet.add(new Attribute(Attribute.Name.USER_ID, Table.USERS));
-//        toGet.add(new Attribute(Attribute.Name.LOCATION_NUM, Table.LOCS));
+        toGet.add(new Attribute(Attribute.Name.LOCATION_NUM, Table.LOCS));
         toGet.add(new Attribute(Attribute.Name.UTILITY_ID, Table.BILLS));
         toGet.add(new Attribute(Attribute.Name.BILL_NUM, Table.DISCOUNTS));
         toGet.add(new Attribute(Attribute.Name.BILL_NUM, Table.BILLS));
 
         QueryGenerator qg = new QueryGenerator(toGet, new Filters());
         try {
+
             System.out.println(qg.getFromClause());
         } catch (InvalidJoinException e) {
             throw new RuntimeException(e);

@@ -1,10 +1,10 @@
 package DatabaseManagement.Interfaces;
 
-import DatabaseManagement.Constraints.ReferentialResolver;
-import DatabaseManagement.Tables.Attribute;
-import DatabaseManagement.Tables.AttributeCollection;
-import DatabaseManagement.Tables.Filters;
-import DatabaseManagement.Tables.Table;
+import DatabaseManagement.ConstraintsHandling.ReferentialResolver;
+import DatabaseManagement.Attribute;
+import DatabaseManagement.AttributeCollection;
+import DatabaseManagement.Filters;
+import DatabaseManagement.Table;
 
 import java.util.HashMap;
 

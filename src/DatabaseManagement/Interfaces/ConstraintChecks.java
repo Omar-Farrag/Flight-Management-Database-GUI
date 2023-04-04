@@ -1,10 +1,10 @@
 package DatabaseManagement.Interfaces;
 
-import DatabaseManagement.Constraints.ConstraintChecker.Errors;
+import DatabaseManagement.ConstraintsHandling.ConstraintChecker.Errors;
 import DatabaseManagement.Exceptions.*;
-import DatabaseManagement.Tables.AttributeCollection;
-import DatabaseManagement.Tables.Filters;
-import DatabaseManagement.Tables.Table;
+import DatabaseManagement.AttributeCollection;
+import DatabaseManagement.Filters;
+import DatabaseManagement.Table;
 
 import java.sql.SQLException;
 

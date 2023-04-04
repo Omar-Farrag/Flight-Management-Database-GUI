@@ -1,6 +1,6 @@
 package DatabaseManagement.Exceptions;
 
-import DatabaseManagement.Tables.Attribute;
+import DatabaseManagement.Attribute;
 
 public class AttributeMismatchException extends DBManagementException {
     Attribute attr1;

@@ -1,9 +1,8 @@
 package DatabaseManagement;
 
-import DatabaseManagement.Constraints.ConstraintChecker.Errors;
+import DatabaseManagement.ConstraintsHandling.ConstraintChecker.Errors;
 import DatabaseManagement.Exceptions.DBManagementException;
 import DatabaseManagement.Interfaces.QueryResultInterace;
-import DatabaseManagement.Tables.Attribute;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;

@@ -5,16 +5,12 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import DatabaseManagement.Constraints.ConstraintChecker;
-import DatabaseManagement.Constraints.ConstraintChecker.Errors;
-import DatabaseManagement.Constraints.ReferentialResolver;
+import DatabaseManagement.ConstraintsHandling.ConstraintChecker;
+import DatabaseManagement.ConstraintsHandling.ConstraintChecker.Errors;
+import DatabaseManagement.ConstraintsHandling.ReferentialResolver;
 import DatabaseManagement.Exceptions.*;
 import DatabaseManagement.Interfaces.DatabaseOperations;
 import DatabaseManagement.QueryGeneration.QueryGenerator;
-import DatabaseManagement.Tables.Attribute;
-import DatabaseManagement.Tables.AttributeCollection;
-import DatabaseManagement.Tables.Filters;
-import DatabaseManagement.Tables.Table;
 
 public class DatabaseManager implements DatabaseOperations {
 
@@ -312,8 +308,8 @@ public class DatabaseManager implements DatabaseOperations {
 //            collection.add(x9);
 
 
-            QueryResult res = DB.insert(Table.DISCOUNTS, collection);
-//            QueryResult res = DB.retrieve(Table.BILLS);
+//            QueryResult res = DB.insert(Table.DISCOUNTS, collection);
+            QueryResult res = DB.retrieve(Table.BILLS);
 //
             if (res.noErrors()) {
                 System.out.println(res.getRowsAffected());

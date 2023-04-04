@@ -1,11 +1,20 @@
 package DatabaseManagement.Interfaces;
 
 import DatabaseManagement.Exceptions.DBManagementException;
-import DatabaseManagement.Tables.Attribute;
-import DatabaseManagement.Tables.AttributeCollection;
+import DatabaseManagement.Attribute;
+import DatabaseManagement.AttributeCollection;
 
 public interface ValidationChecks {
 
+    /**
+     * Does something
+     *
+     * @param constraint
+     * @param toValidate
+     * @param allAttributes
+     * @return
+     * @throws DBManagementException
+     */
     String validate(String constraint, Attribute toValidate, AttributeCollection allAttributes) throws DBManagementException;
 
     String validatePRIMARY(String constraint, Attribute toValidate, AttributeCollection allAttributes);

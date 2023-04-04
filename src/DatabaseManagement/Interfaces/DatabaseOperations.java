@@ -2,9 +2,9 @@ package DatabaseManagement.Interfaces;
 
 import DatabaseManagement.Exceptions.*;
 import DatabaseManagement.QueryResult;
-import DatabaseManagement.Tables.AttributeCollection;
-import DatabaseManagement.Tables.Filters;
-import DatabaseManagement.Tables.Table;
+import DatabaseManagement.AttributeCollection;
+import DatabaseManagement.Filters;
+import DatabaseManagement.Table;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;

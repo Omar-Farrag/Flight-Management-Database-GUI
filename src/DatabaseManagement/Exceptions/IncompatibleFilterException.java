@@ -2,8 +2,8 @@ package DatabaseManagement.Exceptions;
 
 import java.util.Map;
 
-import DatabaseManagement.Tables.Attribute;
-import DatabaseManagement.Tables.Filters.FilterType;
+import DatabaseManagement.Attribute;
+import DatabaseManagement.Filters.FilterType;
 
 public class IncompatibleFilterException extends DBManagementException {
 
