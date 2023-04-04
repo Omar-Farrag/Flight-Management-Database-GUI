@@ -266,7 +266,10 @@ public class Validator {
     public String validateREGEXP_LIKE(String constraint, Attribute toValidate,
                                       AttributeCollection allAttributes) {
         String value = toValidate.getValue();
-        String pattern = constraint.split(",")[1].trim().replace("'", "").replace(")", "");
+        int firstCommaIndex = constraint.indexOf(",");
+
+        String pattern = constraint.substring(firstCommaIndex + 1);
+        pattern = pattern.substring(2, pattern.length() - 2).trim();
 
         if (value == null || value.isEmpty() || regexMatch(value, pattern)) return "";
         else return toValidate.getStringName() + " must be in the following format: " + pattern;
@@ -505,7 +508,7 @@ public class Validator {
                 System.out.println(res.getRowsAffected());
             } else {
                 for (Attribute attribute : collection.attributes())
-                    printList(res.getErrors().getErrorByAttribute(attribute));
+                    printList(res.getErrorByAttribute(attribute));
             }
 //            collection.add(y);
 //            // collection.add(z);

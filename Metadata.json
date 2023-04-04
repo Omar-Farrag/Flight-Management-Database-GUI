@@ -67,8 +67,7 @@
         "CHAR_10"
       ],
       "CHARGE": [
-        "NUMBER_10_2",
-        "C_CHARGE >= 0"
+        "NUMBER_10_2"
       ]
     }
   },
@@ -322,6 +321,7 @@
     "Attributes": {
       "MALL_NUM": [
         "CHAR_3",
+        "C_MALL_NUM IS NOT NULL",
         "U_LOCATIONS_UNIQUENESS"
       ],
       "LOCATION_NUM": [
@@ -361,7 +361,7 @@
       ],
       "EMAIL_ADDRESS": [
         "VARCHAR2_50",
-        "C_REGEXP_LIKE(EMAIL_ADDRESS, '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$')"
+        "C_REGEXP_LIKE(EMAIL_ADDRESS, '^\\w+\\d*@\\w+\\d*\\.\\w{3}$')"
       ],
       "USER_ID": [
         "VARCHAR2_30",

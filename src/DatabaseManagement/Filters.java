@@ -97,6 +97,13 @@ public class Filters {
         filters_IN_Type.put(attribute, acceptedValues);
     }
 
+    /**
+     * Removes all filters from this object
+     */
+    public void clear() {
+        filters.clear();
+    }
+
     public String getFilterClause() {
         if (filters.isEmpty() && filters_IN_Type.isEmpty())
             return "";

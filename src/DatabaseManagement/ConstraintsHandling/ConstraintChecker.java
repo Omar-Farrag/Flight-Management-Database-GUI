@@ -53,7 +53,7 @@ public class ConstraintChecker {
         checkAttributeExistence(toGet);
         AttributeCollection filterCollection = new AttributeCollection(filters);
         checkAttributeExistence(filterCollection);
-        return checkConstraints(filterCollection);
+        return new Errors();
 
     }
 
@@ -61,7 +61,7 @@ public class ConstraintChecker {
     public Errors checkRetrieval(Table t, Filters filters) throws DBManagementException {
         AttributeCollection filterCollection = new AttributeCollection(filters);
         checkAttributeExistence(t, filterCollection);
-        return checkConstraints(t, filterCollection);
+        return new Errors();
     }
 
 
@@ -75,9 +75,7 @@ public class ConstraintChecker {
     public Errors checkDeletion(Table t, Filters filters) throws SQLException, DBManagementException {
         AttributeCollection filterCollection = new AttributeCollection(filters);
         checkAttributeExistence(t, filterCollection);
-        Errors constraintErrors = checkConstraints(t, filterCollection);
-        Errors referentialErrors = checkReferencingTables(t, filters);
-        return constraintErrors.append(referentialErrors);
+        return checkReferencingTables(t, filters);
     }
 
 

@@ -71,6 +71,13 @@ public class AttributeCollection {
         return attributes.size();
     }
 
+    /**
+     * Clears all attributes in the attribute collection
+     */
+    public void clear() {
+        attributes.clear();
+    }
+
     public String getAliasedFormattedAtt() {
         ArrayList<String> attributes_as_string = new ArrayList<>();
 

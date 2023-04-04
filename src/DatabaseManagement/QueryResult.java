@@ -11,28 +11,40 @@ public class QueryResult {
     private int rows;
     private Errors errors;
 
+
     public QueryResult(ResultSet result, int rows, Errors errors) {
         this.result = result;
         this.rows = rows;
         this.errors = errors;
     }
 
+    /**
+     * @return result set of a retrieval operation or null for other insertion/deletion/modification
+     */
     public ResultSet getResult() {
         return result;
     }
 
+    /**
+     * @return number of rows inserted/deleted/modified. For retrieval operations, it returns number of rows retrieved
+     */
     public int getRowsAffected() {
         return rows;
     }
 
-    public Errors getErrors() {
-        return errors;
-    }
-
+    /**
+     * @return True if all input data was valid and that the database operation was successful. Returns false
+     * otherwise
+     */
     public boolean noErrors() {
         return errors == null || errors.noErrors();
     }
 
+    /**
+     * @param attribute Attribute whose validation errors are to be retrieved
+     * @return The list of validation errors on the given attribute
+     * @throws DBManagementException Print the message to know why it was thrown
+     */
     public ArrayList<String> getErrorByAttribute(Attribute attribute) throws DBManagementException {
         return errors.getErrorByAttribute(attribute);
     }
