@@ -14,6 +14,7 @@ public class ReferentialResolver implements DatabaseManagement.Interfaces.Foreig
     private ArrayList<DetailedKey> primaryKeys;
     private ArrayList<DetailedKey> foreignKeys;
     private ArrayList<DetailedKey> uniqueKeys;
+    private boolean initialized;
 
     private static ReferentialResolver instance;
 
@@ -23,6 +24,7 @@ public class ReferentialResolver implements DatabaseManagement.Interfaces.Foreig
         primaryKeys = new ArrayList<>();
         foreignKeys = new ArrayList<>();
         uniqueKeys = new ArrayList<>();
+        initialized = false;
     }
 
     public static ReferentialResolver getInstance() {
@@ -41,7 +43,7 @@ public class ReferentialResolver implements DatabaseManagement.Interfaces.Foreig
     @Override
     public AttributeCollection getReferencedAttributes(Table t) {
         AttributeCollection collection = new AttributeCollection();
-        JSONObject attributes = ConstraintChecker.getInstance().getTableAttributes(t);
+        JSONObject attributes = MetaDataExtractor.getInstance().getTableAttributes(t);
 
         for (var attribute : attributes.keySet()) {
             Attribute.Name column = Attribute.Name.valueOf(attribute.toString());
@@ -103,6 +105,7 @@ public class ReferentialResolver implements DatabaseManagement.Interfaces.Foreig
 
     @Override
     public void initResolver() {
+        if (initialized) return;
         for (DetailedKey key : primaryKeys)
             referenced_to_referencers.put(key, new ArrayList<>());
 
@@ -112,6 +115,8 @@ public class ReferentialResolver implements DatabaseManagement.Interfaces.Foreig
         for (DetailedKey key : foreignKeys) {
             referenced_to_referencers.get(key).add(key);
         }
+
+        initialized = true;
     }
 
     private class Key {

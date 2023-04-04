@@ -1,5 +1,7 @@
 package DatabaseManagement;
 
+import java.util.ArrayList;
+
 public enum Table {
     /*
      * The names of the tables in our tables should appear here.
@@ -32,6 +34,13 @@ public enum Table {
     Table(String tableName, String alias) {
         this.tableName = tableName;
         this.alias = alias;
+    }
+
+    public static ArrayList<String> getApplicationTables() {
+        ArrayList<String> currentApplicationTables = new ArrayList<>();
+        for (Table t : Table.values())
+            currentApplicationTables.add(t.getTableName().toUpperCase());
+        return currentApplicationTables;
     }
 
     public String getTableName() {
