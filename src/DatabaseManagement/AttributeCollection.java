@@ -93,7 +93,7 @@ public class AttributeCollection {
         ArrayList<String> values_as_string = new ArrayList<>();
 
         for (Attribute att : attributes) {
-            values_as_string.add(att.getString());
+            values_as_string.add(att.getStringValue());
         }
 
         return String.join(" , ", values_as_string);

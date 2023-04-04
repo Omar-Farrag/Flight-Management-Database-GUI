@@ -95,7 +95,7 @@ public class QueryGenerator {
         String clause = "set ";
         ArrayList<String> updates = new ArrayList<>();
         for (Attribute attribute : toModify.attributes()) {
-            String update = attribute.getStringName() + " = " + attribute.getString();
+            String update = attribute.getStringName() + " = " + attribute.getStringValue();
             updates.add(update);
         }
         return clause + String.join(",", updates);

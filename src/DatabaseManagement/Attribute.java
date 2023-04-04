@@ -55,7 +55,7 @@ public class Attribute {
         return attributeValue;
     }
 
-    public String getString() {
+    public String getStringValue() {
         if (type.equals(Type.STRING) || type.equals((Type.DATE)))
             return "'" + attributeValue + "'";
         else if (attributeValue == null) return "NULL";

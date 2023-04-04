@@ -58,7 +58,7 @@ public class Validator {
                                  AttributeCollection allAttributes) {
         try {
             String query = "Select * from " + toValidate.getT().getTableName() +
-                    " where " + toValidate.getStringName() + " = " + toValidate.getString();
+                    " where " + toValidate.getStringName() + " = " + toValidate.getStringValue();
             ResultSet result = DatabaseManager.getInstance().executeStatement(query);
 
             if (!result.next()) return "";
@@ -75,7 +75,7 @@ public class Validator {
         DetailedKey referenced = ReferentialResolver.getInstance().getReferencedTable(constraint);
 
         String query =
-                "Select * from " + referenced.t.getTableName() + " where " + referenced.column.getName() + " = " + toValidate.getString();
+                "Select * from " + referenced.t.getTableName() + " where " + referenced.column.getName() + " = " + toValidate.getStringValue();
         ResultSet result = null;
         try {
             result = DatabaseManager.getInstance().executeStatement(query);
