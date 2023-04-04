@@ -52,14 +52,6 @@ public class DatabaseManager {
      * attributes in the table, but the order is irrelevant. If you want to set one of the attributes in the table to
      * null, then set the value of that attribute in the attribute collection to null, pass an empty string to the
      * attribute's value.
-     * <p>
-     * Sample Usage: Insert into T(x,y,z) values(1,2,3)
-     * AttributeCollection collection = new AttributeCollection();
-     * collection.add(new Attribute(Attribute.Name.x,"1",Table.T));
-     * collection.add(new Attribute(Attribute.Name.y,"2",Table.T));
-     * collection.add(new Attribute(Attribute.Name.z,"3",Table.T));
-     * <p>
-     * QueryResult result = DatabaseManager.getInstance().insert(Table.T, collection);
      *
      * @param toInsert list of attributes forming the tuple to be inserted
      * @param t        Table where the tuple will be inserted
@@ -84,20 +76,11 @@ public class DatabaseManager {
     /**
      * Deletes rows in the given table that satisfy all the given filters. Passing an empty filters object will
      * delete the whole table.
-     * <p>
-     * Sample Usage: Delete T where x = 'blah-blah' AND y = 'blah'
-     * <p>
-     * //The following deletes rows in table t where x = 'blah-blah' and y = 'blah'
-     * Filters filters = new Filters();
-     * filters.addEqual(new Attribute(Attribute.Name.x,"blah-blah",Table.T));
-     * filters.addEqual(new Attribute(Attribute.Name.y,"blah",Table.T));
-     * <p>
-     * QueryResult result = DatabaseManager.getInstance().delete(Table.T, filters);
      *
      * @param t       Table whose entries are to be deleted.
      * @param filters Conditions that a row must satisfy to be deleted
      * @return Query result of the delete operation
-     * @throws SQLException          If an error occurs while inserting the data into the DB.
+     * @throws SQLException          If an error occurs while data the data from the DB.
      * @throws DBManagementException Print the message to know why the exception was thrown
      */
     public QueryResult delete(Table t, Filters filters) throws SQLException, DBManagementException {
@@ -113,7 +96,16 @@ public class DatabaseManager {
         return handleDBOperation(error, query, true);
     }
 
-
+    /**
+     * Updates the values of certain rows in the given table
+     *
+     * @param t        Table whose rows are to be modified
+     * @param filters  Conditions that a row must satisfy to be updatedd
+     * @param toModify Attribute collection containing the attributes to be modified and their new values
+     * @return Result of modification operation
+     * @throws SQLException          If an error occurs while updating the data in the DB.
+     * @throws DBManagementException Print the message to know why the exception was thrown
+     */
     public QueryResult modify(Table t, Filters filters, AttributeCollection toModify) throws SQLException, DBManagementException {
 
         if (toModify.isEmpty()) throw new MissingUpdatedValuesException(t);
@@ -129,10 +121,15 @@ public class DatabaseManager {
 
         return handleDBOperation(error, query, true);
 
-
     }
 
-
+    /**
+     * Retrieves all rows from a specific table
+     *
+     * @param t Table whose rows are to be retrieved
+     * @return QueryResult containing the result set of the retrieved table
+     * @throws SQLException If an error occurs while retrieving the data from the DB.
+     */
     public QueryResult retrieve(Table t) throws SQLException {
 
         String query = "Select * from " + t.getAliasedName();
@@ -140,7 +137,15 @@ public class DatabaseManager {
 
     }
 
-
+    /**
+     * Retrieves specific rows from a given table
+     *
+     * @param t       Table containing the rows to be retrieved
+     * @param filters Conditions that a row must satisfy to be part of the retrieved set of rows
+     * @return QueryResult containing a result set of the retrieved rows
+     * @throws SQLException          If an error occurs while retrieving the data from the DB.
+     * @throws DBManagementException Print the message to know why the exception was thrown
+     */
     public QueryResult retrieve(Table t, Filters filters) throws SQLException, DBManagementException {
 
         Errors error = null;
@@ -153,7 +158,16 @@ public class DatabaseManager {
         return handleDBOperation(error, query, false);
     }
 
-
+    /**
+     * Joins the tables containing the attributes in the given attribute collection and retrieves all their
+     * rows. Only the attributes in the collection are selected from the rows. Bear in mind that the tables
+     * containing the attributes must be eligible for joining, otherwise an exception is thrown.
+     *
+     * @param toGet Collection of attributes to be retrieved
+     * @return QueryResult containing the result set of the retrieval operation
+     * @throws SQLException          If an error occurs while retrieving the data from the DB.
+     * @throws DBManagementException Print the message to know why the exception was thrown
+     */
     public QueryResult retrieve(AttributeCollection toGet) throws SQLException, DBManagementException {
 
         Errors error = null;
@@ -168,7 +182,18 @@ public class DatabaseManager {
 
     }
 
-
+    /**
+     * Joins the tables containing the attributes in the given attribute collection and filters then retrieves rows
+     * that satisfy certain conditions. Only the attributes in the collection are selected from the rows. Bear in
+     * mind that the tables containing the attributes in the attribute collection and filters must be eligible for
+     * joining, otherwise an exception is thrown.
+     *
+     * @param toGet   Attributes to be retrieved
+     * @param filters Conditions that a row must satisfy to be part of the retrieved set of rows
+     * @return QueryResult containing the result set of the retrieval operation
+     * @throws SQLException          If an error occurs while retrieving the data from the DB.
+     * @throws DBManagementException Print the message to know why the exception was thrown
+     */
     public QueryResult retrieve(AttributeCollection toGet, Filters filters) throws SQLException, DBManagementException {
         Errors error = ConstraintChecker.getInstance().checkRetrieval(filters, toGet);
 
@@ -180,6 +205,13 @@ public class DatabaseManager {
     }
 
 
+    /**
+     * Executes the given SQL statement. Only Select SQL statements allowed
+     *
+     * @param sqlStatement Statement to be executed
+     * @return Result set of the executed statement
+     * @throws SQLException If an error occurs while executing the SQL statement in the DBMS
+     */
     public ResultSet executeStatement(String sqlStatement) throws SQLException {
 
         System.out.println(sqlStatement);
@@ -187,6 +219,13 @@ public class DatabaseManager {
         return stmt.executeQuery(sqlStatement);
     }
 
+    /**
+     * Executes the given SQL statement. Only Insert, Update, & Delete SQL statements are allowed
+     *
+     * @param sqlPreparedStatement Statement to be executed
+     * @return Number of rows affected by the SQL operation
+     * @throws SQLException If an error occurs while executing SQL Prepared Statement in the DBMS.
+     */
     public int executePreparedStatement(String sqlPreparedStatement) throws SQLException {
         PreparedStatement prep = conn.prepareStatement(sqlPreparedStatement);
         return prep.executeUpdate();
