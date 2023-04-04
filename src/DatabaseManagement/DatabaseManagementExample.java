@@ -116,7 +116,7 @@ public class DatabaseManagementExample {
             filters.addEqual(new Attribute(Name.LNAME, "Kareem", Table.USERS));
             collection.clear();
             collection.add(new Attribute(Name.LNAME, "Karim", Table.USERS));
-            result = DB.modify(Table.USERS, filters, collection);
+            result = DB.modify(Table.USERS, filters, collection, false);
             if (result.noErrors()) {
                 System.out.println(result.getRowsAffected());
                 printTable(DB.retrieve(Table.USERS).getResult());
@@ -132,7 +132,7 @@ public class DatabaseManagementExample {
             filters.addEqual(new Attribute(Name.LNAME, "Karim", Table.USERS));
             collection.clear();
             collection.add(new Attribute(Name.LNAME, "Kareem", Table.USERS));
-            result = DB.modify(Table.USERS, filters, collection);
+            result = DB.modify(Table.USERS, filters, collection, false);
             if (result.noErrors()) {
                 System.out.println(result.getRowsAffected());
                 printTable(DB.retrieve(Table.USERS).getResult());

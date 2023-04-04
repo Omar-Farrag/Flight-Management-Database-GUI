@@ -79,17 +79,23 @@ public class ConstraintChecker {
     }
 
 
-    public Errors checkUpdate(Table t, Filters filters, AttributeCollection newValues)
+    public Errors checkUpdate(Table t, Filters filters, AttributeCollection newValues, boolean cascade)
             throws SQLException, DBManagementException {
 
         checkAttributeExistence(t, new AttributeCollection(filters));
         checkAttributeExistence(t, newValues);
         Errors constraintErrorsNew = checkConstraints(t, newValues);
         Errors constraintErrorsFilters = checkConstraints(t, new AttributeCollection(filters));
-        Errors referentialErrors = checkReferencingTables(t, filters);
-
-        return constraintErrorsNew.append(constraintErrorsFilters).append(referentialErrors);
+        if (cascade) {
+            if (!constraintErrorsNew.noErrors() || !constraintErrorsFilters.noErrors())
+                return constraintErrorsNew.append(constraintErrorsFilters);
+        } else {
+            Errors referentialErrors = checkReferencingTables(t, filters);
+            return constraintErrorsNew.append(constraintErrorsFilters).append(referentialErrors);
+        }
+        return new Errors();
     }
+
 
     private Errors checkReferencingTables(Table t, Filters f) throws TableNotFoundException, AttributeNotFoundException, SQLException, IncompatibleFilterException, ConstraintNotFoundException {
         Errors errors = new Errors();

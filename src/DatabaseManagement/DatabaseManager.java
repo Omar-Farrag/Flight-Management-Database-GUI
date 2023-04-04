@@ -74,8 +74,8 @@ public class DatabaseManager {
 
 
     /**
-     * Deletes rows in the given table that satisfy all the given filters. Passing an empty filters object will
-     * delete the whole table.
+     * Deletes rows in the given table that satisfy all the given filters provided these rows are not referenced by
+     * other rows. Passing an  empty filters object will delete the whole table.
      *
      * @param t       Table whose entries are to be deleted.
      * @param filters Conditions that a row must satisfy to be deleted
@@ -100,19 +100,22 @@ public class DatabaseManager {
      * Updates the values of certain rows in the given table
      *
      * @param t        Table whose rows are to be modified
-     * @param filters  Conditions that a row must satisfy to be updatedd
+     * @param filters  Conditions that a row must satisfy to be updated
      * @param toModify Attribute collection containing the attributes to be modified and their new values
+     * @param cascade  A flag determining whether the changes in the given table must be cascaded to the referencing
+     *                 foreign keys. If they are to be cascaded, then the foreign key attributes referencing them
+     *                 must have the on Update Cascade option in the DBMS. Otherwise, an exception is thrown.
      * @return Result of modification operation
      * @throws SQLException          If an error occurs while updating the data in the DB.
      * @throws DBManagementException Print the message to know why the exception was thrown
      */
-    public QueryResult modify(Table t, Filters filters, AttributeCollection toModify) throws SQLException, DBManagementException {
+    public QueryResult modify(Table t, Filters filters, AttributeCollection toModify, boolean cascade) throws SQLException, DBManagementException {
 
         if (toModify.isEmpty()) throw new MissingUpdatedValuesException(t);
 
         Errors error = null;
         try {
-            error = ConstraintChecker.getInstance().checkUpdate(t, filters, toModify);
+            error = ConstraintChecker.getInstance().checkUpdate(t, filters, toModify, cascade);
         } catch (DBManagementException e) {
             throw new RuntimeException(e);
         }
