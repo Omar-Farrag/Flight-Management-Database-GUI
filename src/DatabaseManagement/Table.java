@@ -10,16 +10,27 @@ public enum Table {
      * the tables for our application and all other tables, we can
      * put the names of this application's tables here.
      */
-
+    UTILITY_CONSUMPTION("UTILITY_CONSUMPTION", "A"),
+    MAINTENANCE_REQUESTS("MAINTENANCE_REQUESTS", "B"),
+    BILLS("BILLS", "C"),
+    RECEIPTS("RECEIPTS", "D"),
+    DISCOUNTS("DISCOUNTS", "E"),
+    LEASES("LEASES", "F"),
+    LEASE_REQUESTS("LEASE_REQUESTS", "G"),
+    APPOINTMENT_SLOTS("APPOINTMENT_SLOTS", "H"),
+    APPOINTMENTS("APPOINTMENTS", "I"),
+    PROPERTIES("PROPERTIES", "J"),
+    LOCS("LOCS", "K"),
+    MALLS("MALLS", "L"),
+    USERS("USERS", "M"),
+    ROLES("ROLES", "N"),
+    CREDENTIALS("CREDENTIALS", "O"),
+    NOTIFICATIONS("NOTIFICATIONS", "P");
     private final String tableName;
     private final String alias;
 
-    Table(String
-    tableName, String
-    alias
-
-
-        ) {
+    Table(String tableName, String alias
+    ) {
         this.tableName = tableName;
         this.alias = alias;
     }
