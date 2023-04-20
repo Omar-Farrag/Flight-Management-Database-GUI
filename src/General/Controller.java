@@ -126,6 +126,23 @@ public class Controller {
         dialog.setVisible(true);
     }
 
+    /**
+     * Updates the values of certain rows in the given table
+     *
+     * @param t Table whose rows are to be modified
+     * @param filters Conditions that a row must satisfy to be updated
+     * @param toModify Attribute collection containing the attributes to be
+     * modified and their new values
+     * @param cascade A flag determining whether the changes in the given table
+     * must be cascaded to the referencing foreign keys. If they are to be
+     * cascaded, then the foreign key attributes referencing them must have the
+     * on Update Cascade option in the DBMS. Otherwise, an exception is thrown.
+     * @return Result of modification operation
+     * @throws SQLException If an error occurs while updating the data in the
+     * DB.
+     * @throws DBManagementException Print the message to know why the exception
+     * was thrown
+     */
     public QueryResult modify(Table t, AttributeCollection newValues, Filters filters) {
         try {
             QueryResult result = DB.modify(t, filters, newValues, true);
@@ -143,6 +160,17 @@ public class Controller {
         return null;
     }
 
+    /**
+     * Inserts the given attribute collection to the given table. The attributes
+     * in the collection must match the attributes in the table, but the order
+     * is irrelevant. If you want to set one of the attributes in the table to
+     * null, then set the value of that attribute in the attribute collection to
+     * null, pass an empty string to the attribute's value.
+     *
+     * @param newValues list of attributes forming the tuple to be inserted
+     * @param t Table where the tuple will be inserted
+     * @return The result of the insertion operation
+     */
     public QueryResult insert(Table t, AttributeCollection newValues) {
         try {
             QueryResult result = DB.insert(t, newValues);
@@ -160,6 +188,19 @@ public class Controller {
         return null;
     }
 
+    /**
+     * Joins the tables containing the attributes in the given attribute
+     * collection and filters then retrieves rows that satisfy certain
+     * conditions. Only the attributes in the collection are selected from the
+     * rows. Bear in mind that the tables containing the attributes in the
+     * attribute collection and filters must be eligible for joining, otherwise
+     * an exception is thrown.
+     *
+     * @param toShow Attributes to be retrieved
+     * @param filters Conditions that a row must satisfy to be part of the
+     * retrieved set of rows
+     * @return QueryResult containing the result set of the retrieval operation
+     */
     public QueryResult retrieve(AttributeCollection toShow, Filters filters) {
         try {
             QueryResult result = DB.retrieve(toShow, filters);
@@ -176,6 +217,15 @@ public class Controller {
         return null;
     }
 
+    /**
+     * Retrieves specific rows from a given table
+     *
+     * @param t Table containing the rows to be retrieved
+     * @param filters Conditions that a row must satisfy to be part of the
+     * retrieved set of rows
+     * @return QueryResult containing a result set of the retrieved rows
+     *
+     */
     public QueryResult retrieve(Table t, Filters filters) {
         try {
             QueryResult result = DB.retrieve(t, filters);
@@ -192,6 +242,15 @@ public class Controller {
         return null;
     }
 
+    /**
+     * Deletes rows in the given table that satisfy all the given filters
+     * provided these rows are not referenced by other rows. Passing an empty
+     * filters object will delete the whole table.
+     *
+     * @param t Table whose entries are to be deleted.
+     * @param filters Conditions that a row must satisfy to be deleted
+     * @return Query result of the delete operation
+     */
     public QueryResult delete(Table t, Filters filters) {
         try {
             QueryResult result = DB.delete(t, filters);
@@ -209,6 +268,13 @@ public class Controller {
         return null;
     }
 
+    /**
+     * Retrieves all rows from a specific table
+     *
+     * @param t Table whose rows are to be retrieved
+     * @return QueryResult containing the result set of the retrieved table
+     *
+     */
     public QueryResult retrieve(Table t) {
         try {
             QueryResult result = DB.retrieve(t);
