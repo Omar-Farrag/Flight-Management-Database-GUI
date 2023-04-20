@@ -10,27 +10,28 @@ public enum Table {
      * the tables for our application and all other tables, we can
      * put the names of this application's tables here.
      */
-    UTILITY_CONSUMPTION("UTILITY_CONSUMPTION", "A"),
-    MAINTENANCE_REQUESTS("MAINTENANCE_REQUESTS", "B"),
-    BILLS("BILLS", "C"),
-    RECEIPTS("RECEIPTS", "D"),
-    DISCOUNTS("DISCOUNTS", "E"),
-    LEASES("LEASES", "F"),
-    LEASE_REQUESTS("LEASE_REQUESTS", "G"),
-    APPOINTMENT_SLOTS("APPOINTMENT_SLOTS", "H"),
-    APPOINTMENTS("APPOINTMENTS", "I"),
-    PROPERTIES("PROPERTIES", "J"),
-    LOCS("LOCS", "K"),
-    MALLS("MALLS", "L"),
-    USERS("USERS", "M"),
-    ROLES("ROLES", "N"),
-    CREDENTIALS("CREDENTIALS", "O"),
-    NOTIFICATIONS("NOTIFICATIONS", "P");
+    ACCOUNT("account", "A"),
+    AIRLINE("airline", "B"),
+    AIRPLANE("airplane", "C"),
+    AIRPORT("airport", "D"),
+    BAGGAGE("baggage", "E"),
+    BUSINESS_TICKET("business_ticket", "F"),
+    CITY("city", "G"),
+    CREWMEMBER("crewmember", "H"),
+    ECONOMY_TICKET("economy_ticket", "I"),
+    FIRST_TICKET("first_ticket", "J"),
+    FLIGHT("flight", "K"),
+    GATES("gates", "L"),
+    PASSENGER("passenger", "M"),
+    PERSON("person", "N"),
+    PERSON_FLIGHT("person_flight", "O"),
+    TICKET("ticket", "P"),
+    USER_ACTIVITY("user_activity", "Q");
+
     private final String tableName;
     private final String alias;
 
-    Table(String tableName, String alias
-    ) {
+    Table(String tableName, String alias) {
         this.tableName = tableName;
         this.alias = alias;
     }

@@ -18,7 +18,7 @@ public class Attribute {
      */
     public Attribute(Name attributeName, String value, Table t) {
         this.attributeName = attributeName;
-        this.attributeValue = value;
+        this.attributeValue = value.replace("'", "''");
         this.type = attributeName.type;
         this.t = t;
 
@@ -101,84 +101,68 @@ public class Attribute {
      */
     public enum Name {
 
-        ELECHARGE("ELECHARGE", Type.NUMBER),
-        WATCONS("WATCONS", Type.NUMBER),
-        ELECONS("ELECONS", Type.NUMBER),
-        WASTEDISPOSED("WASTEDISPOSED", Type.NUMBER),
-        WASTECHARGE("WASTECHARGE", Type.NUMBER),
-        WATCHARGE("WATCHARGE", Type.NUMBER),
-        UTILITY_ID("UTILITY_ID", Type.STRING),
-        REQUEST_NUM("REQUEST_NUM", Type.STRING),
-        STATUS("STATUS", Type.STRING),
-        LEASE_NUM("LEASE_NUM", Type.STRING),
-        ASSIGNED_TECH("ASSIGNED_TECH", Type.STRING),
-        DESCRIPTION("DESCRIPTION", Type.STRING),
-        BILL_NUM("BILL_NUM", Type.STRING),
-        CHARGE("CHARGE", Type.NUMBER),
-        DUE_DATE("DUE_DATE", Type.DATE),
-        PAID("PAID", Type.NUMBER),
-        TOTAL_AMOUNT("TOTAL_AMOUNT", Type.NUMBER),
-        PAYER_ID("PAYER_ID", Type.STRING),
-        RECEIPT_NUM("RECEIPT_NUM", Type.STRING),
-        DATE_PAID("DATE_PAID", Type.DATE),
-        UTILITY_PERCENTAGE("UTILITY_PERCENTAGE", Type.NUMBER),
-        MAINTENANCE_PERCENTAGE("MAINTENANCE_PERCENTAGE", Type.NUMBER),
-        LEASE_PERCENTAGE("LEASE_PERCENTAGE", Type.NUMBER),
-        DISCOUNT_NUM("DISCOUNT_NUM", Type.STRING),
-        LOCATION_NUM("LOCATION_NUM", Type.STRING),
-        END_DATE("END_DATE", Type.DATE),
-        START_DATE("START_DATE", Type.DATE),
-        PAYMENT_OPTION("PAYMENT_OPTION", Type.STRING),
-        LEASER_ID("LEASER_ID", Type.STRING),
-        APPLICANT_ID("APPLICANT_ID", Type.STRING),
-        LEASE_END("LEASE_END", Type.DATE),
-        LEASE_START("LEASE_START", Type.DATE),
-        LEASE_REQUEST_NUM("LEASE_REQUEST_NUM", Type.STRING),
-        AGENT_ID("AGENT_ID", Type.STRING),
-        POTENTIAL_TENANT_ID("POTENTIAL_TENANT_ID", Type.STRING),
-        SPACE("SPACE", Type.NUMBER),
-        BI_ANNUAL_RATE("BI_ANNUAL_RATE", Type.NUMBER),
-        ANNUAL_RATE("ANNUAL_RATE", Type.NUMBER),
-        MONTHLY_RATE("MONTHLY_RATE", Type.NUMBER),
-        PURPOSE("PURPOSE", Type.STRING),
-        QUARTERLY_RATE("QUARTERLY_RATE", Type.NUMBER),
-        CLASS("CLASS", Type.STRING),
-        NAME("NAME", Type.STRING),
-        MALL_NUM("MALL_NUM", Type.STRING),
-        STORE_NUM("STORE_NUM", Type.STRING),
-        ADDRESS("ADDRESS", Type.STRING),
-        LNAME("LNAME", Type.STRING),
-        EMAIL_ADDRESS("EMAIL_ADDRESS", Type.STRING),
-        USER_ID("USER_ID", Type.STRING),
-        ROLE_ID("ROLE_ID", Type.STRING),
-        PHONE_NUMBER("PHONE_NUMBER", Type.STRING),
-        FNAME("FNAME", Type.STRING),
+        USERNAME("USERNAME", Type.STRING),
         PASSWORD("PASSWORD", Type.STRING),
-        MESSAGE("MESSAGE", Type.STRING),
-        SENDER_ID("SENDER_ID", Type.STRING),
-        RECEIVER_ID("RECEIVER_ID", Type.STRING),
-        DATE_SENT("DATE_SENT", Type.DATE);
+        ACCOUNT_TYPE("ACCOUNT_TYPE", Type.STRING),
+        CODE("CODE", Type.STRING),
+        NAME("NAME", Type.STRING),
+        NUMBER("NUMBER", Type.STRING),
+        MODEL("MODEL", Type.STRING),
+        MAUNFACTURER("MAUNFACTURER", Type.STRING),
+        YEAR_BUILT("YEAR_BUILT", Type.DATE),
+        AIRLINE_CODE("AIRLINE_CODE", Type.STRING),
+        CITY_CODE("CITY_CODE", Type.STRING),
+        FLIGHT_FNUMBER("FLIGHT_FNUMBER", Type.STRING),
+        PERSON_SSN("PERSON_SSN", Type.NUMBER),
+        LOUNGE("LOUNGE", Type.STRING),
+        SEAT("SEAT", Type.NUMBER),
+        COUNTRY("COUNTRY", Type.STRING),
+        SSN("SSN", Type.NUMBER),
+        ROLE("ROLE", Type.STRING),
+        CREWMEMBER_SSN("CREWMEMBER_SSN", Type.NUMBER),
+        FNUMBER("FNUMBER", Type.STRING),
+        DURATION("DURATION", Type.DATE),
+        FIRST_SEATS("FIRST_SEATS", Type.NUMBER),
+        BUSINESS_SEATS("BUSINESS_SEATS", Type.NUMBER),
+        ECONOMY("ECONOMY", Type.NUMBER),
+        DISTANCE("DISTANCE", Type.NUMBER),
+        STATUS("STATUS", Type.STRING),
+        DEPARTURE("DEPARTURE", Type.STRING),
+        ARRIVAL("ARRIVAL", Type.STRING),
+        GATES_GNUMBER("GATES_GNUMBER", Type.NUMBER),
+        AIRPLANE_NUMBER("AIRPLANE_NUMBER", Type.STRING),
+        AIRPORT_INCOMING_CODE("AIRPORT_INCOMING_CODE", Type.STRING),
+        AIRPORT_OUTCOMING_CODE2("AIRPORT_OUTCOMING_CODE2", Type.STRING),
+        GNUMBER("GNUMBER", Type.NUMBER),
+        FLOOR("FLOOR", Type.STRING),
+        LOCATION("LOCATION", Type.STRING),
+        AIRPORT_CODE("AIRPORT_CODE", Type.STRING),
+        FNAME("FNAME", Type.STRING),
+        LNAME("LNAME", Type.STRING),
+        AGE("AGE", Type.NUMBER),
+        PERRSON_SSN("PERRSON_SSN", Type.NUMBER),
+        PRICE("PRICE", Type.NUMBER),
+        PASSENGER_SSN("PASSENGER_SSN", Type.NUMBER),
+        ROWS_AFFECTED("ROWS_AFFECTED", Type.STRING),
+        TABLE("TABLE", Type.STRING),
+        ACTIVITY("ACTIVITY", Type.STRING),
+        DATE("DATE", Type.DATE),
+        ACCOUNT_USERNAME("ACCOUNT_USERNAME", Type.STRING);
 
-        private final String name;
+        private final String attName;
         private final Type type;
 
-        Name(String name, Type type
-        ) {
-            this.name = name;
+        Name(String name, Type type) {
+            this.attName = name;
             this.type = type;
         }
 
         public String getName() {
-            return name;
+            return attName;
         }
     }
 
     public enum Type {
         NUMBER, STRING, DATE;
-    }
-
-    public static void main(String[] args) {
-        String x = "3.23";
-        System.out.println(Integer.parseInt(x));
     }
 }

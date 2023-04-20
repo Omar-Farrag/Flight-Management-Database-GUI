@@ -5,6 +5,15 @@
  */
 package General;
 
+import DatabaseManagement.ConstraintsHandling.ConstraintChecker;
+import DatabaseManagement.DatabaseManager;
+import DatabaseManagement.Exceptions.DBManagementException;
+import DatabaseManagement.Table;
+import SuperAccess.TestForm;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author wissam
@@ -15,6 +24,14 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        (new LoginForm()).setVisible(true);
+        try {
+            ConstraintChecker.getInstance();
+//        (new LoginForm()).setVisible(true);
+            new TableViewer("AIRPORT", Table.AIRPORT, new TestForm());
+        } catch (SQLException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (DBManagementException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

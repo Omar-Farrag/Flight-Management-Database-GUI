@@ -12,12 +12,10 @@ package General;
 public class LoginUser {
 
     String username;
-    String Name;
-    int type;
+    String type;
 
-    LoginUser(String uuser, String uname, int utype) {
+    LoginUser(String uuser, String utype) {
         username = uuser;
-        Name = uname;
         type = utype;
     }
 
@@ -27,7 +25,7 @@ public class LoginUser {
      * @return true if user is admin, false otherwise
      */
     public boolean isAdmin() {
-        return type == 0;
+        return type.equals("0");
     }
 
 }
