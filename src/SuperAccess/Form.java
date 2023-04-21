@@ -18,11 +18,13 @@ import javax.swing.JFrame;
  */
 public interface Form {
 
-    public AttributeCollection getAttributes();
+    public AttributeCollection getAllAttributes();
+
+    public AttributeCollection getModifiedAttributes();
 
     public Filters getBrowsingFilters();
 
-    public Filters getEntryFilters();
+    public Filters getPKFilter();
 
     public Table getTable();
 
@@ -30,7 +32,7 @@ public interface Form {
 
     public void enableFields();
 
-    public void disableFixedFields();
+    public void disablePKFields();
 
     public void populateFields(AttributeCollection toPopulateWith);
 

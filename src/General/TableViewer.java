@@ -146,8 +146,8 @@ public class TableViewer extends JFrame {
 
     public void applyModification() throws SQLException {
         Controller controller = new Controller();
-        Filters filters = form.getEntryFilters();
-        AttributeCollection newValues = form.getAttributes();
+        Filters filters = form.getPKFilter();
+        AttributeCollection newValues = form.getModifiedAttributes();
         Table t = form.getTable();
         QueryResult result = controller.modify(t, newValues, filters);
 
@@ -170,7 +170,7 @@ public class TableViewer extends JFrame {
     public void applyInsertion() throws SQLException {
         Controller controller = new Controller();
 
-        AttributeCollection newValues = form.getAttributes();
+        AttributeCollection newValues = form.getAllAttributes();
         Table t = form.getTable();
 
         QueryResult result = controller.insert(t, newValues);

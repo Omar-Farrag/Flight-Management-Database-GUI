@@ -10,6 +10,7 @@ import DatabaseManagement.DatabaseManager;
 import DatabaseManagement.Exceptions.DBManagementException;
 import DatabaseManagement.Table;
 import SuperAccess.Account;
+import SuperAccess.Airline;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,7 +28,8 @@ public class Main {
         try {
             ConstraintChecker.getInstance();
 //        (new LoginForm()).setVisible(true);
-            new TableViewer("ACCOUNT", Table.ACCOUNT, new Account());
+            TableViewer viewer = new TableViewer("AIRLINE", Table.AIRLINE, new Airline());
+
         } catch (SQLException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         } catch (DBManagementException ex) {
