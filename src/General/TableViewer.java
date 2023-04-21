@@ -11,7 +11,6 @@ import DatabaseManagement.Table;
 import FormManipulationStrategies.FilterForm;
 import FormManipulationStrategies.InsertForm;
 import FormManipulationStrategies.ModifyForm;
-import General.Controller;
 import SuperAccess.Form;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -24,10 +23,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JButton;
 
 import javax.swing.JFrame;
@@ -51,7 +47,7 @@ public class TableViewer extends JFrame {
     private JScrollPane scrollPane;
     private AttributeCollection toShow;
     private Table toDisplay;
-    private DatabaseManager DB = DatabaseManager.getInstance();
+    private final DatabaseManager DB = DatabaseManager.getInstance();
     private JPopupMenu contextMenu;
     private Form form;
     private boolean readOnly;
@@ -64,11 +60,10 @@ public class TableViewer extends JFrame {
      *
      * @param title Title of the window
      * @param toShow collection to be retrieved from database and displayed
-     * @param filterPane A filter pane containing the scrollPane component to be
-     * displayed when filtering. Users will interact with that scroll pane to
-     * set the filters as they please. Simply create a new JPanel and make it
-     * implement the FilterPane interface. Checkout PropertyBrowsingFilters for
-     * more clarity.
+     * @param form A form containing the frame to be displayed when filtering.
+     * Users will interact with that frame to set the filters as they please.
+     * Simply create a new JFrame and make it implement the Form interface.
+     * Checkout Account for more clarity.
      *
      * @throws SQLException
      */
@@ -83,11 +78,10 @@ public class TableViewer extends JFrame {
      *
      * @param title Title of the window
      * @param toDisplay table to be retrieved from database and displayed
-     * @param filterPane A filter pane containing the scrollPane component to be
-     * displayed when filtering. Users will interact with that scroll pane to
-     * set the filters as they please. Simply create a new JPanel and make it
-     * implement the FilterPane interface. Checkout PropertyBrowsingFilters for
-     * more clarity.
+     * @param form A form containing the frame to be displayed when filtering.
+     * Users will interact with that frame to set the filters as they please.
+     * Simply create a new JFrame and make it implement the Form interface.
+     * Checkout Account for more clarity.
      *
      * @throws SQLException
      */
@@ -119,7 +113,7 @@ public class TableViewer extends JFrame {
         AttributeCollection collection = new AttributeCollection();
         for (int col = 0; col < table.getColumnCount(); col++) {
             Name columnName = Name.valueOf(table.getColumnName(col));
-            String value = table.getValueAt(rowNum, col).toString();
+            String value = table.getValueAt(rowNum, col).toString().trim();
             collection.add(new Attribute(columnName, value, toDisplay));
         }
         return collection;
@@ -142,6 +136,10 @@ public class TableViewer extends JFrame {
         initModel(result.getResult());
 
         initTable();
+
+        sorter = new TableRowSorter<>(model);
+        table.setRowSorter(sorter);
+
         scrollPane.setViewportView(table);
         form.getFrame().dispose();
     }
@@ -160,6 +158,10 @@ public class TableViewer extends JFrame {
         initModel(controller.retrieve(t).getResult());
 
         initTable();
+
+        sorter = new TableRowSorter<>(model);
+        table.setRowSorter(sorter);
+
         scrollPane.setViewportView(table);
         form.getFrame().dispose();
 
@@ -178,6 +180,9 @@ public class TableViewer extends JFrame {
         }
         initModel(controller.retrieve(t).getResult());
 
+        sorter = new TableRowSorter<>(model);
+        table.setRowSorter(sorter);
+
         initTable();
         scrollPane.setViewportView(table);
         form.getFrame().dispose();
@@ -193,12 +198,15 @@ public class TableViewer extends JFrame {
             Filters filters = new Filters(getRow(row));
             QueryResult result = controller.delete(form.getTable(), filters);
             if (!result.noErrors()) {
-                controller.displayErrors(result);
                 break;
             }
         }
+
         initModel(controller.retrieve(t).getResult());
         initTable();
+        sorter = new TableRowSorter<>(model);
+        table.setRowSorter(sorter);
+
         scrollPane.setViewportView(table);
         form.getFrame().dispose();
 

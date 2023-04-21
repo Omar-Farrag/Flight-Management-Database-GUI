@@ -68,7 +68,10 @@ public class Controller {
      *
      * @param result The returned QueryResult from the database operation
      */
+    static int counter = 0;
+
     public void displayErrors(QueryResult result) {
+        System.out.println(++counter);
         ArrayList<String> errors = result.getAllErrors();
         String messageToDisplay = "";
         for (String error : errors) {
@@ -284,6 +287,28 @@ public class Controller {
             return result;
         } catch (SQLException ex) {
             displaySQLError(ex);
+        }
+        return null;
+    }
+
+    /**
+     * Retrieves all rows from the tables containing the attributes in the given
+     * collection. Only the attribute values are retrieved
+     *
+     * @param toGet Table whose rows are to be retrieved
+     * @return QueryResult containing the result set of the retrievedd e
+     */
+    public QueryResult retrieve(AttributeCollection toGet) {
+        try {
+            QueryResult result = DB.retrieve(toGet);
+            if (!result.noErrors()) {
+                displayErrors(result);
+            }
+            return result;
+        } catch (SQLException ex) {
+            displaySQLError(ex);
+        } catch (DBManagementException ex) {
+            displayErrors("Something went wrong while retrieving data from database");
         }
         return null;
     }

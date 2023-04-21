@@ -30,7 +30,7 @@ public interface Form {
 
     public void enableFields();
 
-    public void disableFields();
+    public void disableFixedFields();
 
     public void populateFields(AttributeCollection toPopulateWith);
 

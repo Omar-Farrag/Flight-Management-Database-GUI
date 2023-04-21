@@ -4,29 +4,69 @@
  */
 package SuperAccess;
 
+import DatabaseManagement.Attribute;
+import DatabaseManagement.Attribute.Name;
 import DatabaseManagement.AttributeCollection;
 import DatabaseManagement.Filters;
 import DatabaseManagement.Table;
 import FormManipulationStrategies.FormInitializationStrategy;
+import General.PasswordManager;
 import General.TableViewer;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  *
  * @author Dell
  */
-public class TestForm extends javax.swing.JFrame implements Form {
+public class Account extends javax.swing.JFrame implements Form {
 
     private FormInitializationStrategy initStrategy;
     private TableViewer viewer;
+    private final Table table = Table.ACCOUNT;
 
     /**
      * Creates new form InsertForm
      */
-    public TestForm() {
+    public Account() {
         initComponents();
+
+        ComboBoxFactory.populateAccountTypeCMB(accountTypeCMB);
+        passwordField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                checkLength();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                checkLength();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                checkLength();
+            }
+
+            private void checkLength() {
+
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (passwordField.getText().length() > 25) { // check if length of text is greater than 25
+                            String text = passwordField.getText().substring(0, 25); // truncate text to first 25 characters
+                            passwordField.setText(text); // set text field to truncated text
+                        }
+                    }
+                });
+
+            }
+        });
+
     }
 
     /**
@@ -43,16 +83,12 @@ public class TestForm extends javax.swing.JFrame implements Form {
         jPanel1 = new javax.swing.JPanel();
         jLabel25 = new javax.swing.JLabel();
         jLabel26 = new javax.swing.JLabel();
-        field1 = new javax.swing.JTextField();
+        usernameField = new javax.swing.JTextField();
         ActionBtn = new javax.swing.JButton();
         jLabel27 = new javax.swing.JLabel();
-        field2 = new javax.swing.JTextField();
+        passwordField = new javax.swing.JTextField();
         jLabel28 = new javax.swing.JLabel();
-        field3 = new javax.swing.JTextField();
-        field4 = new javax.swing.JTextField();
-        jLabel29 = new javax.swing.JLabel();
-        jLabel30 = new javax.swing.JLabel();
-        field5 = new javax.swing.JTextField();
+        accountTypeCMB = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -61,7 +97,7 @@ public class TestForm extends javax.swing.JFrame implements Form {
         TopLabel.setFont(new java.awt.Font("Verdana", 1, 24)); // NOI18N
         TopLabel.setForeground(new java.awt.Color(255, 255, 255));
         TopLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        TopLabel.setText("CREATE");
+        TopLabel.setText("ACCOUNT");
         TopLabel.setOpaque(true);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -73,12 +109,12 @@ public class TestForm extends javax.swing.JFrame implements Form {
         jLabel26.setBackground(new java.awt.Color(204, 204, 204));
         jLabel26.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
         jLabel26.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel26.setText("Store Name:");
+        jLabel26.setText("Username:");
         jLabel26.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         jLabel26.setOpaque(true);
 
-        field1.setFont(new java.awt.Font("Verdana", 3, 14)); // NOI18N
-        field1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        usernameField.setFont(new java.awt.Font("Verdana", 3, 14)); // NOI18N
+        usernameField.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
         ActionBtn.setBackground(new java.awt.Color(0, 204, 0));
         ActionBtn.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
@@ -88,42 +124,22 @@ public class TestForm extends javax.swing.JFrame implements Form {
         jLabel27.setBackground(new java.awt.Color(204, 204, 204));
         jLabel27.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
         jLabel27.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel27.setText("Store Name:");
+        jLabel27.setText("Password:");
         jLabel27.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         jLabel27.setOpaque(true);
 
-        field2.setFont(new java.awt.Font("Verdana", 3, 14)); // NOI18N
-        field2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        passwordField.setFont(new java.awt.Font("Verdana", 3, 14)); // NOI18N
+        passwordField.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
         jLabel28.setBackground(new java.awt.Color(204, 204, 204));
         jLabel28.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
         jLabel28.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel28.setText("Store Name:");
+        jLabel28.setText("Account Type:");
         jLabel28.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         jLabel28.setOpaque(true);
 
-        field3.setFont(new java.awt.Font("Verdana", 3, 14)); // NOI18N
-        field3.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-
-        field4.setFont(new java.awt.Font("Verdana", 3, 14)); // NOI18N
-        field4.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-
-        jLabel29.setBackground(new java.awt.Color(204, 204, 204));
-        jLabel29.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
-        jLabel29.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel29.setText("Store Name:");
-        jLabel29.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        jLabel29.setOpaque(true);
-
-        jLabel30.setBackground(new java.awt.Color(204, 204, 204));
-        jLabel30.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
-        jLabel30.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel30.setText("Store Name:");
-        jLabel30.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        jLabel30.setOpaque(true);
-
-        field5.setFont(new java.awt.Font("Verdana", 3, 14)); // NOI18N
-        field5.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        accountTypeCMB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        accountTypeCMB.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -137,31 +153,20 @@ public class TestForm extends javax.swing.JFrame implements Form {
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 25, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(field1, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(29, 29, 29))
+                                .addComponent(usernameField, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel27, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(field2, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel28, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(field3, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel29, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(field4, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel30, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(field5, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(29, 29, 29))))))
+                                .addComponent(jLabel27, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(passwordField, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel28, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(accountTypeCMB, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGap(29, 29, 29))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(ActionBtn)
@@ -174,26 +179,18 @@ public class TestForm extends javax.swing.JFrame implements Form {
                 .addGap(26, 26, 26)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel26)
-                    .addComponent(field1, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(usernameField, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel27)
-                    .addComponent(field2, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(passwordField, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel28)
-                    .addComponent(field3, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(26, 26, 26)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel29)
-                    .addComponent(field4, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(26, 26, 26)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel30)
-                    .addComponent(field5, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(100, 100, 100)
+                    .addComponent(accountTypeCMB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(39, 39, 39)
                 .addComponent(ActionBtn)
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addContainerGap(242, Short.MAX_VALUE))
         );
 
         jScrollPane1.setViewportView(jPanel1);
@@ -219,39 +216,66 @@ public class TestForm extends javax.swing.JFrame implements Form {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ActionBtn;
     private javax.swing.JLabel TopLabel;
-    private javax.swing.JTextField field1;
-    private javax.swing.JTextField field2;
-    private javax.swing.JTextField field3;
-    private javax.swing.JTextField field4;
-    private javax.swing.JTextField field5;
+    private javax.swing.JComboBox<String> accountTypeCMB;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel28;
-    private javax.swing.JLabel jLabel29;
-    private javax.swing.JLabel jLabel30;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextField passwordField;
+    private javax.swing.JTextField usernameField;
     // End of variables declaration//GEN-END:variables
 
     @Override
     public AttributeCollection getAttributes() {
-        return new AttributeCollection();
+        AttributeCollection collection = new AttributeCollection();
+
+        String username = usernameField.getText().trim();
+        String password = passwordField.getText();
+        if (!password.isBlank()) {
+            password = new PasswordManager().encrypt(passwordField.getText());
+        }
+        String accountType = accountTypeCMB.getSelectedItem().toString().trim();
+
+        collection.add(new Attribute(Name.USERNAME, username, table));
+        collection.add(new Attribute(Name.PASSWORD, password, table));
+        collection.add(new Attribute(Name.ACCOUNT_TYPE, accountType, table));
+
+        return collection;
     }
 
     @Override
     public Filters getBrowsingFilters() {
-        return new Filters();
+        Filters filters = new Filters();
+
+        String username = usernameField.getText().trim();
+        String accountType = accountTypeCMB.getSelectedItem().toString().trim();
+
+        if (!username.isBlank()) {
+            filters.addEqual(new Attribute(Name.USERNAME, usernameField.getText().trim(), table));
+        }
+        if (!accountType.isBlank()) {
+            filters.addEqual(new Attribute(Name.ACCOUNT_TYPE, accountType, table));
+        }
+        return filters;
     }
 
     @Override
     public Filters getEntryFilters() {
-        return new Filters();
+        Filters filters = new Filters();
+
+        String username = usernameField.getText().trim();
+
+        filters.addEqual(new Attribute(Name.USERNAME, usernameField.getText().trim(), table));
+
+        return filters;
+
     }
 
     @Override
     public Table getTable() {
-        return Table.AIRPORT;
+        return table;
     }
 
     @Override
@@ -261,42 +285,36 @@ public class TestForm extends javax.swing.JFrame implements Form {
 
     @Override
     public void enableFields() {
-        field1.setEnabled(true);
-        field2.setEnabled(true);
-        field3.setEnabled(true);
-        field4.setEnabled(true);
-        field5.setEnabled(true);
+        usernameField.setEnabled(true);
+        passwordField.setEnabled(true);
+        accountTypeCMB.setEnabled(true);
     }
 
     @Override
-    public void disableFields() {
-        field5.setEnabled(false);
-        field3.setEnabled(false);
-        field1.setEnabled(false);
-
+    public void disableFixedFields() {
+        usernameField.setEnabled(false);
     }
 
     @Override
     public void populateFields(AttributeCollection toPopulateWith) {
-        field1.setText("Hello I am field1");
-        field2.setText("Hello I am field2");
-        field3.setText("Hello I am field3");
-        field4.setText("Hello I am field4");
-        field5.setText("Hello I am field5");
+        usernameField.setText(toPopulateWith.getValue(new Attribute(Name.USERNAME, table)));
+        String decryptedPassword = new PasswordManager().decrypt(toPopulateWith.getValue(new Attribute(Name.USERNAME, table)));
+        passwordField.setText(decryptedPassword);
+        ComboBoxFactory.populateAccountTypeCMB(accountTypeCMB);
+        accountTypeCMB.setSelectedItem(toPopulateWith.getValue(new Attribute(Name.ACCOUNT_TYPE, table)));
     }
 
     @Override
     public void clearFields() {
-        field1.setText("");
-        field2.setText("");
-        field3.setText("");
-        field4.setText("");
-        field5.setText("");
+        usernameField.setText("");
+        passwordField.setText("");
+        accountTypeCMB.setSelectedItem("");
+
     }
 
     @Override
     public void setLabelType(String labelType) {
-        TopLabel.setText(labelType.toUpperCase() + " " + Table.AIRPORT.getTableName().toUpperCase());
+        TopLabel.setText(labelType.toUpperCase() + " " + table.getTableName().toUpperCase());
     }
 
     @Override

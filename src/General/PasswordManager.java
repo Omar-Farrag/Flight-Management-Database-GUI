@@ -95,4 +95,10 @@ public class PasswordManager {
         return "";
     }
 
+    public static void main(String[] args) {
+        String text = "abcd";
+        String encryptedText = new PasswordManager().encrypt(text);
+        System.out.println(encryptedText + " " + encryptedText.length());
+    }
+
 }

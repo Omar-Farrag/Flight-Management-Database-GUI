@@ -206,7 +206,7 @@ public class MetaDataExtractor {
                     } else if (dataType.toLowerCase().equals("varchar2") || dataType.toLowerCase().equals("char")) {
                         dataType += extractMaxLength(tableDataTypes);
                     }
-                    return dataType;
+                    return dataType.toUpperCase();
                 }
 
             }
@@ -251,7 +251,7 @@ public class MetaDataExtractor {
                     }
                 }
 
-                constraints.add(constraint);
+                constraints.add(constraint.toUpperCase());
             }
         }
         return constraints;

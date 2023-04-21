@@ -26,6 +26,11 @@ public class InsertForm implements FormInitializationStrategy {
         form.setLabelType("Insert");
         JButton button = form.getActionBtn();
 
+        ActionListener[] listeners = button.getActionListeners();
+        for (ActionListener listener : listeners) {
+            button.removeActionListener(listener);
+        }
+
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
