@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Filters {
 
-    private HashMap<Attribute, FilterType> filters;
+    private HashMap<Attribute, ArrayList<Filter>> filters;
     private HashMap<Attribute, String[]> filters_IN_Type;
 
     /**
@@ -39,7 +39,10 @@ public class Filters {
      * that the attribute must be greater than
      */
     public void addGreater(Attribute attribute) {
-        filters.put(attribute, FilterType.GREATER);
+        if (!filters.containsKey(attribute)) {
+            filters.put(attribute, new ArrayList<Filter>());
+        }
+        filters.get(attribute).add(new Filter(attribute.getStringValue(), FilterType.GREATER));
     }
 
     /**
@@ -51,7 +54,10 @@ public class Filters {
      * that the attribute must be greater than or equal
      */
     public void addGreaterEqual(Attribute attribute) {
-        filters.put(attribute, FilterType.GREATER_EQUAL);
+        if (!filters.containsKey(attribute)) {
+            filters.put(attribute, new ArrayList<Filter>());
+        }
+        filters.get(attribute).add(new Filter(attribute.getStringValue(), FilterType.GREATER_EQUAL));
     }
 
     /**
@@ -63,7 +69,25 @@ public class Filters {
      * that the attribute must be equal to
      */
     public void addEqual(Attribute attribute) {
-        filters.put(attribute, FilterType.EQUAL);
+        if (!filters.containsKey(attribute)) {
+            filters.put(attribute, new ArrayList<Filter>());
+        }
+        filters.get(attribute).add(new Filter(attribute.getStringValue(), FilterType.EQUAL));
+    }
+
+    /**
+     * Adds a condition where the value of the given attribute must match a
+     * given regular expression
+     *
+     * @param attribute Attribute where the attribute's name is the name of the
+     * attribute to place the condition on and attribute's value is the regex
+     * that the attribute must match
+     */
+    public void addLike(Attribute attribute) {
+        if (!filters.containsKey(attribute)) {
+            filters.put(attribute, new ArrayList<Filter>());
+        }
+        filters.get(attribute).add(new Filter(attribute.getStringValue(), FilterType.LIKE));
     }
 
     /**
@@ -75,7 +99,10 @@ public class Filters {
      * that the attribute must be less than
      */
     public void addLess(Attribute attribute) {
-        filters.put(attribute, FilterType.LESS);
+        if (!filters.containsKey(attribute)) {
+            filters.put(attribute, new ArrayList<Filter>());
+        }
+        filters.get(attribute).add(new Filter(attribute.getStringValue(), FilterType.LESS));
     }
 
     /**
@@ -87,7 +114,10 @@ public class Filters {
      * that the attribute must be less than or equal
      */
     public void addLessEqual(Attribute attribute) {
-        filters.put(attribute, FilterType.LESS_EQUAL);
+        if (!filters.containsKey(attribute)) {
+            filters.put(attribute, new ArrayList<Filter>());
+        }
+        filters.get(attribute).add(new Filter(attribute.getStringValue(), FilterType.LESS_EQUAL));
     }
 
     /**
@@ -99,7 +129,10 @@ public class Filters {
      * that the attribute must be unequal to
      */
     public void addNotEqual(Attribute attribute) {
-        filters.put(attribute, FilterType.NOT_EQUAL);
+        if (!filters.containsKey(attribute)) {
+            filters.put(attribute, new ArrayList<Filter>());
+        }
+        filters.get(attribute).add(new Filter(attribute.getStringValue(), FilterType.NOT_EQUAL));
     }
 
     /**
@@ -112,8 +145,12 @@ public class Filters {
     public void addBetween(Attribute attribute, String min, String max) {
         Attribute minAtt = new Attribute(attribute.getAttributeName(), min, attribute.getT());
         Attribute maxAtt = new Attribute(attribute.getAttributeName(), max, attribute.getT());
-        filters.put(minAtt, FilterType.GREATER_EQUAL);
-        filters.put(maxAtt, FilterType.LESS_EQUAL);
+
+        if (!filters.containsKey(attribute)) {
+            filters.put(attribute, new ArrayList<Filter>());
+        }
+        filters.get(attribute).add(new Filter(minAtt.getStringValue(), FilterType.GREATER_EQUAL));
+        filters.get(attribute).add(new Filter(maxAtt.getStringValue(), FilterType.LESS_EQUAL));
     }
 
     /**
@@ -144,10 +181,12 @@ public class Filters {
         String clause = "where ";
         ArrayList<String> conditions = new ArrayList<>();
 
-        for (Map.Entry<Attribute, FilterType> entry : filters.entrySet()) {
-            String condition
-                    = entry.getKey().getAliasedStringName() + " " + entry.getValue().getOperator() + " " + entry.getKey().getStringValue();
-            conditions.add(condition);
+        for (Map.Entry<Attribute, ArrayList<Filter>> entry : filters.entrySet()) {
+            for (Filter filter : entry.getValue()) {
+                String condition
+                        = entry.getKey().getAliasedStringName() + " " + filter.getOperator() + " " + filter.getStringValue();
+                conditions.add(condition);
+            }
         }
 
         for (Map.Entry<Attribute, String[]> entry : filters_IN_Type.entrySet()) {
@@ -173,6 +212,26 @@ public class Filters {
         return filters.keySet();
     }
 
+    private class Filter {
+
+        private String value;
+        private FilterType filterType;
+
+        private Filter(String value, FilterType filterType) {
+            this.value = value;
+            this.filterType = filterType;
+        }
+
+        private String getOperator() {
+            return filterType.getOperator();
+        }
+
+        private String getStringValue() {
+            return value;
+        }
+
+    }
+
     public enum FilterType {
         EQUAL("="),
         NOT_EQUAL("!="),
@@ -181,6 +240,7 @@ public class Filters {
         GREATER(">"),
         GREATER_EQUAL(">="),
         BETWEEN("BETWEEN"),
+        LIKE("LIKE"),
         IN("IN");
 
         private String operator;

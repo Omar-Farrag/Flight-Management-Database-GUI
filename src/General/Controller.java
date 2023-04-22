@@ -16,6 +16,7 @@ import java.awt.Color;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JDialog;
@@ -72,7 +73,7 @@ public class Controller {
 
     public void displayErrors(QueryResult result) {
         System.out.println(++counter);
-        ArrayList<String> errors = result.getAllErrors();
+        HashSet<String> errors = result.getAllErrors();
         String messageToDisplay = "";
         for (String error : errors) {
             messageToDisplay += "\u2022 " + error + "\n";
@@ -158,6 +159,7 @@ public class Controller {
         } catch (SQLException ex) {
             displaySQLError(ex);
         } catch (DBManagementException ex) {
+            ex.printStackTrace();
             displayErrors("Something went wrong while modifying " + t.getTableName().toUpperCase());
         }
         return null;

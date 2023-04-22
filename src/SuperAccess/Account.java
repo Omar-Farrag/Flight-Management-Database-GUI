@@ -23,21 +23,18 @@ import javax.swing.event.DocumentListener;
  *
  * @author Dell
  */
-public class Account extends javax.swing.JFrame implements Form {
+public class Account extends TableForm {
 
-    private FormInitializationStrategy initStrategy;
-    private TableViewer viewer;
     private String currentUsername;
     private String currentPassword;
     private String currentAccountType;
-
-    private final Table table = Table.ACCOUNT;
 
     /**
      * Creates new form InsertForm
      */
     public Account() {
         initComponents();
+        initBaseComponents(Table.ACCOUNT, TopLabel, ActionBtn);
 
         ComboBoxFactory.populateAccountTypeCMB(accountTypeCMB);
         passwordField.getDocument().addDocumentListener(new DocumentListener() {
@@ -246,6 +243,8 @@ public class Account extends javax.swing.JFrame implements Form {
         collection.add(new Attribute(Name.PASSWORD, currentPassword, table));
         collection.add(new Attribute(Name.ACCOUNT_TYPE, currentAccountType, table));
 
+        ComboBoxFactory.populateAccountTypeCMB(accountTypeCMB);
+
         return collection;
     }
 
@@ -257,11 +256,14 @@ public class Account extends javax.swing.JFrame implements Form {
         currentAccountType = accountTypeCMB.getSelectedItem().toString().trim();
 
         if (!currentUsername.isBlank()) {
-            filters.addEqual(new Attribute(Name.USERNAME, usernameField.getText().trim(), table));
+            filters.addLike(new Attribute(Name.USERNAME, "%" + currentUsername + "%", table));
         }
         if (!currentAccountType.isBlank()) {
-            filters.addEqual(new Attribute(Name.ACCOUNT_TYPE, currentAccountType, table));
+            filters.addLike(new Attribute(Name.ACCOUNT_TYPE, "%" + currentAccountType + "%", table));
         }
+
+        ComboBoxFactory.populateAccountTypeCMB(accountTypeCMB);
+
         return filters;
     }
 
@@ -273,18 +275,10 @@ public class Account extends javax.swing.JFrame implements Form {
 
         filters.addEqual(new Attribute(Name.USERNAME, currentUsername, table));
 
+        ComboBoxFactory.populateAccountTypeCMB(accountTypeCMB);
+
         return filters;
 
-    }
-
-    @Override
-    public Table getTable() {
-        return table;
-    }
-
-    @Override
-    public JFrame getFrame() {
-        return this;
     }
 
     @Override
@@ -295,7 +289,7 @@ public class Account extends javax.swing.JFrame implements Form {
     }
 
     @Override
-    public void disablePKFields() {
+    public void disableUnmodifiableFields() {
         usernameField.setEnabled(false);
     }
 
@@ -311,6 +305,8 @@ public class Account extends javax.swing.JFrame implements Form {
         passwordField.setText(currentPassword);
         ComboBoxFactory.populateAccountTypeCMB(accountTypeCMB);
         accountTypeCMB.setSelectedItem(currentAccountType);
+        ComboBoxFactory.populateAccountTypeCMB(accountTypeCMB);
+
     }
 
     @Override
@@ -324,36 +320,6 @@ public class Account extends javax.swing.JFrame implements Form {
         passwordField.setText(currentPassword);
         accountTypeCMB.setSelectedItem(currentAccountType);
 
-    }
-
-    @Override
-    public void setLabelType(String labelType) {
-        TopLabel.setText(labelType.toUpperCase() + " " + table.getTableName().toUpperCase());
-    }
-
-    @Override
-    public JButton getActionBtn() {
-        return ActionBtn;
-    }
-
-    @Override
-    public TableViewer getViewer() {
-        return viewer;
-    }
-
-    @Override
-    public void setInitStrategy(FormInitializationStrategy initStrat) {
-        this.initStrategy = initStrat;
-    }
-
-    @Override
-    public void applyInitStrategy() {
-        initStrategy.handleFormInitialization(this);
-    }
-
-    @Override
-    public void setViewer(TableViewer viewer) {
-        this.viewer = viewer;
     }
 
     @Override
@@ -380,6 +346,8 @@ public class Account extends javax.swing.JFrame implements Form {
         currentUsername = newUsername;
         currentPassword = newPassword;
         currentAccountType = newAccountType;
+
+        ComboBoxFactory.populateAccountTypeCMB(accountTypeCMB);
 
         return collection;
     }

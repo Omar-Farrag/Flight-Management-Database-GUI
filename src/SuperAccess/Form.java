@@ -32,7 +32,7 @@ public interface Form {
 
     public void enableFields();
 
-    public void disablePKFields();
+    public void disableUnmodifiableFields();
 
     public void populateFields(AttributeCollection toPopulateWith);
 

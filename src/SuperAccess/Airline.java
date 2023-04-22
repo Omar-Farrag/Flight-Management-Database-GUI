@@ -9,34 +9,23 @@ import DatabaseManagement.Attribute.Name;
 import DatabaseManagement.AttributeCollection;
 import DatabaseManagement.Filters;
 import DatabaseManagement.Table;
-import FormManipulationStrategies.FormInitializationStrategy;
-import General.PasswordManager;
-import General.TableViewer;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 /**
  *
  * @author Dell
  */
-public class Airline extends javax.swing.JFrame implements Form {
+public class Airline extends TableForm {
 
-    private FormInitializationStrategy initStrategy;
-    private TableViewer viewer;
     private String currentCode;
     private String currentName;
-
-    private final Table table = Table.AIRLINE;
 
     /**
      * Creates new form InsertForm
      */
     public Airline() {
         initComponents();
+
+        initBaseComponents(Table.AIRLINE, TopLabel, ActionBtn);
     }
 
     /**
@@ -195,10 +184,10 @@ public class Airline extends javax.swing.JFrame implements Form {
         currentName = nameField.getText().trim();
 
         if (!currentCode.isBlank()) {
-            filters.addEqual(new Attribute(Name.CODE, currentCode, table));
+            filters.addLike(new Attribute(Name.CODE, "%" + currentCode + "%", table));
         }
         if (!currentName.isBlank()) {
-            filters.addEqual(new Attribute(Name.NAME, currentName, table));
+            filters.addLike(new Attribute(Name.NAME, "%" + currentName + "%", table));
         }
         return filters;
     }
@@ -236,23 +225,13 @@ public class Airline extends javax.swing.JFrame implements Form {
     }
 
     @Override
-    public Table getTable() {
-        return table;
-    }
-
-    @Override
-    public JFrame getFrame() {
-        return this;
-    }
-
-    @Override
     public void enableFields() {
         codeField.setEnabled(true);
         nameField.setEnabled(true);
     }
 
     @Override
-    public void disablePKFields() {
+    public void disableUnmodifiableFields() {
         codeField.setEnabled(false);
     }
 
@@ -276,36 +255,6 @@ public class Airline extends javax.swing.JFrame implements Form {
         codeField.setText(currentCode);
         nameField.setText(currentName);
 
-    }
-
-    @Override
-    public void setLabelType(String labelType) {
-        TopLabel.setText(labelType.toUpperCase() + " " + table.getTableName().toUpperCase());
-    }
-
-    @Override
-    public JButton getActionBtn() {
-        return ActionBtn;
-    }
-
-    @Override
-    public TableViewer getViewer() {
-        return viewer;
-    }
-
-    @Override
-    public void setInitStrategy(FormInitializationStrategy initStrat) {
-        this.initStrategy = initStrat;
-    }
-
-    @Override
-    public void applyInitStrategy() {
-        initStrategy.handleFormInitialization(this);
-    }
-
-    @Override
-    public void setViewer(TableViewer viewer) {
-        this.viewer = viewer;
     }
 
 }

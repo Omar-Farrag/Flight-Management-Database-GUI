@@ -37,4 +37,24 @@ public class ComboBoxFactory {
         toPopulate.addItem("1");
 
     }
+
+    static void populateAirlineCodeCMB(JComboBox toPopulate) {
+        Controller controller = new Controller();
+
+        toPopulate.removeAllItems();
+
+        AttributeCollection collection = new AttributeCollection();
+        collection.add(new Attribute(Name.CODE, Table.AIRLINE));
+
+        ResultSet result = controller.retrieve(collection).getResult();
+
+        toPopulate.addItem("");
+        try {
+            while (result.next()) {
+                toPopulate.addItem(result.getString(1));
+            }
+        } catch (SQLException ex) {
+            controller.displaySQLError(ex);
+        }
+    }
 }

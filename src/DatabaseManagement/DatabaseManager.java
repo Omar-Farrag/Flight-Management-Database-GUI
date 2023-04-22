@@ -10,8 +10,8 @@ import DatabaseManagement.QueryGeneration.QueryGenerator;
 public class DatabaseManager {
 
     private final String URL = "jdbc:oracle:thin:@coeoracle.aus.edu:1521:orcl";
-    private final String username = "b00090340";
-    private final String password = "b00090340";
+    private final String username = "b00087320";
+    private final String password = "b00087320";
     private Connection conn;
     private static DatabaseManager instance;
 

@@ -101,9 +101,10 @@ public class Validator {
         Key primaryKeys = MetaDataExtractor.getInstance().getPrimaryKeys(toValidate.getT());
 
         if (primaryKeys.getKeyAttributes().size() <= 1) {
-            String query = "Select * from " + toValidate.getT().getAliasedName()
+            String query = "Select " + toValidate.getAliasedStringName() + "from " + toValidate.getT().getAliasedName()
                     + " where " + toValidate.getStringName() + " = " + toValidate.getStringValue();
             ResultSet result = DatabaseManager.getInstance().executeStatement(query);
+
             return !result.next();
         }
 
@@ -234,7 +235,8 @@ public class Validator {
         try {
             result = DatabaseManager.getInstance().executeStatement(query);
             if (!result.next()) {
-                return toValidate.getStringName() + " = " + toValidate.getStringValue() + ": No " + toValidate.getStringName() + " with the value " + toValidate.getValue() + " extists";
+                String givenValue = "' " + toValidate.getStringValue() + " '";
+                return toValidate.getStringName() + " = " + givenValue + ": No " + toValidate.getStringName() + " with the value " + givenValue + " exists";
             } else {
                 return "";
             }

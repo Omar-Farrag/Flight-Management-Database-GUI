@@ -226,8 +226,8 @@ public class ConstraintChecker {
             }
         }
 
-        public ArrayList<String> getAllErrors() {
-            ArrayList<String> allErrors = new ArrayList<>();
+        public HashSet getAllErrors() {
+            HashSet<String> allErrors = new HashSet<>();
             for (Map.Entry<Attribute, ArrayList<String>> entry : attribute_to_errors.entrySet()) {
                 allErrors.addAll(entry.getValue());
             }

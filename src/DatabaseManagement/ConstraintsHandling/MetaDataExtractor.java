@@ -176,7 +176,7 @@ public class MetaDataExtractor {
 
         while (columns.next()) {
 
-            String attributeName = columns.getString("COLUMN_NAME").toUpperCase();
+            String attributeName = columns.getString("COLUMN_NAME");
             JSONArray constraints = new JSONArray();
 
             ArrayList<String> constraintStrings = extractConstraints(tableName, attributeName);

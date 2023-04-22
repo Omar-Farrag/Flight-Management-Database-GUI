@@ -29,7 +29,7 @@ public class ModifyForm implements FormInitializationStrategy {
     @Override
     public void handleFormInitialization(Form form) {
         form.populateFields(toPopulateWith);
-        form.disablePKFields();
+        form.disableUnmodifiableFields();
         form.setLabelType("Modify");
         JButton button = form.getActionBtn();
 
