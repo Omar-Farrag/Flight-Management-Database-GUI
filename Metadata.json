@@ -14,7 +14,7 @@
     }, {
         "TableName": "AIRPLANE",
         "Attributes": {
-            "AIRLINE_CODE": ["VARCHAR2_4", "C_AIRLINE_CODE IS NOT NULL", "R_AIRLINE_PK"],
+            "AIRLINE_CODE": ["VARCHAR2_4", "C_AIRLINE_CODE IS NOT NULL", "R_AIRLINE_PK(SET NULL)"],
             "NUM": ["VARCHAR2_6", "C_NUM IS NOT NULL", "P_AIRPLANE_PK"],
             "YEAR_BUILT": ["NUMBER_38_0", "C_YEAR_BUILT IS NOT NULL"],
             "MODEL": ["VARCHAR2_15", "C_MODEL IS NOT NULL"],
@@ -24,21 +24,21 @@
         "TableName": "AIRPORT",
         "Attributes": {
             "CODE": ["CHAR_3", "C_CODE IS NOT NULL", "P_AIRPORT_PK"],
-            "CITY_CODE": ["CHAR_3", "C_CITY_CODE IS NOT NULL", "R_CITY_PK"],
+            "CITY_CODE": ["CHAR_3", "C_CITY_CODE IS NOT NULL", "R_CITY_PK(CASCADE)"],
             "NAME": ["VARCHAR2_25", "C_NAME IS NOT NULL"]
         }
     }, {
         "TableName": "BAGGAGE",
         "Attributes": {
-            "PERSON_SSN": ["NUMBER_38_0", "C_PERSON_SSN IS NOT NULL", "R_PERSON_PK"],
+            "PERSON_SSN": ["NUMBER_38_0", "C_PERSON_SSN IS NOT NULL", "R_PERSON_PK(CASCADE)"],
             "NUM": ["VARCHAR2_9", "C_NUM IS NOT NULL", "P_BAGGAGE_PK"],
-            "FLIGHT_FNUMBER": ["VARCHAR2_6", "C_FLIGHT_FNUMBER IS NOT NULL", "R_FLIGHT_PK"]
+            "FLIGHT_FNUMBER": ["VARCHAR2_6", "C_FLIGHT_FNUMBER IS NOT NULL", "R_FLIGHT_PK(SET NULL)"]
         }
     }, {
         "TableName": "BUSINESS_TICKET",
         "Attributes": {
             "SEAT": ["NUMBER_38_0", "C_  SEAT > 0  AND SEAT < 77 ", "C_SEAT IS NOT NULL"],
-            "NUM": ["VARCHAR2_9", "C_NUM IS NOT NULL", "P_BUSINESS_PK", "R_TICKET_PK"],
+            "NUM": ["VARCHAR2_9", "C_NUM IS NOT NULL", "P_BUSINESS_PK", "R_TICKET_PK(CASCADE)"],
             "LOUNGE": ["CHAR_1"]
         }
     }, {
@@ -52,39 +52,39 @@
         "TableName": "CREWMEMBER",
         "Attributes": {
             "ROLE": ["VARCHAR2_25", "C_ROLE IS NOT NULL"],
-            "SSN": ["NUMBER_38_0", "C_SSN IS NOT NULL", "P_CREWMEMBER_PK", "R_PERSON_PK"]
+            "SSN": ["NUMBER_38_0", "C_SSN IS NOT NULL", "P_CREWMEMBER_PK", "R_PERSON_PK(CASCADE)"]
         }
     }, {
         "TableName": "ECONOMY_TICKET",
         "Attributes": {
             "SEAT": ["NUMBER_38_0", "C_  SEAT > 0  AND SEAT < 558 ", "C_SEAT IS NOT NULL"],
-            "NUM": ["VARCHAR2_9", "C_NUM IS NOT NULL", "R_TICKET_PK"]
+            "NUM": ["VARCHAR2_9", "C_NUM IS NOT NULL", "R_TICKET_PK(CASCADE)"]
         }
     }, {
         "TableName": "FIRST_TICKET",
         "Attributes": {
-            "CREWMEMBER_SSN": ["NUMBER_38_0", "C_CREWMEMBER_SSN IS NOT NULL", "R_CREWMEMBER_PK"],
+            "CREWMEMBER_SSN": ["NUMBER_38_0", "C_CREWMEMBER_SSN IS NOT NULL", "R_CREWMEMBER_PK(SET NULL)"],
             "SEAT": ["NUMBER_38_0", "C_  SEAT > 0  AND SEAT < 15 ", "C_SEAT IS NOT NULL"],
-            "NUM": ["VARCHAR2_9", "C_NUM IS NOT NULL", "P_FIRST_PK", "R_TICKET_PK"],
+            "NUM": ["VARCHAR2_9", "C_NUM IS NOT NULL", "P_FIRST_PK", "R_TICKET_PK(CASCADE)"],
             "LOUNGE": ["CHAR_1", "C_LOUNGE IS NOT NULL"]
         }
     }, {
         "TableName": "FLIGHT",
         "Attributes": {
             "DISTANCE": ["NUMBER_38_0", "C_DISTANCE IS NOT NULL"],
-            "AIRPORT_OUTCOMING_CODE2": ["CHAR_3", "C_AIRPORT_OUTCOMING_CODE2 IS NOT NULL", "R_AIRPORT_PK"],
+            "AIRPORT_OUTCOMING_CODE2": ["CHAR_3", "C_AIRPORT_OUTCOMING_CODE2 IS NOT NULL", "R_AIRPORT_PK(SET NULL)"],
             "BUSINESS_SEATS": ["NUMBER_38_0", "C_  BUSINESS_SEATS > 0  AND BUSINESS_SEATS < 77 ", "C_BUSINESS_SEATS IS NOT NULL"],
             "FNUMBER": ["VARCHAR2_6", "C_FNUMBER IS NOT NULL", "P_FLIGHT_PK"],
             "ARRIVAL": ["DATE", "C_ARRIVAL IS NOT NULL"],
             "STATUS": ["CHAR_1", "C_STATUS IS NOT NULL"],
             "DEPARTURE": ["DATE", "C_DEPARTURE IS NOT NULL"],
-            "AIRLINE_CODE": ["VARCHAR2_4", "C_AIRLINE_CODE IS NOT NULL", "R_AIRLINE_PK"],
-            "GATES_GNUMBER": ["NUMBER_38_0", "C_GATES_GNUMBER IS NOT NULL", "R_GATES_PK"],
-            "AIRPLANE_NUMBER": ["VARCHAR2_6", "C_AIRPLANE_NUMBER IS NOT NULL", "R_AIRPLANE_PK"],
+            "AIRLINE_CODE": ["VARCHAR2_4", "C_AIRLINE_CODE IS NOT NULL", "R_AIRLINE_PK(CASCADE)"],
+            "GATES_GNUMBER": ["NUMBER_38_0", "C_GATES_GNUMBER IS NOT NULL", "R_GATES_PK(SET NULL)"],
+            "AIRPLANE_NUMBER": ["VARCHAR2_6", "C_AIRPLANE_NUMBER IS NOT NULL", "R_AIRPLANE_PK(SET NULL)"],
             "DURATION": ["NUMBER_38_0", "C_DURATION IS NOT NULL"],
             "FIRST_SEATS": ["NUMBER_38_0", "C_  FIRST_SEATS > 0  AND FIRST_SEATS < 15 ", "C_FIRST_SEATS IS NOT NULL"],
             "ECONOMY": ["NUMBER_38_0", "C_  ECONOMY > 0  AND ECONOMY < 558 ", "C_ECONOMY IS NOT NULL"],
-            "AIRPORT_INCOMING_CODE": ["CHAR_3", "C_AIRPORT_INCOMING_CODE IS NOT NULL", "R_AIRPORT_PK"]
+            "AIRPORT_INCOMING_CODE": ["CHAR_3", "C_AIRPORT_INCOMING_CODE IS NOT NULL", "R_AIRPORT_PK(SET NULL)"]
         }
     }, {
         "TableName": "GATES",
@@ -92,12 +92,12 @@
             "LOCATION": ["VARCHAR2_25"],
             "FLOOR": ["CHAR_1", "C_FLOOR IS NOT NULL"],
             "GNUMBER": ["NUMBER_38_0", "C_GNUMBER IS NOT NULL", "P_GATES_PK"],
-            "AIRPORT_CODE": ["CHAR_3", "C_AIRPORT_CODE IS NOT NULL", "R_AIRPORT_PK"]
+            "AIRPORT_CODE": ["CHAR_3", "C_AIRPORT_CODE IS NOT NULL", "R_AIRPORT_PK(CASCADE)"]
         }
     }, {
         "TableName": "PASSENGER",
         "Attributes": {
-            "SSN": ["NUMBER_38_0", "C_SSN IS NOT NULL", "P_PASSENGER_PK", "R_PERSON_PK"]
+            "SSN": ["NUMBER_38_0", "C_SSN IS NOT NULL", "P_PASSENGER_PK", "R_PERSON_PK(CASCADE)"]
         }
     }, {
         "TableName": "PERSON",
@@ -110,21 +110,21 @@
     }, {
         "TableName": "PERSON_FLIGHT",
         "Attributes": {
-            "PERSON_SSN": ["NUMBER_38_0", "C_PERSON_SSN IS NOT NULL", "P_IN_PK", "R_PERSON_PK"],
-            "FLIGHT_FNUMBER": ["VARCHAR2_6", "C_FLIGHT_FNUMBER IS NOT NULL", "P_IN_PK", "R_FLIGHT_PK"]
+            "PERSON_SSN": ["NUMBER_38_0", "C_PERSON_SSN IS NOT NULL", "P_IN_PK", "R_PERSON_PK(CASCADE)"],
+            "FLIGHT_FNUMBER": ["VARCHAR2_6", "C_FLIGHT_FNUMBER IS NOT NULL", "P_IN_PK", "R_FLIGHT_PK(CASCADE)"]
         }
     }, {
         "TableName": "TICKET",
         "Attributes": {
-            "PASSENGER_SSN": ["NUMBER_38_0", "C_PASSENGER_SSN IS NOT NULL", "R_PASSENGER_PK"],
+            "PASSENGER_SSN": ["NUMBER_38_0", "C_PASSENGER_SSN IS NOT NULL", "R_PASSENGER_PK(CASCADE)"],
             "PRICE": ["NUMBER_38_0", "C_PRICE IS NOT NULL"],
             "NUM": ["VARCHAR2_9", "C_NUM IS NOT NULL", "P_TICKET_PK"],
-            "FLIGHT_FNUMBER": ["VARCHAR2_6", "C_FLIGHT_FNUMBER IS NOT NULL", "R_FLIGHT_PK"]
+            "FLIGHT_FNUMBER": ["VARCHAR2_6", "C_FLIGHT_FNUMBER IS NOT NULL", "R_FLIGHT_PK(SET NULL)"]
         }
     }, {
         "TableName": "USER_ACTIVITY",
         "Attributes": {
-            "ACCOUNT_USERNAME": ["VARCHAR2_25", "C_ACCOUNT_USERNAME IS NOT NULL", "P_USER_ACTIVITY_PK", "R_ACCOUNT_PK"],
+            "ACCOUNT_USERNAME": ["VARCHAR2_25", "C_ACCOUNT_USERNAME IS NOT NULL", "P_USER_ACTIVITY_PK", "R_ACCOUNT_PK(SET NULL)"],
             "TABLE_NAME": ["VARCHAR2_25", "C_TABLE_NAME IS NOT NULL"],
             "ACTIVITY_DATE": ["DATE", "C_ACTIVITY_DATE IS NOT NULL", "P_USER_ACTIVITY_PK"],
             "ROWS_AFFECTED": ["VARCHAR2_25", "C_ROWS_AFFECTED IS NOT NULL"],

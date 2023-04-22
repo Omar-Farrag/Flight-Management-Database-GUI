@@ -113,8 +113,11 @@ public class TableViewer extends JFrame {
         AttributeCollection collection = new AttributeCollection();
         for (int col = 0; col < table.getColumnCount(); col++) {
             Name columnName = Name.valueOf(table.getColumnName(col));
-            String value = table.getValueAt(rowNum, col).toString().trim();
-            collection.add(new Attribute(columnName, value, toDisplay));
+            Object value = table.getValueAt(rowNum, col);
+            if (value == null) {
+                value = "";
+            }
+            collection.add(new Attribute(columnName, value.toString().trim(), toDisplay));
         }
         return collection;
     }

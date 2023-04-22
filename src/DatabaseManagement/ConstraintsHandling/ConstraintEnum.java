@@ -4,7 +4,7 @@ public enum ConstraintEnum {
     // Names of constraints come here.
     PRIMARY("^P_\\w+"),
     UNIQUE("^U_\\w+"),
-    FOREIGN("^R_\\w+"),
+    FOREIGN("^R_\\w+\\(\\w+\\s*\\w+\\)$"),
     LESS_THAN("^C_\\s*\\w+\\s*<\\s*\\w+"),
     GREATER_THAN("^C_\\s*\\w+\\s*>\\s*\\w+"),
     EQUAL("^C_\\s*\\w+\\s*=\\s*\\w+"),

@@ -82,7 +82,11 @@ public class MetaDataExtractor {
                         } else if (constraintName.startsWith("U")) {
                             resolver.insertUnique(t, attName, constraintName.substring(2));
                         } else if (constraintName.startsWith("R")) {
-                            resolver.insertForeign(t, attName, constraintName.substring(2));
+                            int leftParenIndex = constraintName.indexOf('(');
+                            int rightParenIndex = constraintName.indexOf(')');
+                            String deleteRule = constraintName.substring(leftParenIndex + 1, rightParenIndex).trim();
+                            constraintName = constraintName.substring(2, leftParenIndex);
+                            resolver.insertForeign(t, attName, constraintName, deleteRule);
                         }
                     }
                 }
@@ -120,7 +124,8 @@ public class MetaDataExtractor {
                     + "CONSTRAINT_TYPE,"
                     + " SEARCH_CONDITION,"
                     + " U.CONSTRAINT_NAME,"
-                    + " R_CONSTRAINT_NAME"
+                    + " R_CONSTRAINT_NAME,"
+                    + " DELETE_RULE"
                     + " FROM USER_CONS_COLUMNS U"
                     + " JOIN ALL_CONSTRAINTS A"
                     + " ON ( U.TABLE_NAME = A.TABLE_NAME"
@@ -241,8 +246,11 @@ public class MetaDataExtractor {
                         constraint += "_"
                                 + constraintsTable.getString("SEARCH_CONDITION").replace("\"", "").replace("\n", "")
                                         .replace("   ", "");
-                    case "R" ->
-                        constraint += "_" + constraintsTable.getString("R_CONSTRAINT_NAME");
+                    case "R" -> {
+                        String referencedKey = constraintsTable.getString("R_CONSTRAINT_NAME");
+                        String deleteRule = "(" + constraintsTable.getString("DELETE_RULE") + ")";
+                        constraint += "_" + referencedKey + deleteRule;
+                    }
                     case "P" ->
                         constraint += "_" + constraintsTable.getString("CONSTRAINT_NAME");
                     case "U" ->

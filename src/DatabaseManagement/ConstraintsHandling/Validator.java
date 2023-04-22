@@ -273,7 +273,9 @@ public class Validator {
         String constraint = parameters.getConstraint();
         Attribute toValidate = parameters.getToValidate();
 
-        constraint = constraint.substring(2).trim();
+        int leftParenIndex = constraint.indexOf('(');
+        constraint = constraint.substring(2, leftParenIndex).trim();
+
         DetailedKey referenced = ReferentialResolver.getInstance().getReferencedTable(constraint);
 
         String query

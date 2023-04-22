@@ -33,7 +33,7 @@ public class ReferentialResolver {
     }
 
     public DetailedKey getReferencedTable(String constraintName) {
-        DetailedKey toFind = new DetailedKey(null, null, constraintName);
+        DetailedKey toFind = new DetailedKey(null, null, constraintName, "");
         for (DetailedKey key : referenced_to_referencers.keySet()) {
             if (key.equals(toFind)) {
                 return key;
@@ -51,7 +51,7 @@ public class ReferentialResolver {
             Attribute.Name column = Attribute.Name.valueOf(attribute.toString());
             String constraintName = column_to_P_Constraint.get(new Key(t, column));
 
-            if (constraintName != null && referenced_to_referencers.containsKey(new DetailedKey(t, column, constraintName))) {
+            if (constraintName != null && referenced_to_referencers.containsKey(new DetailedKey(t, column, constraintName, ""))) {
                 collection.add(new Attribute(column, t));
             }
         }
@@ -64,13 +64,17 @@ public class ReferentialResolver {
         HashMap<Table, Filters> table_to_filters = new HashMap<>();
 
         for (DetailedKey key : references) {
-            Attribute toFilterBy = new Attribute(key.column, attribute.getValue(), key.t);
-            if (table_to_filters.containsKey(key.t)) {
-                table_to_filters.get(key.t).addEqual(toFilterBy);
-            } else {
-                Filters filter = new Filters();
-                filter.addEqual(toFilterBy);
-                table_to_filters.put(key.t, filter);
+
+            if (key.deleteRule.equals("NO ACTION")) {
+
+                Attribute toFilterBy = new Attribute(key.column, attribute.getValue(), key.t);
+                if (table_to_filters.containsKey(key.t)) {
+                    table_to_filters.get(key.t).addEqual(toFilterBy);
+                } else {
+                    Filters filter = new Filters();
+                    filter.addEqual(toFilterBy);
+                    table_to_filters.put(key.t, filter);
+                }
             }
         }
 
@@ -79,7 +83,7 @@ public class ReferentialResolver {
 
     private ArrayList<DetailedKey> getReferences(Table t, Attribute.Name column) {
         String constraintName = column_to_P_Constraint.get(new Key(t, column));
-        DetailedKey key = new DetailedKey(t, column, constraintName);
+        DetailedKey key = new DetailedKey(t, column, constraintName, "");
 
         if (constraintName == null || !referenced_to_referencers.containsKey(key)) {
             return new ArrayList<>();
@@ -89,17 +93,17 @@ public class ReferentialResolver {
     }
 
     public void insertPrimary(Table t, Attribute.Name column, String constraintName) {
-        primaryKeys.add(new DetailedKey(t, column, constraintName));
+        primaryKeys.add(new DetailedKey(t, column, constraintName, ""));
         column_to_P_Constraint.put(new Key(t, column), constraintName);
     }
 
-    public void insertForeign(Table t, Attribute.Name column, String constraintName) {
-        foreignKeys.add(new DetailedKey(t, column, constraintName));
+    public void insertForeign(Table t, Attribute.Name column, String constraintName, String deleteRule) {
+        foreignKeys.add(new DetailedKey(t, column, constraintName, deleteRule));
 
     }
 
     public void insertUnique(Table t, Attribute.Name column, String constraintName) {
-        uniqueKeys.add(new DetailedKey(t, column, constraintName));
+        uniqueKeys.add(new DetailedKey(t, column, constraintName, ""));
         column_to_P_Constraint.put(new Key(t, column), constraintName);
     }
 
@@ -152,10 +156,12 @@ public class ReferentialResolver {
     public class DetailedKey extends Key {
 
         private String constraintName;
+        private String deleteRule;
 
-        public DetailedKey(Table table, Attribute.Name column, String constraintName) {
+        public DetailedKey(Table table, Attribute.Name column, String constraintName, String deleteRule) {
             super(table, column);
             this.constraintName = constraintName;
+            this.deleteRule = deleteRule;
         }
 
         @Override
