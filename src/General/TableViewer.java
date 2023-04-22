@@ -147,7 +147,7 @@ public class TableViewer extends JFrame {
     public void applyModification() throws SQLException {
         Controller controller = new Controller();
         Filters filters = form.getPKFilter();
-        AttributeCollection newValues = form.getModifiedAttributes();
+        AttributeCollection newValues = form.getAllAttributes();
         Table t = form.getTable();
         QueryResult result = controller.modify(t, newValues, filters);
 

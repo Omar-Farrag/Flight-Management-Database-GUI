@@ -146,7 +146,10 @@ public class Attribute {
         TABLE_NAME("TABLE_NAME", Type.STRING),
         ACTIVITY_DATE("ACTIVITY_DATE", Type.DATE),
         ROWS_AFFECTED("ROWS_AFFECTED", Type.STRING),
-        ACTIVITY("ACTIVITY", Type.STRING);
+        ACTIVITY("ACTIVITY", Type.STRING),
+        LOCATION_NUM("LOCATION_NUM", Type.NUMBER),
+        MALL_NUM("MALL_NUM", Type.NUMBER),
+        STORE_NUM("STORE_NUM", Type.STRING);
 
         private final String attName;
         private final Type type;
