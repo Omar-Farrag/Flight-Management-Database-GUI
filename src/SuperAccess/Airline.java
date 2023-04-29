@@ -193,26 +193,6 @@ public class Airline extends TableForm {
     }
 
     @Override
-    public AttributeCollection getModifiedAttributes() {
-        AttributeCollection collection = new AttributeCollection();
-
-        String newCode = codeField.getText().trim();
-        String newName = nameField.getText().trim();
-
-        if (!newCode.equals(currentCode)) {
-            collection.add(new Attribute(Name.CODE, newCode, table));
-        }
-        if (!newName.equals(currentName)) {
-            collection.add(new Attribute(Name.NAME, newName, table));
-        }
-
-        currentCode = newCode;
-        currentName = newName;
-
-        return collection;
-    }
-
-    @Override
     public Filters getPKFilter() {
         Filters filters = new Filters();
 

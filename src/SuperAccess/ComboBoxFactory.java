@@ -38,16 +38,25 @@ public class ComboBoxFactory {
 
     }
 
-    static void populateAirlineCodeCMB(JComboBox toPopulate) {
-        Controller controller = new Controller();
+    public static void populateAirlineCodeCMB(JComboBox toPopulate) {
 
-        toPopulate.removeAllItems();
+        Attribute attribute = new Attribute(Name.CODE, Table.AIRLINE);
+        fillBoxFromDB(toPopulate, attribute);
 
+    }
+
+    public static void populateCityCodeCMB(JComboBox toPopulate) {
+        Attribute attribute = new Attribute(Name.CODE, Table.CITY);
+        fillBoxFromDB(toPopulate, attribute);
+    }
+
+    private static void fillBoxFromDB(JComboBox toPopulate, Attribute attribute) {
         AttributeCollection collection = new AttributeCollection();
-        collection.add(new Attribute(Name.CODE, Table.AIRLINE));
+        collection.add(attribute);
 
         ResultSet result = controller.retrieve(collection).getResult();
 
+        toPopulate.removeAllItems();
         toPopulate.addItem("");
         try {
             while (result.next()) {
@@ -57,4 +66,5 @@ public class ComboBoxFactory {
             controller.displaySQLError(ex);
         }
     }
+
 }

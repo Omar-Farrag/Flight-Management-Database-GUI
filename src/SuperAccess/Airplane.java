@@ -339,17 +339,4 @@ public class Airplane extends TableForm {
 
     }
 
-    @Override
-    public AttributeCollection getModifiedAttributes() {
-        AttributeCollection collection = new AttributeCollection();
-
-        String newAirlineCode = airlineCodeCMB.getSelectedItem().toString().trim();
-
-        if (!newAirlineCode.equals(currentAirlineCode)) {
-            collection.add(new Attribute(Name.AIRLINE_CODE, newAirlineCode, table));
-            currentAirlineCode = newAirlineCode;
-        }
-
-        return collection;
-    }
 }
