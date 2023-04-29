@@ -14,13 +14,12 @@ import DatabaseManagement.Table;
  *
  * @author Dell
  */
-public class Airport extends TableForm {
+public class CrewMember extends TableForm {
 
-    public Airport() {
+    public CrewMember() {
         initComponents();
-        initBaseComponents(Table.AIRPORT, TopLabel, ActionBtn);
+        initBaseComponents(Table.CREWMEMBER, TopLabel, ActionBtn);
 
-        ComboBoxFactory.populateCityCodeCMB(cityCodeCMB);
     }
 
     /**
@@ -36,13 +35,11 @@ public class Airport extends TableForm {
         jScrollPane1 = new javax.swing.JScrollPane();
         jPanel1 = new javax.swing.JPanel();
         jLabel25 = new javax.swing.JLabel();
-        jLabel26 = new javax.swing.JLabel();
-        codeField = new javax.swing.JTextField();
         ActionBtn = new javax.swing.JButton();
         jLabel27 = new javax.swing.JLabel();
-        nameField = new javax.swing.JTextField();
         jLabel28 = new javax.swing.JLabel();
-        cityCodeCMB = new javax.swing.JComboBox<>();
+        ssnCMB = new javax.swing.JComboBox<>();
+        roleCMB = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -51,7 +48,7 @@ public class Airport extends TableForm {
         TopLabel.setFont(new java.awt.Font("Verdana", 1, 24)); // NOI18N
         TopLabel.setForeground(new java.awt.Color(255, 255, 255));
         TopLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        TopLabel.setText("Airport");
+        TopLabel.setText("CrewMember");
         TopLabel.setOpaque(true);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -59,16 +56,6 @@ public class Airport extends TableForm {
         jLabel25.setBackground(new java.awt.Color(255, 255, 255));
         jLabel25.setForeground(new java.awt.Color(0, 102, 0));
         jLabel25.setText("Please fill in this form then submit");
-
-        jLabel26.setBackground(new java.awt.Color(204, 204, 204));
-        jLabel26.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
-        jLabel26.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel26.setText("Code:");
-        jLabel26.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        jLabel26.setOpaque(true);
-
-        codeField.setFont(new java.awt.Font("Verdana", 3, 14)); // NOI18N
-        codeField.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
         ActionBtn.setBackground(new java.awt.Color(0, 204, 0));
         ActionBtn.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
@@ -78,22 +65,22 @@ public class Airport extends TableForm {
         jLabel27.setBackground(new java.awt.Color(204, 204, 204));
         jLabel27.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
         jLabel27.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel27.setText("Name:");
+        jLabel27.setText("Role:");
         jLabel27.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         jLabel27.setOpaque(true);
-
-        nameField.setFont(new java.awt.Font("Verdana", 3, 14)); // NOI18N
-        nameField.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
         jLabel28.setBackground(new java.awt.Color(204, 204, 204));
         jLabel28.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
         jLabel28.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel28.setText("City Code:");
+        jLabel28.setText("SSN:");
         jLabel28.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         jLabel28.setOpaque(true);
 
-        cityCodeCMB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cityCodeCMB.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        ssnCMB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        ssnCMB.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+
+        roleCMB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        roleCMB.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -108,18 +95,14 @@ public class Airport extends TableForm {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 25, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(codeField, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel27, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(nameField, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(roleCMB, 0, 474, Short.MAX_VALUE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel28, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(cityCodeCMB, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addComponent(ssnCMB, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addGap(29, 29, 29))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -130,21 +113,17 @@ public class Airport extends TableForm {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jLabel25)
-                .addGap(26, 26, 26)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel26)
-                    .addComponent(codeField, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(26, 26, 26)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel27)
-                    .addComponent(nameField, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(26, 26, 26)
+                .addGap(32, 32, 32)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel28)
-                    .addComponent(cityCodeCMB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(46, 46, 46)
+                    .addComponent(ssnCMB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(24, 24, 24)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel27)
+                    .addComponent(roleCMB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(56, 56, 56)
                 .addComponent(ActionBtn)
-                .addContainerGap(235, Short.MAX_VALUE))
+                .addContainerGap(187, Short.MAX_VALUE))
         );
 
         jScrollPane1.setViewportView(jPanel1);
@@ -170,27 +149,23 @@ public class Airport extends TableForm {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ActionBtn;
     private javax.swing.JLabel TopLabel;
-    private javax.swing.JComboBox<String> cityCodeCMB;
-    private javax.swing.JTextField codeField;
     private javax.swing.JLabel jLabel25;
-    private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel28;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField nameField;
+    private javax.swing.JComboBox<String> roleCMB;
+    private javax.swing.JComboBox<String> ssnCMB;
     // End of variables declaration//GEN-END:variables
     @Override
     public AttributeCollection getAllAttributes() {
         AttributeCollection collection = new AttributeCollection();
 
-        String code = codeField.getText().trim();
-        String name = nameField.getText().trim();
-        String cityCode = cityCodeCMB.getSelectedItem().toString().trim();
+        String crewMemberSSN = ssnCMB.getSelectedItem().toString().trim();
+        String role = roleCMB.getSelectedItem().toString().trim();
 
-        collection.add(new Attribute(Name.CODE, code, table));
-        collection.add(new Attribute(Name.NAME, name, table));
-        collection.add(new Attribute(Name.CITY_CODE, cityCode, table));
+        collection.add(new Attribute(Name.SSN, crewMemberSSN, table));
+        collection.add(new Attribute(Name.ROLE, role, table));
 
         return collection;
     }
@@ -199,18 +174,14 @@ public class Airport extends TableForm {
     public Filters getBrowsingFilters() {
         Filters filters = new Filters();
 
-        String code = codeField.getText().trim();
-        String name = nameField.getText().trim();
-        String cityCode = cityCodeCMB.getSelectedItem().toString().trim();
+        String role = roleCMB.getSelectedItem().toString().trim();
+        String crewMemberSSN = ssnCMB.getSelectedItem().toString().trim();
 
-        if (!code.isBlank()) {
-            filters.addLike(new Attribute(Name.CODE, "%" + code + "%", table));
+        if (!role.isBlank()) {
+            filters.addLike(new Attribute(Name.ROLE, "%" + role + "%", table));
         }
-        if (!name.isBlank()) {
-            filters.addLike(new Attribute(Name.NAME, "%" + name + "%", table));
-        }
-        if (!cityCode.isBlank()) {
-            filters.addLike(new Attribute(Name.CITY_CODE, "%" + cityCode + "%", table));
+        if (!crewMemberSSN.isBlank()) {
+            filters.addEqual(new Attribute(Name.SSN, crewMemberSSN, table));
         }
 
         return filters;
@@ -220,8 +191,8 @@ public class Airport extends TableForm {
     public Filters getPKFilter() {
         Filters filters = new Filters();
 
-        String code = codeField.getText().trim();
-        filters.addEqual(new Attribute(Name.CODE, code, table));
+        String crewMemberSSN = ssnCMB.getSelectedItem().toString().trim();
+        filters.addEqual(new Attribute(Name.SSN, crewMemberSSN, table));
 
         return filters;
 
@@ -229,36 +200,35 @@ public class Airport extends TableForm {
 
     @Override
     public void enableFields() {
-        codeField.setEnabled(true);
-        nameField.setEnabled(true);
-        cityCodeCMB.setEnabled(true);
+        roleCMB.setEnabled(true);
+        ssnCMB.setEnabled(true);
     }
 
     @Override
     public void disableUnmodifiableFields() {
-        codeField.setEnabled(false);
+        ssnCMB.setEnabled(false);
     }
 
     @Override
     public void populateFields(AttributeCollection toPopulateWith) {
-        ComboBoxFactory.populateCityCodeCMB(cityCodeCMB);
 
-        String code = toPopulateWith.getValue(new Attribute(Name.CODE, table));
-        String name = toPopulateWith.getValue(new Attribute(Name.NAME, table));
-        String cityCode = toPopulateWith.getValue(new Attribute(Name.CITY_CODE, table));
+        ComboBoxFactory.populateCrewRoleCMB(roleCMB);
+        ComboBoxFactory.populatePersonCMB(ssnCMB);
 
-        codeField.setText(code);
-        nameField.setText(name);
-        cityCodeCMB.setSelectedItem(cityCode);
+        String role = toPopulateWith.getValue(new Attribute(Name.ROLE, table));
+        String crewMemberSSN = toPopulateWith.getValue(new Attribute(Name.SSN, table));
+
+        roleCMB.setSelectedItem(role);
+        ssnCMB.setSelectedItem(crewMemberSSN);
     }
 
     @Override
     public void clearFields() {
-        ComboBoxFactory.populateCityCodeCMB(cityCodeCMB);
+        ComboBoxFactory.populateCrewRoleCMB(roleCMB);
+        ComboBoxFactory.populatePersonCMB(ssnCMB);
 
-        codeField.setText("");
-        nameField.setText("");
-        cityCodeCMB.setSelectedItem("");
+        roleCMB.setSelectedItem("");
+        ssnCMB.setSelectedItem("");
 
     }
 }

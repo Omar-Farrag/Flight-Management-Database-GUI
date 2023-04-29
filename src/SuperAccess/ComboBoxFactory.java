@@ -50,6 +50,52 @@ public class ComboBoxFactory {
         fillBoxFromDB(toPopulate, attribute);
     }
 
+    public static void populateFlightNumberCMB(JComboBox toPopulate) {
+        Attribute attribute = new Attribute(Name.FNUMBER, Table.FLIGHT);
+        fillBoxFromDB(toPopulate, attribute);
+    }
+
+    public static void populatePersonCMB(JComboBox toPopulate) {
+        Attribute attribute = new Attribute(Name.SSN, Table.PERSON);
+        fillBoxFromDB(toPopulate, attribute);
+    }
+
+    public static void populatePassengerCMB(JComboBox toPopulate) {
+        Attribute attribute = new Attribute(Name.SSN, Table.PASSENGER);
+        fillBoxFromDB(toPopulate, attribute);
+    }
+
+    public static void populateCrewMemberCMB(JComboBox toPopulate) {
+        Attribute attribute = new Attribute(Name.SSN, Table.CREWMEMBER);
+        fillBoxFromDB(toPopulate, attribute);
+    }
+
+    public static void populateCrewRoleCMB(JComboBox toPopulate) {
+        toPopulate.removeAllItems();
+        toPopulate.addItem("");
+        toPopulate.addItem("Pilot");
+        toPopulate.addItem("Co-Pilot");
+        toPopulate.addItem("Flight Attendant");
+        toPopulate.addItem("Air Marshall");
+    }
+
+    public static void populateLoungeCMB(JComboBox toPopulate) {
+        toPopulate.removeAllItems();
+        toPopulate.addItem("");
+        toPopulate.addItem("A");
+        toPopulate.addItem("B");
+        toPopulate.addItem("C");
+        toPopulate.addItem("D");
+        toPopulate.addItem("E");
+        toPopulate.addItem("F");
+        toPopulate.addItem("G");
+    }
+
+    public static void populateTicketNumCMB(JComboBox toPopulate) {
+        Attribute attribute = new Attribute(Name.NUM, Table.TICKET);
+        fillBoxFromDB(toPopulate, attribute);
+    }
+
     private static void fillBoxFromDB(JComboBox toPopulate, Attribute attribute) {
         AttributeCollection collection = new AttributeCollection();
         collection.add(attribute);

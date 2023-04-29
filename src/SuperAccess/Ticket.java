@@ -14,22 +14,12 @@ import DatabaseManagement.Table;
  *
  * @author Dell
  */
-public class Airplane extends TableForm {
+public class Ticket extends TableForm {
 
-    private String currentNumber;
-    private String currentManufacturer;
-    private String currentAirlineCode;
-    private String currentYearBuilt;
-    private String currentModel;
-
-    /**
-     * Creates new form InsertForm
-     */
-    public Airplane() {
+    public Ticket() {
         initComponents();
-        initBaseComponents(Table.AIRPLANE, TopLabel, ActionBtn);
+        initBaseComponents(Table.TICKET, TopLabel, ActionBtn);
 
-        ComboBoxFactory.populateAirlineCodeCMB(airlineCodeCMB);
     }
 
     /**
@@ -49,13 +39,11 @@ public class Airplane extends TableForm {
         numberField = new javax.swing.JTextField();
         ActionBtn = new javax.swing.JButton();
         jLabel27 = new javax.swing.JLabel();
-        manufacturerField = new javax.swing.JTextField();
         jLabel28 = new javax.swing.JLabel();
-        airlineCodeCMB = new javax.swing.JComboBox<>();
+        passengerSSNCMB = new javax.swing.JComboBox<>();
+        flightNumberCMB = new javax.swing.JComboBox<>();
         jLabel29 = new javax.swing.JLabel();
-        yearField = new javax.swing.JTextField();
-        jLabel30 = new javax.swing.JLabel();
-        modelField = new javax.swing.JTextField();
+        priceField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -64,7 +52,7 @@ public class Airplane extends TableForm {
         TopLabel.setFont(new java.awt.Font("Verdana", 1, 24)); // NOI18N
         TopLabel.setForeground(new java.awt.Color(255, 255, 255));
         TopLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        TopLabel.setText("Airplane");
+        TopLabel.setText("Ticket");
         TopLabel.setOpaque(true);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -91,42 +79,32 @@ public class Airplane extends TableForm {
         jLabel27.setBackground(new java.awt.Color(204, 204, 204));
         jLabel27.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
         jLabel27.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel27.setText("Manufacturer:");
+        jLabel27.setText("Flight Number:");
         jLabel27.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         jLabel27.setOpaque(true);
-
-        manufacturerField.setFont(new java.awt.Font("Verdana", 3, 14)); // NOI18N
-        manufacturerField.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
         jLabel28.setBackground(new java.awt.Color(204, 204, 204));
         jLabel28.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
         jLabel28.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel28.setText("Airline Code:");
+        jLabel28.setText("Passenger:");
         jLabel28.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         jLabel28.setOpaque(true);
 
-        airlineCodeCMB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        airlineCodeCMB.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        passengerSSNCMB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        passengerSSNCMB.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+
+        flightNumberCMB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        flightNumberCMB.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
         jLabel29.setBackground(new java.awt.Color(204, 204, 204));
         jLabel29.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
         jLabel29.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel29.setText("Year Built:");
+        jLabel29.setText("Price(AED):");
         jLabel29.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         jLabel29.setOpaque(true);
 
-        yearField.setFont(new java.awt.Font("Verdana", 3, 14)); // NOI18N
-        yearField.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-
-        jLabel30.setBackground(new java.awt.Color(204, 204, 204));
-        jLabel30.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
-        jLabel30.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel30.setText("Model:");
-        jLabel30.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        jLabel30.setOpaque(true);
-
-        modelField.setFont(new java.awt.Font("Verdana", 3, 14)); // NOI18N
-        modelField.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        priceField.setFont(new java.awt.Font("Verdana", 3, 14)); // NOI18N
+        priceField.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -140,28 +118,23 @@ public class Airplane extends TableForm {
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 25, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(numberField, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel27, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(flightNumberCMB, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel28, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(passengerSSNCMB, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel29, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(yearField, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                    .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(numberField, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(jLabel27, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(manufacturerField, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(jLabel28, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(airlineCodeCMB, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel30, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(modelField, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(priceField, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(29, 29, 29))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -178,23 +151,19 @@ public class Airplane extends TableForm {
                     .addComponent(numberField, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel27)
-                    .addComponent(manufacturerField, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel29)
+                    .addComponent(priceField, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel27)
+                    .addComponent(flightNumberCMB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(24, 24, 24)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel28)
-                    .addComponent(airlineCodeCMB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(26, 26, 26)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel29)
-                    .addComponent(yearField, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(26, 26, 26)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel30)
-                    .addComponent(modelField, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(41, 41, 41)
+                    .addComponent(passengerSSNCMB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(46, 46, 46)
                 .addComponent(ActionBtn)
-                .addContainerGap(148, Short.MAX_VALUE))
+                .addContainerGap(166, Short.MAX_VALUE))
         );
 
         jScrollPane1.setViewportView(jPanel1);
@@ -220,35 +189,31 @@ public class Airplane extends TableForm {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ActionBtn;
     private javax.swing.JLabel TopLabel;
-    private javax.swing.JComboBox<String> airlineCodeCMB;
+    private javax.swing.JComboBox<String> flightNumberCMB;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel29;
-    private javax.swing.JLabel jLabel30;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField manufacturerField;
-    private javax.swing.JTextField modelField;
     private javax.swing.JTextField numberField;
-    private javax.swing.JTextField yearField;
+    private javax.swing.JComboBox<String> passengerSSNCMB;
+    private javax.swing.JTextField priceField;
     // End of variables declaration//GEN-END:variables
     @Override
     public AttributeCollection getAllAttributes() {
         AttributeCollection collection = new AttributeCollection();
 
-        currentNumber = numberField.getText().trim();
-        currentManufacturer = manufacturerField.getText().trim();
-        currentAirlineCode = airlineCodeCMB.getSelectedItem().toString().trim();
-        currentYearBuilt = yearField.getText().trim();
-        currentModel = modelField.getText().trim();
+        String number = numberField.getText().trim();
+        String price = priceField.getText().trim();
+        String flightNumber = flightNumberCMB.getSelectedItem().toString().trim();
+        String passengerSSN = passengerSSNCMB.getSelectedItem().toString().trim();
 
-        collection.add(new Attribute(Name.NUM, currentNumber, table));
-        collection.add(new Attribute(Name.MANUFACTURER, currentManufacturer, table));
-        collection.add(new Attribute(Name.AIRLINE_CODE, currentAirlineCode, table));
-        collection.add(new Attribute(Name.YEAR_BUILT, currentYearBuilt, table));
-        collection.add(new Attribute(Name.MODEL, currentModel, table));
+        collection.add(new Attribute(Name.NUM, number, table));
+        collection.add(new Attribute(Name.PRICE, price, table));
+        collection.add(new Attribute(Name.FLIGHT_FNUMBER, flightNumber, table));
+        collection.add(new Attribute(Name.PASSENGER_SSN, passengerSSN, table));
 
         return collection;
     }
@@ -257,26 +222,22 @@ public class Airplane extends TableForm {
     public Filters getBrowsingFilters() {
         Filters filters = new Filters();
 
-        currentNumber = numberField.getText().trim();
-        currentManufacturer = manufacturerField.getText().trim();
-        currentAirlineCode = airlineCodeCMB.getSelectedItem().toString().trim();
-        currentYearBuilt = yearField.getText().trim();
-        currentModel = modelField.getText().trim();
+        String number = numberField.getText().trim();
+        String price = priceField.getText().trim();
+        String flightNumber = flightNumberCMB.getSelectedItem().toString().trim();
+        String passengerSSN = passengerSSNCMB.getSelectedItem().toString().trim();
 
-        if (!currentNumber.isBlank()) {
-            filters.addLike(new Attribute(Name.NUM, "%" + currentNumber + "%", table));
+        if (!number.isBlank()) {
+            filters.addLike(new Attribute(Name.NUM, "%" + number + "%", table));
         }
-        if (!currentManufacturer.isBlank()) {
-            filters.addLike(new Attribute(Name.MANUFACTURER, "%" + currentManufacturer + "%", table));
+        if (!price.isBlank()) {
+            filters.addEqual(new Attribute(Name.PRICE, price, table));
         }
-        if (!currentAirlineCode.isBlank()) {
-            filters.addLike(new Attribute(Name.AIRLINE_CODE, "%" + currentAirlineCode + "%", table));
+        if (!flightNumber.isBlank()) {
+            filters.addLike(new Attribute(Name.FLIGHT_FNUMBER, "%" + flightNumber + "%", table));
         }
-        if (!currentYearBuilt.isBlank()) {
-            filters.addEqual(new Attribute(Name.YEAR_BUILT, currentYearBuilt, table));
-        }
-        if (!currentModel.isBlank()) {
-            filters.addLike(new Attribute(Name.MODEL, "%" + currentModel + "%", table));
+        if (!passengerSSN.isBlank()) {
+            filters.addEqual(new Attribute(Name.PASSENGER_SSN, passengerSSN, table));
         }
 
         return filters;
@@ -286,8 +247,8 @@ public class Airplane extends TableForm {
     public Filters getPKFilter() {
         Filters filters = new Filters();
 
-        currentNumber = numberField.getText().trim();
-        filters.addEqual(new Attribute(Name.NUM, currentNumber, table));
+        String number = numberField.getText().trim();
+        filters.addEqual(new Attribute(Name.NUM, number, table));
 
         return filters;
 
@@ -296,47 +257,43 @@ public class Airplane extends TableForm {
     @Override
     public void enableFields() {
         numberField.setEnabled(true);
-        manufacturerField.setEnabled(true);
-        airlineCodeCMB.setEnabled(true);
-        yearField.setEnabled(true);
-        modelField.setEnabled(true);
+        priceField.setEnabled(true);
+        flightNumberCMB.setEnabled(true);
+        passengerSSNCMB.setEnabled(true);
     }
 
     @Override
     public void disableUnmodifiableFields() {
         numberField.setEnabled(false);
-        manufacturerField.setEnabled(false);
-        yearField.setEnabled(false);
-        modelField.setEnabled(false);
     }
 
     @Override
     public void populateFields(AttributeCollection toPopulateWith) {
-        ComboBoxFactory.populateAirlineCodeCMB(airlineCodeCMB);
 
-        currentNumber = toPopulateWith.getValue(new Attribute(Name.NUM, table));
-        currentManufacturer = toPopulateWith.getValue(new Attribute(Name.MANUFACTURER, table));
-        currentAirlineCode = toPopulateWith.getValue(new Attribute(Name.AIRLINE_CODE, table));
-        currentYearBuilt = toPopulateWith.getValue(new Attribute(Name.YEAR_BUILT, table));
-        currentModel = toPopulateWith.getValue(new Attribute(Name.MODEL, table));
+        ComboBoxFactory.populateFlightNumberCMB(flightNumberCMB);
+        ComboBoxFactory.populatePassengerCMB(passengerSSNCMB);
 
-        numberField.setText(currentNumber);
-        manufacturerField.setText(currentManufacturer);
-        airlineCodeCMB.setSelectedItem(currentAirlineCode);
-        yearField.setText(currentYearBuilt);
-        modelField.setText(currentModel);
+        String number = toPopulateWith.getValue(new Attribute(Name.NUM, table));
+        String seat = toPopulateWith.getValue(new Attribute(Name.SEAT, table));
+        String price = toPopulateWith.getValue(new Attribute(Name.PRICE, table));
+        String flightNumber = toPopulateWith.getValue(new Attribute(Name.FLIGHT_FNUMBER, table));
+        String passengerSSN = toPopulateWith.getValue(new Attribute(Name.PASSENGER_SSN, table));
+
+        numberField.setText(number);
+        priceField.setText(price);
+        flightNumberCMB.setSelectedItem(flightNumber);
+        passengerSSNCMB.setSelectedItem(passengerSSN);
     }
 
     @Override
     public void clearFields() {
-        ComboBoxFactory.populateAirlineCodeCMB(airlineCodeCMB);
+        ComboBoxFactory.populateFlightNumberCMB(flightNumberCMB);
+        ComboBoxFactory.populatePassengerCMB(passengerSSNCMB);
 
         numberField.setText("");
-        manufacturerField.setText("");
-        airlineCodeCMB.setSelectedItem("");
-        yearField.setText("");
-        modelField.setText("");
+        priceField.setText("");
+        flightNumberCMB.setSelectedItem("");
+        passengerSSNCMB.setSelectedItem("");
 
     }
-
 }

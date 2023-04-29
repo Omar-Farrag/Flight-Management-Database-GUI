@@ -304,6 +304,7 @@ public class Account extends TableForm {
 
     @Override
     public void clearFields() {
+        ComboBoxFactory.populateAccountTypeCMB(accountTypeCMB);
 
         currentUsername = "";
         currentPassword = "";

@@ -12,6 +12,10 @@ import SuperAccess.Account;
 import SuperAccess.Airline;
 import SuperAccess.Airplane;
 import SuperAccess.Airport;
+import SuperAccess.Baggage;
+import SuperAccess.City;
+import SuperAccess.CrewMember;
+import SuperAccess.Person;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,7 +33,8 @@ public class Main {
         try {
             ConstraintChecker.getInstance();
 //        (new LoginForm()).setVisible(true);
-            TableViewer viewer4 = new TableViewer("Airport", Table.AIRPORT, new Airport());
+            TableViewer viewer4 = new TableViewer("Crew Member", Table.CREWMEMBER, new CrewMember());
+            TableViewer viewer5 = new TableViewer("Person", Table.PERSON, new Person());
 
         } catch (SQLException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);

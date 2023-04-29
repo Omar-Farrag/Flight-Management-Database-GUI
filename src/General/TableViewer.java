@@ -183,10 +183,11 @@ public class TableViewer extends JFrame {
         }
         initModel(controller.retrieve(t).getResult());
 
+        initTable();
+
         sorter = new TableRowSorter<>(model);
         table.setRowSorter(sorter);
 
-        initTable();
         scrollPane.setViewportView(table);
         form.getFrame().dispose();
     }
