@@ -165,6 +165,6 @@ public class Attribute {
     }
 
     public enum Type {
-        NUMBER, STRING, DATE;
+        NUMBER, STRING, DATE, TIMESTAMP;
     }
 }

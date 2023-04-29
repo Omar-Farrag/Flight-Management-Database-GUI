@@ -2,6 +2,7 @@ package DatabaseManagement.ConstraintsHandling;
 
 import DatabaseManagement.*;
 import DatabaseManagement.Attribute.Name;
+import DatabaseManagement.Attribute.Type;
 import DatabaseManagement.ConstraintsHandling.MetaDataExtractor.Key;
 import DatabaseManagement.ConstraintsHandling.ValidationParameters.OperationType;
 import DatabaseManagement.Exceptions.ConstraintNotFoundException;
@@ -17,8 +18,10 @@ import java.text.SimpleDateFormat;
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.ResolverStyle;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -664,19 +667,54 @@ public class Validator {
 
     public String validateTIMESTAMP(ValidationParameters parameters) {
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy hh:mm:ss a");
         String inputDate = parameters.getToValidate().getValue();
-        try {
-            LocalDateTime.parse(inputDate, formatter);
+
+        String regex = "\\d{2}-\\w{3}-\\d{2} \\d{2}.\\d{2}.\\d{2}\\.\\d{9} (am|pm|AM|PM)";
+
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(inputDate);
+
+        if (matcher.matches()) {
             return "";
-        } catch (DateTimeException e) {
-            String validAsDate = validateDATE(parameters);
-            if (validAsDate.isEmpty()) {
-                return "";
-            } else {
-                return parameters.getToValidate().getStringName() + ": Invalid Timestamp. Must be in format dd-MMM-yyyy hh:mm:ss a.";
+        } else {
+            return parameters.getToValidate().getStringName() + ": Invalid Timestamp. Must be in format DD-Mon-YY HH:MI:SS.FF9 AM";
+        }
+
+    }
+
+    public ArrayList<String> validateType(Attribute attribute, ArrayList<String> values) {
+        ArrayList<String> messages = new ArrayList<>();
+        if (null != attribute.getType()) {
+            switch (attribute.getType()) {
+                case NUMBER -> {
+                    for (String value : values) {
+                        try {
+                            BigDecimal number = new BigDecimal(value);
+                        } catch (NumberFormatException ex) {
+                            messages.add(attribute.getStringName() + ": Value entered is not a number");
+                        }
+                    }
+                }
+                case DATE -> {
+                    for (String value : values) {
+                        Attribute currAttribute = new Attribute(attribute.getAttributeName(), value, attribute.getT());
+                        ValidationParameters parameters = new ValidationParameters("", currAttribute, new AttributeCollection(), null, new Filters());
+                        messages.add(validateDATE(parameters));
+                    }
+                }
+                case TIMESTAMP -> {
+                    for (String value : values) {
+                        Attribute currAttribute = new Attribute(attribute.getAttributeName(), value, attribute.getT());
+                        ValidationParameters parameters = new ValidationParameters("", currAttribute, new AttributeCollection(), null, new Filters());
+                        messages.add(validateTIMESTAMP(parameters));
+                    }
+                }
+                default -> {
+                }
             }
         }
+        return messages;
+
     }
 
     private void initConstraintsToValidatorMap() {
@@ -702,6 +740,7 @@ public class Validator {
         constraints.add(new Constraint(ConstraintEnum.VARCHAR2, this::validateVARCHAR2));
         constraints.add(new Constraint(ConstraintEnum.DATE, this::validateDATE));
         constraints.add(new Constraint(ConstraintEnum.TIMESTAMP, this::validateTIMESTAMP));
+
     }
 
     private class ComparisonResult {
@@ -760,68 +799,15 @@ public class Validator {
     }
 
     public static void main(String[] args) {
+        String inputDate = "05-Jun-28 04.02.00.000000000 PM";
 
-        try {
-            Attribute toValidate = new Attribute(Name.MALL_NUM, "3", Table.LOCS);
-            Filters filters = new Filters();
-            filters.addEqual(new Attribute(Name.MALL_NUM, "5", Table.LOCS));
-            ArrayList<Key> uniqueKeys = MetaDataExtractor.getInstance().getUniqueKeys(toValidate.getT());
+        // Regular expression to match timestamp in the format of "DD-Mon-YY HH:MI:SS.FF9 AM"
+        String regex = "\\d{2}-\\w{3}-\\d{2} \\d{2}.\\d{2}.\\d{2}\\.\\d{9} (am|pm)";
 
-            String query = "Select * from " + toValidate.getT().getAliasedName()
-                    + " where " + toValidate.getStringName() + " = " + toValidate.getStringValue();
-            ResultSet result = DatabaseManager.getInstance().executeStatement(query);
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(inputDate);
 
-            HashSet<Key> keys = new HashSet<>();
+        System.out.println(matcher.matches());
 
-            while (result.next()) {
-                for (Key uniqueKey : uniqueKeys) {
-                    Key key = new Key();
-                    for (Attribute attribute : uniqueKey.getKeyAttributes()) {
-                        Name name = attribute.getAttributeName();
-                        String originalValue = result.getString(name.getName());
-                        Table t = attribute.getT();
-                        Attribute valuedAttribute = new Attribute(name, originalValue, t);
-                        key.add(valuedAttribute);
-                    }
-                    keys.add(key);
-                }
-            }
-
-            query = "Select * from " + toValidate.getT().getAliasedName() + " " + filters.getFilterClause();
-            result = DatabaseManager.getInstance().executeStatement(query);
-
-            while (result.next()) {
-
-                for (Key uniqueKey : uniqueKeys) {
-                    Key originalKey = new Key();
-                    Key potentialKey = new Key();
-
-                    for (Attribute attribute : uniqueKey.getKeyAttributes()) {
-                        Name name = attribute.getAttributeName();
-                        String originalValue = result.getString(name.getName());
-                        String potentialValue = originalValue;
-                        Table t = attribute.getT();
-
-                        if (attribute.equals(toValidate)) {
-                            potentialValue = toValidate.getValue();
-                        }
-                        Attribute valuedOriginalAttribute = new Attribute(name, originalValue, t);
-                        Attribute valuedPotentialAttribute = new Attribute(name, potentialValue, t);
-
-                        originalKey.add(valuedOriginalAttribute);
-                        potentialKey.add(valuedPotentialAttribute);
-                    }
-                    if (!originalKey.equals(potentialKey)) {
-                        if (keys.contains(potentialKey)) {
-                            System.out.println("Not Fine");
-                            return;
-                        }
-                    }
-                }
-            }
-            System.out.println("Fine");
-        } catch (SQLException ex) {
-            Logger.getLogger(Validator.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 }

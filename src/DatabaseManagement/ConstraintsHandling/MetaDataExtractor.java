@@ -112,6 +112,16 @@ public class MetaDataExtractor {
         }
     }
 
+    public AttributeCollection getAttributeCollection(Table t) {
+        JSONObject attributes = getTableAttributes(t);
+        AttributeCollection collection = new AttributeCollection();
+
+        for (Object jsonAtt : attributes.keySet()) {
+            collection.add(new Attribute(Name.valueOf(jsonAtt.toString()), t));
+        }
+        return collection;
+    }
+
     private Boolean initMetaDataFile() {
         try {
             FileWriter fout = new FileWriter(metaDataFile);
