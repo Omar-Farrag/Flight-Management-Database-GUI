@@ -8,21 +8,17 @@ import DatabaseManagement.Attribute;
 import DatabaseManagement.Attribute.Name;
 import DatabaseManagement.AttributeCollection;
 import DatabaseManagement.Filters;
-import DatabaseManagement.QueryResult;
 import DatabaseManagement.Table;
-import General.Controller;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  *
  * @author Dell
  */
-public class BusinessTicket extends TableForm {
+public class Gates extends TableForm {
 
-    public BusinessTicket() {
+    public Gates() {
         initComponents();
-        initBaseComponents(Table.BUSINESS_TICKET, TopLabel, ActionBtn);
+        initBaseComponents(Table.GATES, TopLabel, ActionBtn);
 
     }
 
@@ -40,12 +36,14 @@ public class BusinessTicket extends TableForm {
         jPanel1 = new javax.swing.JPanel();
         jLabel25 = new javax.swing.JLabel();
         jLabel26 = new javax.swing.JLabel();
+        gNumberField = new javax.swing.JTextField();
         ActionBtn = new javax.swing.JButton();
+        jLabel27 = new javax.swing.JLabel();
+        jLabel28 = new javax.swing.JLabel();
         jLabel29 = new javax.swing.JLabel();
-        seatField = new javax.swing.JTextField();
-        jLabel30 = new javax.swing.JLabel();
-        loungeCMB = new javax.swing.JComboBox<>();
-        numberCMB = new javax.swing.JComboBox<>();
+        airportCodeCMB = new javax.swing.JComboBox<>();
+        floorCMB = new javax.swing.JComboBox<>();
+        locationField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -54,7 +52,7 @@ public class BusinessTicket extends TableForm {
         TopLabel.setFont(new java.awt.Font("Verdana", 1, 24)); // NOI18N
         TopLabel.setForeground(new java.awt.Color(255, 255, 255));
         TopLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        TopLabel.setText("Business Ticket");
+        TopLabel.setText("Gates");
         TopLabel.setOpaque(true);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -66,37 +64,47 @@ public class BusinessTicket extends TableForm {
         jLabel26.setBackground(new java.awt.Color(204, 204, 204));
         jLabel26.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
         jLabel26.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel26.setText("Number:");
+        jLabel26.setText("GNumber:");
         jLabel26.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         jLabel26.setOpaque(true);
+
+        gNumberField.setFont(new java.awt.Font("Verdana", 3, 14)); // NOI18N
+        gNumberField.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
         ActionBtn.setBackground(new java.awt.Color(0, 204, 0));
         ActionBtn.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
         ActionBtn.setForeground(new java.awt.Color(255, 255, 255));
         ActionBtn.setText("Submit");
 
+        jLabel27.setBackground(new java.awt.Color(204, 204, 204));
+        jLabel27.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        jLabel27.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel27.setText("Floor:");
+        jLabel27.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        jLabel27.setOpaque(true);
+
+        jLabel28.setBackground(new java.awt.Color(204, 204, 204));
+        jLabel28.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        jLabel28.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel28.setText("Location:");
+        jLabel28.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        jLabel28.setOpaque(true);
+
         jLabel29.setBackground(new java.awt.Color(204, 204, 204));
         jLabel29.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
         jLabel29.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel29.setText("Seat:");
+        jLabel29.setText("AirportCode:");
         jLabel29.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         jLabel29.setOpaque(true);
 
-        seatField.setFont(new java.awt.Font("Verdana", 3, 14)); // NOI18N
-        seatField.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        airportCodeCMB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        airportCodeCMB.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
-        jLabel30.setBackground(new java.awt.Color(204, 204, 204));
-        jLabel30.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
-        jLabel30.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel30.setText("Lounge:");
-        jLabel30.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        jLabel30.setOpaque(true);
+        floorCMB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        floorCMB.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
-        loungeCMB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        loungeCMB.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-
-        numberCMB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        numberCMB.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        locationField.setFont(new java.awt.Font("Verdana", 3, 14)); // NOI18N
+        locationField.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -110,19 +118,23 @@ public class BusinessTicket extends TableForm {
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 25, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(numberCMB, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(gNumberField, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel27, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(floorCMB, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel28, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(locationField, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel29, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(seatField, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel30, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(loungeCMB, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addComponent(airportCodeCMB, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addGap(29, 29, 29))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -136,18 +148,22 @@ public class BusinessTicket extends TableForm {
                 .addGap(26, 26, 26)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel26)
-                    .addComponent(numberCMB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(gNumberField, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(26, 26, 26)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel27)
+                    .addComponent(floorCMB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(24, 24, 24)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel30)
-                    .addComponent(loungeCMB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(24, 24, 24)
+                    .addComponent(jLabel28)
+                    .addComponent(locationField, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(28, 28, 28)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel29)
-                    .addComponent(seatField, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(61, 61, 61)
+                    .addComponent(airportCodeCMB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(46, 46, 46)
                 .addComponent(ActionBtn)
-                .addContainerGap(116, Short.MAX_VALUE))
+                .addContainerGap(148, Short.MAX_VALUE))
         );
 
         jScrollPane1.setViewportView(jPanel1);
@@ -173,27 +189,31 @@ public class BusinessTicket extends TableForm {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ActionBtn;
     private javax.swing.JLabel TopLabel;
+    private javax.swing.JComboBox<String> airportCodeCMB;
+    private javax.swing.JComboBox<String> floorCMB;
+    private javax.swing.JTextField gNumberField;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel27;
+    private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel29;
-    private javax.swing.JLabel jLabel30;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JComboBox<String> loungeCMB;
-    private javax.swing.JComboBox<String> numberCMB;
-    private javax.swing.JTextField seatField;
+    private javax.swing.JTextField locationField;
     // End of variables declaration//GEN-END:variables
     @Override
     public AttributeCollection getAllAttributes() {
         AttributeCollection collection = new AttributeCollection();
 
-        String number = numberCMB.getSelectedItem().toString().trim();
-        String seat = seatField.getText().trim();
-        String lounge = loungeCMB.getSelectedItem().toString().trim();
+        String gateNum = gNumberField.getText().trim();
+        String floor = floorCMB.getSelectedItem().toString().trim();
+        String location = locationField.getText().trim();
+        String airportCode = airportCodeCMB.getSelectedItem().toString().trim();
 
-        collection.add(new Attribute(Name.NUM, number, table));
-        collection.add(new Attribute(Name.SEAT, seat, table));
-        collection.add(new Attribute(Name.LOUNGE, lounge, table));
+        collection.add(new Attribute(Name.GNUMBER, gateNum, table));
+        collection.add(new Attribute(Name.FLOOR, floor, table));
+        collection.add(new Attribute(Name.LOCATION, location, table));
+        collection.add(new Attribute(Name.AIRPORT_CODE, airportCode, table));
 
         return collection;
     }
@@ -202,19 +222,24 @@ public class BusinessTicket extends TableForm {
     public Filters getBrowsingFilters() {
         Filters filters = new Filters();
 
-        String number = numberCMB.getSelectedItem().toString().trim();
-        String seat = seatField.getText().trim();
-        String lounge = loungeCMB.getSelectedItem().toString().trim();
+        String gateNum = gNumberField.getText().trim();
+        String floor = floorCMB.getSelectedItem().toString().trim();
+        String location = locationField.getText().trim();
+        String airportCode = airportCodeCMB.getSelectedItem().toString().trim();
 
-        if (!number.isBlank()) {
-            filters.addLike(new Attribute(Name.NUM, "%" + number + "%", table));
+        if (!gateNum.isBlank()) {
+            filters.addEqual(new Attribute(Name.GNUMBER, gateNum, table));
         }
-        if (!seat.isBlank()) {
-            filters.addEqual(new Attribute(Name.SEAT, seat, table));
+        if (!floor.isBlank()) {
+            filters.addLike(new Attribute(Name.FLOOR, "%" + floor + "%", table));
         }
-        if (!lounge.isBlank()) {
-            filters.addLike(new Attribute(Name.LOUNGE, "%" + lounge + "%", table));
+        if (!airportCode.isBlank()) {
+            filters.addLike(new Attribute(Name.AIRPORT_CODE, "%" + airportCode + "%", table));
         }
+        if (!location.isBlank()) {
+            filters.addLike(new Attribute(Name.LOCATION, "%" + location + "%", table));
+        }
+
         return filters;
     }
 
@@ -222,8 +247,10 @@ public class BusinessTicket extends TableForm {
     public Filters getPKFilter() {
         Filters filters = new Filters();
 
-        String number = numberCMB.getSelectedItem().toString().trim();
-        filters.addEqual(new Attribute(Name.NUM, number, table));
+        String gateNum = gNumberField.getText().trim();
+        String airportCode = airportCodeCMB.getSelectedItem().toString().trim();
+        filters.addEqual(new Attribute(Name.GNUMBER, gateNum, table));
+        filters.addEqual(new Attribute(Name.AIRPORT_CODE, airportCode, table));
 
         return filters;
 
@@ -231,59 +258,44 @@ public class BusinessTicket extends TableForm {
 
     @Override
     public void enableFields() {
-        numberCMB.setEnabled(true);
-        seatField.setEnabled(true);
-        loungeCMB.setEnabled(true);
+        gNumberField.setEnabled(true);
+        floorCMB.setEnabled(true);
+        locationField.setEnabled(true);
+        airportCodeCMB.setEnabled(true);
     }
 
     @Override
     public void disableUnmodifiableFields() {
-        numberCMB.setEnabled(false);
+        gNumberField.setEnabled(false);
+        airportCodeCMB.setEnabled(false);
+
     }
 
     @Override
     public void populateFields(AttributeCollection toPopulateWith) {
+        ComboBoxFactory.populateAirportFloorCMB(floorCMB);
+        ComboBoxFactory.populateAirportCodeCMB(airportCodeCMB);
 
-        ComboBoxFactory.populateLoungeCMB(loungeCMB);
-        ComboBoxFactory.populateTicketNumCMB(numberCMB);
+        String gateNum = toPopulateWith.getValue(new Attribute(Name.GNUMBER, table));
+        String floor = toPopulateWith.getValue(new Attribute(Name.FLOOR, table));
+        String location = toPopulateWith.getValue(new Attribute(Name.LOCATION, table));
+        String airportCode = toPopulateWith.getValue(new Attribute(Name.AIRPORT_CODE, table));
 
-        String number = toPopulateWith.getValue(new Attribute(Name.NUM, table));
-        String seat = toPopulateWith.getValue(new Attribute(Name.SEAT, table));
-        String lounge = toPopulateWith.getValue(new Attribute(Name.LOUNGE, table));
-
-        numberCMB.setSelectedItem(number);
-        seatField.setText(seat);
-        loungeCMB.setSelectedItem(lounge);
+        gNumberField.setText(gateNum);
+        floorCMB.setSelectedItem(floor);
+        locationField.setText(location);
+        airportCodeCMB.setSelectedItem(airportCode);
     }
 
     @Override
     public void clearFields() {
-        ComboBoxFactory.populateLoungeCMB(loungeCMB);
-        ComboBoxFactory.populateTicketNumCMB(numberCMB);
+        ComboBoxFactory.populateAirportFloorCMB(floorCMB);
+        ComboBoxFactory.populateAirportCodeCMB(airportCodeCMB);
 
-        numberCMB.setSelectedItem("");
-        seatField.setText("");
-        loungeCMB.setSelectedItem("");
-
-    }
-
-    @Override
-    public String checkBusinessLogic() throws SQLException {
-        if (checkSeatUnique()) {
-            return "";
-        } else {
-            return "Seat already taken by someone else.";
-        }
-    }
-
-    private boolean checkSeatUnique() throws SQLException {
-        String query = "SELECT * FROM TICKET A JOIN BUSINESS_TICKET B ON A.NUM = B.NUM WHERE FLIGHT_FNUMBER IN (SELECT FLIGHT_FNUMBER FROM TICKET C WHERE C.NUM = '" + numberCMB.getSelectedItem().toString().trim() + "') AND SEAT = " + seatField.getText().trim();
-
-        ResultSet result = new Controller().executeStatement(query);
-        if (result.next()) {
-            return false;
-        }
-        return true;
+        gNumberField.setText("");
+        floorCMB.setSelectedItem("");
+        locationField.setText("");
+        airportCodeCMB.setSelectedItem("");
 
     }
 }

@@ -10,6 +10,7 @@ import General.TableViewer;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import java.sql.SQLException;
 
 /**
  *
@@ -67,6 +68,11 @@ public abstract class TableForm extends JFrame implements Form {
     @Override
     public void setViewer(TableViewer viewer) {
         this.viewer = viewer;
+    }
+
+    @Override
+    public String checkBusinessLogic() throws SQLException {
+        return "";
     }
 
 }

@@ -26,8 +26,7 @@ public enum Table {
     PERSON("person", "N"),
     PERSON_FLIGHT("person_flight", "O"),
     TICKET("ticket", "P"),
-    USER_ACTIVITY("user_activity", "Q"),
-    LOCS("LOCS", "Z");
+    USER_ACTIVITY("user_activity", "Q");
 
     private final String tableName;
     private final String alias;

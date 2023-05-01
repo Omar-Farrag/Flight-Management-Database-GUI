@@ -9,20 +9,20 @@ import DatabaseManagement.Attribute.Name;
 import DatabaseManagement.AttributeCollection;
 import DatabaseManagement.Filters;
 import DatabaseManagement.Table;
-import General.Controller;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  *
  * @author Dell
  */
-public class EconomyTicket extends TableForm {
+public class Passenger extends TableForm {
 
-    public EconomyTicket() {
+    /**
+     * Creates new form InsertForm
+     */
+    public Passenger() {
         initComponents();
-        initBaseComponents(Table.ECONOMY_TICKET, TopLabel, ActionBtn);
 
+        initBaseComponents(Table.PASSENGER, TopLabel, ActionBtn);
     }
 
     /**
@@ -40,9 +40,7 @@ public class EconomyTicket extends TableForm {
         jLabel25 = new javax.swing.JLabel();
         jLabel26 = new javax.swing.JLabel();
         ActionBtn = new javax.swing.JButton();
-        jLabel29 = new javax.swing.JLabel();
-        seatField = new javax.swing.JTextField();
-        numberCMB = new javax.swing.JComboBox<>();
+        ssnCMB = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -51,7 +49,7 @@ public class EconomyTicket extends TableForm {
         TopLabel.setFont(new java.awt.Font("Verdana", 1, 24)); // NOI18N
         TopLabel.setForeground(new java.awt.Color(255, 255, 255));
         TopLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        TopLabel.setText("Business Ticket");
+        TopLabel.setText("Person");
         TopLabel.setOpaque(true);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -63,7 +61,7 @@ public class EconomyTicket extends TableForm {
         jLabel26.setBackground(new java.awt.Color(204, 204, 204));
         jLabel26.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
         jLabel26.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel26.setText("Number:");
+        jLabel26.setText("SSN:");
         jLabel26.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         jLabel26.setOpaque(true);
 
@@ -72,18 +70,8 @@ public class EconomyTicket extends TableForm {
         ActionBtn.setForeground(new java.awt.Color(255, 255, 255));
         ActionBtn.setText("Submit");
 
-        jLabel29.setBackground(new java.awt.Color(204, 204, 204));
-        jLabel29.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
-        jLabel29.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel29.setText("Seat:");
-        jLabel29.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        jLabel29.setOpaque(true);
-
-        seatField.setFont(new java.awt.Font("Verdana", 3, 14)); // NOI18N
-        seatField.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-
-        numberCMB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        numberCMB.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        ssnCMB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        ssnCMB.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -97,20 +85,14 @@ public class EconomyTicket extends TableForm {
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 25, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(numberCMB, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel29, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(seatField, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(ssnCMB, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(29, 29, 29))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(ActionBtn)
-                .addGap(302, 302, 302))
+                .addGap(305, 305, 305))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -119,14 +101,10 @@ public class EconomyTicket extends TableForm {
                 .addGap(26, 26, 26)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel26)
-                    .addComponent(numberCMB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(26, 26, 26)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel29)
-                    .addComponent(seatField, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(61, 61, 61)
+                    .addComponent(ssnCMB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(43, 43, 43)
                 .addComponent(ActionBtn)
-                .addContainerGap(160, Short.MAX_VALUE))
+                .addContainerGap(297, Short.MAX_VALUE))
         );
 
         jScrollPane1.setViewportView(jPanel1);
@@ -154,22 +132,16 @@ public class EconomyTicket extends TableForm {
     private javax.swing.JLabel TopLabel;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
-    private javax.swing.JLabel jLabel29;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JComboBox<String> numberCMB;
-    private javax.swing.JTextField seatField;
+    private javax.swing.JComboBox<String> ssnCMB;
     // End of variables declaration//GEN-END:variables
-
     @Override
     public AttributeCollection getAllAttributes() {
         AttributeCollection collection = new AttributeCollection();
 
-        String number = numberCMB.getSelectedItem().toString().trim();
-        String seat = seatField.getText().trim();
-
-        collection.add(new Attribute(Name.NUM, number, table));
-        collection.add(new Attribute(Name.SEAT, seat, table));
+        String ssn = ssnCMB.getSelectedItem().toString().trim();
+        collection.add(new Attribute(Name.SSN, ssn, table));
 
         return collection;
     }
@@ -178,14 +150,10 @@ public class EconomyTicket extends TableForm {
     public Filters getBrowsingFilters() {
         Filters filters = new Filters();
 
-        String number = numberCMB.getSelectedItem().toString().trim();
-        String seat = seatField.getText().trim();
+        String ssn = ssnCMB.getSelectedItem().toString().trim();
 
-        if (!number.isBlank()) {
-            filters.addLike(new Attribute(Name.NUM, "%" + number + "%", table));
-        }
-        if (!seat.isBlank()) {
-            filters.addEqual(new Attribute(Name.SEAT, seat, table));
+        if (!ssn.isBlank()) {
+            filters.addEqual(new Attribute(Name.SSN, ssn, table));
         }
 
         return filters;
@@ -195,8 +163,9 @@ public class EconomyTicket extends TableForm {
     public Filters getPKFilter() {
         Filters filters = new Filters();
 
-        String number = numberCMB.getSelectedItem().toString().trim();
-        filters.addEqual(new Attribute(Name.NUM, number, table));
+        String ssn = ssnCMB.getSelectedItem().toString().trim();
+
+        filters.addEqual(new Attribute(Name.SSN, ssn, table));
 
         return filters;
 
@@ -204,54 +173,27 @@ public class EconomyTicket extends TableForm {
 
     @Override
     public void enableFields() {
-        numberCMB.setEnabled(true);
-        seatField.setEnabled(true);
-
+        ssnCMB.setEnabled(true);
     }
 
     @Override
     public void disableUnmodifiableFields() {
-        numberCMB.setEnabled(false);
+        ssnCMB.setEnabled(false);
     }
 
     @Override
     public void populateFields(AttributeCollection toPopulateWith) {
 
-        ComboBoxFactory.populateTicketNumCMB(numberCMB);
-
-        String number = toPopulateWith.getValue(new Attribute(Name.NUM, table));
-        String seat = toPopulateWith.getValue(new Attribute(Name.SEAT, table));
-
-        numberCMB.setSelectedItem(number);
-        seatField.setText(seat);
+        ComboBoxFactory.populatePersonCMB(ssnCMB);
+        String ssn = toPopulateWith.getValue(new Attribute(Name.SSN, table));
+        ssnCMB.setSelectedItem(ssn);
     }
 
     @Override
     public void clearFields() {
-        ComboBoxFactory.populateTicketNumCMB(numberCMB);
-
-        numberCMB.setSelectedItem("");
-        seatField.setText("");
+        ComboBoxFactory.populatePersonCMB(ssnCMB);
+        ssnCMB.setSelectedItem("");
 
     }
 
-    @Override
-    public String checkBusinessLogic() throws SQLException {
-        if (checkSeatUnique()) {
-            return "";
-        } else {
-            return "Seat already taken by someone else.";
-        }
-    }
-
-    private boolean checkSeatUnique() throws SQLException {
-        String query = "SELECT * FROM TICKET A JOIN ECONOMY_TICKET B ON A.NUM = B.NUM WHERE FLIGHT_FNUMBER IN (SELECT FLIGHT_FNUMBER FROM TICKET C WHERE C.NUM = '" + numberCMB.getSelectedItem().toString().trim() + "') AND SEAT = " + seatField.getText().trim();
-
-        ResultSet result = new Controller().executeStatement(query);
-        if (result.next()) {
-            return false;
-        }
-        return true;
-
-    }
 }

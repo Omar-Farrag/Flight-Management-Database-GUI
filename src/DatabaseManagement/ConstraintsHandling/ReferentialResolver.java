@@ -1,12 +1,14 @@
 package DatabaseManagement.ConstraintsHandling;
 
 import DatabaseManagement.Attribute;
+import DatabaseManagement.Attribute.Name;
 import DatabaseManagement.AttributeCollection;
 import DatabaseManagement.Filters;
 import DatabaseManagement.Table;
 import org.json.simple.JSONObject;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 public class ReferentialResolver {
 
@@ -33,7 +35,7 @@ public class ReferentialResolver {
     }
 
     public DetailedKey getReferencedTable(String constraintName) {
-        DetailedKey toFind = new DetailedKey(null, null, constraintName, "");
+        DetailedKey toFind = new DetailedKey(null, null, constraintName, "", "");
         for (DetailedKey key : referenced_to_referencers.keySet()) {
             if (key.equals(toFind)) {
                 return key;
@@ -51,7 +53,7 @@ public class ReferentialResolver {
             Attribute.Name column = Attribute.Name.valueOf(attribute.toString());
             String constraintName = column_to_P_Constraint.get(new Key(t, column));
 
-            if (constraintName != null && referenced_to_referencers.containsKey(new DetailedKey(t, column, constraintName, ""))) {
+            if (constraintName != null && referenced_to_referencers.containsKey(new DetailedKey(t, column, constraintName, "", ""))) {
                 collection.add(new Attribute(column, t));
             }
         }
@@ -81,9 +83,66 @@ public class ReferentialResolver {
         return table_to_filters;
     }
 
+    public ArrayList<DetailedKey> getPrimaryKeys(Table t) {
+        ArrayList<DetailedKey> PK = new ArrayList<>();
+
+        for (DetailedKey key : primaryKeys) {
+            if (key.t == t) {
+                PK.add(key);
+            }
+        }
+        return PK;
+    }
+
+    public AttributeCollection getReferencingAttributes(AttributeCollection PK) {
+        AttributeCollection collection = new AttributeCollection();
+
+        for (Attribute attribute : PK.attributes()) {
+
+            ArrayList<DetailedKey> references = getReferences(attribute.getT(), attribute.getAttributeName());
+            for (DetailedKey key : references) {
+                collection.add(new Attribute(key.column, key.t));
+            }
+        }
+        return collection;
+
+    }
+
+    public Collection<HashMap<Attribute, Attribute>> get_referencer_to_referenced(String PKConstraintName, Table referencingTable) {
+        HashMap<String, HashMap<Attribute, Attribute>> referencer_to_referenced = new HashMap<>();
+
+        DetailedKey referencedKey = getReferencedTable(PKConstraintName);
+
+        Table referencedTable = referencedKey.t;
+        ArrayList<DetailedKey> referencedPK = getPrimaryKeys(referencedTable);
+
+        ArrayList<HashMap<Attribute, Attribute>> groups = new ArrayList<>();
+        for (DetailedKey referenced : referencedPK) {
+
+            ArrayList<DetailedKey> references = getReferences(referenced.t, referenced.column);
+            for (DetailedKey reference : references) {
+                if (reference.t == referencingTable && reference.position.equals(referenced.position)) {
+                    Attribute referencerAtt = new Attribute(reference.column, reference.t);
+                    Attribute referencedAtt = new Attribute(referenced.column, referenced.t);
+                    String FKName = reference.FKName;
+
+                    if (referencer_to_referenced.containsKey(FKName)) {
+                        referencer_to_referenced.get(FKName).put(referencerAtt, referencedAtt);
+                    } else {
+                        HashMap<Attribute, Attribute> group = new HashMap<>();
+                        group.put(referencerAtt, referencedAtt);
+                        referencer_to_referenced.put(FKName, group);
+                    }
+                }
+            }
+
+        }
+        return referencer_to_referenced.values();
+    }
+
     private ArrayList<DetailedKey> getReferences(Table t, Attribute.Name column) {
         String constraintName = column_to_P_Constraint.get(new Key(t, column));
-        DetailedKey key = new DetailedKey(t, column, constraintName, "");
+        DetailedKey key = new DetailedKey(t, column, constraintName, "", "");
 
         if (constraintName == null || !referenced_to_referencers.containsKey(key)) {
             return new ArrayList<>();
@@ -92,18 +151,18 @@ public class ReferentialResolver {
         }
     }
 
-    public void insertPrimary(Table t, Attribute.Name column, String constraintName) {
-        primaryKeys.add(new DetailedKey(t, column, constraintName, ""));
+    public void insertPrimary(Table t, Attribute.Name column, String constraintName, String position) {
+        primaryKeys.add(new DetailedKey(t, column, constraintName, "", position));
         column_to_P_Constraint.put(new Key(t, column), constraintName);
     }
 
-    public void insertForeign(Table t, Attribute.Name column, String constraintName, String deleteRule) {
-        foreignKeys.add(new DetailedKey(t, column, constraintName, deleteRule));
+    public void insertForeign(Table t, Attribute.Name column, String constraintName, String deleteRule, String position, String FKName) {
+        foreignKeys.add(new DetailedKey(t, column, constraintName, deleteRule, position, FKName));
 
     }
 
-    public void insertUnique(Table t, Attribute.Name column, String constraintName) {
-        uniqueKeys.add(new DetailedKey(t, column, constraintName, ""));
+    public void insertUnique(Table t, Attribute.Name column, String constraintName, String position) {
+        uniqueKeys.add(new DetailedKey(t, column, constraintName, "", position));
         column_to_P_Constraint.put(new Key(t, column), constraintName);
     }
 
@@ -123,12 +182,14 @@ public class ReferentialResolver {
             referenced_to_referencers.get(key).add(key);
         }
         initialized = true;
+
     }
 
     private class Key {
 
         protected Table t;
         protected Attribute.Name column;
+        protected String position;
 
         public Key(Table t, Attribute.Name column) {
             this.t = t;
@@ -157,11 +218,22 @@ public class ReferentialResolver {
 
         private String constraintName;
         private String deleteRule;
+        private String FKName;
 
-        public DetailedKey(Table table, Attribute.Name column, String constraintName, String deleteRule) {
+        public DetailedKey(Table table, Attribute.Name column, String constraintName, String deleteRule, String position) {
             super(table, column);
             this.constraintName = constraintName;
             this.deleteRule = deleteRule;
+            this.position = position;
+            this.FKName = "";
+        }
+
+        public DetailedKey(Table table, Attribute.Name column, String constraintName, String deleteRule, String position, String FKName) {
+            super(table, column);
+            this.constraintName = constraintName;
+            this.deleteRule = deleteRule;
+            this.position = position;
+            this.FKName = FKName;
         }
 
         @Override
@@ -181,5 +253,18 @@ public class ReferentialResolver {
             return constraintName.hashCode();
         }
 
+    }
+
+    public static void main(String[] args) {
+        ConstraintChecker.getInstance();
+        Collection<HashMap<Attribute, Attribute>> x
+                = ReferentialResolver.getInstance().get_referencer_to_referenced("AIRPORT_PK", Table.FLIGHT);
+
+        for (HashMap<Attribute, Attribute> map : x) {
+            System.out.println("GROUP");
+            for (Entry<Attribute, Attribute> innerEntry : map.entrySet()) {
+                System.out.println(innerEntry.getKey().getStringName() + " --> " + innerEntry.getValue().getStringName());
+            }
+        }
     }
 }

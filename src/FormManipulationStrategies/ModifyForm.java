@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -41,11 +42,18 @@ public class ModifyForm implements FormInitializationStrategy {
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
+                    int option = JOptionPane.showConfirmDialog(null, "Are you sure you want to modify entry?", "Delete Confirmation", JOptionPane.YES_NO_OPTION);
+                    if (option == JOptionPane.NO_OPTION || option == JOptionPane.CLOSED_OPTION || option == JOptionPane.CLOSED_OPTION) {
+                        return;
+                    }
                     form.getViewer().applyModification();
+
                 } catch (SQLException ex) {
                     new Controller().displaySQLError(ex);
                 }
             }
+
         });
+
     }
 }

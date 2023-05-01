@@ -11,6 +11,7 @@ import FormManipulationStrategies.FormInitializationStrategy;
 import General.TableViewer;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import java.sql.SQLException;
 
 /**
  *
@@ -118,5 +119,16 @@ public interface Form {
      * Applies the current strategy to the form
      */
     public void applyInitStrategy();
+
+    /**
+     * Performs any extra validation or business rules checking before sending
+     * the query to the database.Useful when certain constraints cannot be added
+     * to the database in a simple manner. Example: Checking that the seat for a
+     * business ticket is unique
+     *
+     * @return Empty string if all business logic is satisfied. Else, returns a
+     * string message explaining how the business logic is not satisfied;
+     */
+    public String checkBusinessLogic() throws SQLException;
 
 }

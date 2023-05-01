@@ -26,8 +26,11 @@ import java.sql.SQLException;
 import java.util.Vector;
 import javax.swing.JButton;
 
+import java.sql.Timestamp;
+
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -110,12 +113,15 @@ public class TableViewer extends JFrame {
      * @return Table entry for row [rowNum]
      */
     public AttributeCollection getRow(int rowNum) {
+        Controller controller = new Controller();
         AttributeCollection collection = new AttributeCollection();
         for (int col = 0; col < table.getColumnCount(); col++) {
             Name columnName = Name.valueOf(table.getColumnName(col));
             Object value = table.getValueAt(rowNum, col);
             if (value == null) {
                 value = "";
+            } else if (columnName.getType() == Attribute.Type.TIMESTAMP) {
+                value = controller.formatTimeStamp(Timestamp.valueOf(value.toString().trim()));
             }
             collection.add(new Attribute(columnName, value.toString().trim(), toDisplay));
         }
@@ -152,6 +158,12 @@ public class TableViewer extends JFrame {
         Filters filters = form.getPKFilter();
         AttributeCollection newValues = form.getAllAttributes();
         Table t = form.getTable();
+
+        String message = form.checkBusinessLogic();
+        if (!message.isBlank()) {
+            controller.displayErrors(message);
+        }
+
         QueryResult result = controller.modify(t, newValues, filters);
 
         if (!result.noErrors()) {
@@ -176,6 +188,10 @@ public class TableViewer extends JFrame {
         AttributeCollection newValues = form.getAllAttributes();
         Table t = form.getTable();
 
+        String message = form.checkBusinessLogic();
+        if (!message.isBlank()) {
+            controller.displayErrors(message);
+        }
         QueryResult result = controller.insert(t, newValues);
 
         if (!result.noErrors()) {
@@ -328,6 +344,10 @@ public class TableViewer extends JFrame {
         deleteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
+                    int option = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete?", "Delete Confirmation", JOptionPane.YES_NO_OPTION);
+                    if (option == JOptionPane.NO_OPTION || option == JOptionPane.CLOSED_OPTION || option == JOptionPane.CLOSED_OPTION) {
+                        return;
+                    }
                     applyDeletion();
                 } catch (SQLException ex) {
                     new Controller().displaySQLError(ex);

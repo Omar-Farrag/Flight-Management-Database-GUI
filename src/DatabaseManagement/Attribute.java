@@ -57,7 +57,7 @@ public class Attribute {
     }
 
     public String getStringValue() {
-        if (type.equals(Type.STRING) || type.equals((Type.DATE))) {
+        if (type.equals(Type.STRING) || type.equals((Type.DATE)) || type.equals(Type.TIMESTAMP)) {
             return "'" + attributeValue + "'";
         } else if (attributeValue == null) {
             return "NULL";
@@ -124,14 +124,14 @@ public class Attribute {
         AIRPORT_OUTCOMING_CODE2("AIRPORT_OUTCOMING_CODE2", Type.STRING),
         BUSINESS_SEATS("BUSINESS_SEATS", Type.NUMBER),
         FNUMBER("FNUMBER", Type.STRING),
-        ARRIVAL("ARRIVAL", Type.DATE),
+        ARRIVAL("ARRIVAL", Type.TIMESTAMP),
         STATUS("STATUS", Type.STRING),
-        DEPARTURE("DEPARTURE", Type.DATE),
+        DEPARTURE("DEPARTURE", Type.TIMESTAMP),
         GATES_GNUMBER("GATES_GNUMBER", Type.NUMBER),
         AIRPLANE_NUMBER("AIRPLANE_NUMBER", Type.STRING),
         DURATION("DURATION", Type.NUMBER),
         FIRST_SEATS("FIRST_SEATS", Type.NUMBER),
-        ECONOMY("ECONOMY", Type.NUMBER),
+        ECONOMY_SEATS("ECONOMY_SEATS", Type.NUMBER),
         AIRPORT_INCOMING_CODE("AIRPORT_INCOMING_CODE", Type.STRING),
         LOCATION("LOCATION", Type.STRING),
         FLOOR("FLOOR", Type.STRING),
@@ -161,6 +161,10 @@ public class Attribute {
 
         public String getName() {
             return attName;
+        }
+
+        public Type getType() {
+            return type;
         }
     }
 

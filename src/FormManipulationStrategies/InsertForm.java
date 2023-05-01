@@ -35,11 +35,13 @@ public class InsertForm implements FormInitializationStrategy {
             public void actionPerformed(ActionEvent e) {
                 try {
                     form.getViewer().applyInsertion();
+
                 } catch (SQLException ex) {
                     new Controller().displaySQLError(ex);
                 }
             }
         });
+
     }
 
 }

@@ -9,6 +9,9 @@ import DatabaseManagement.Attribute.Name;
 import DatabaseManagement.AttributeCollection;
 import DatabaseManagement.Filters;
 import DatabaseManagement.Table;
+import General.Controller;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  *
@@ -295,6 +298,26 @@ public class FirstTicket extends TableForm {
         seatField.setText("");
         loungeCMB.setSelectedItem("");
         crewMemberCMB.setSelectedItem("");
+
+    }
+
+    @Override
+    public String checkBusinessLogic() throws SQLException {
+        if (checkSeatUnique()) {
+            return "";
+        } else {
+            return "Seat already taken by someone else.";
+        }
+    }
+
+    private boolean checkSeatUnique() throws SQLException {
+        String query = "SELECT * FROM TICKET A JOIN FIRST_TICKET B ON A.NUM = B.NUM WHERE FLIGHT_FNUMBER IN (SELECT FLIGHT_FNUMBER FROM TICKET C WHERE C.NUM = '" + numberCMB.getSelectedItem().toString().trim() + "') AND SEAT = " + seatField.getText().trim();
+
+        ResultSet result = new Controller().executeStatement(query);
+        if (result.next()) {
+            return false;
+        }
+        return true;
 
     }
 }

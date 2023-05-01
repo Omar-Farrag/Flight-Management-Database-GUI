@@ -15,6 +15,9 @@ import DatabaseManagement.Table;
 import java.awt.Color;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.logging.Level;
@@ -52,6 +55,7 @@ public class Controller {
         QueryResult result = DB.retrieve(toGet, filters);
         if (result.getRowsAffected() > 0) {
             ResultSet rs = result.getResult();
+            rs.next();
             String username = rs.getString(Name.USERNAME.getName());
             String type = rs.getString(Name.ACCOUNT_TYPE.getName());
             loggedInUser = new LoginUser(username, type);
@@ -62,6 +66,10 @@ public class Controller {
 
     public LoginUser getLoggedInUser() {
         return loggedInUser;
+    }
+
+    public static boolean userIsAdmin() {
+        return loggedInUser.isAdmin();
     }
 
     /**
@@ -313,6 +321,41 @@ public class Controller {
             displayErrors("Something went wrong while retrieving data from database");
         }
         return null;
+    }
+
+    /**
+     * Executes the given SQL statement. Only Select SQL statements allowed
+     *
+     * @param sqlStatement Statement to be executed
+     * @return Result set of the executed statement
+     * @throws SQLException If an error occurs while executing the SQL statement
+     * in the DBMS
+     */
+    public ResultSet executeStatement(String sqlStatement) throws SQLException {
+
+        try {
+            return DB.executeStatement(sqlStatement);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            System.out.println(sqlStatement);
+            throw new SQLException();
+        }
+
+    }
+
+    /**
+     * Formats a given timestamp to the following string format: dd-MMM-yyyy
+     * hh:mm:ss a. Particularly useful when reading timestamps from result sets.
+     * By default, reading a time stamp from a result set as a string changes
+     * the timestamp format from dd-MMM-yy hh:mm:ss.SSSSSSSSS a to yyyy-mm-dd
+     * HH:mm:ss. Use this function to format the string to the default format.
+     *
+     * @param stamp timestamp to be formatted
+     * @return given timestamp as a string in the format 'd-MMM-yyyy hh:mm:ss a'
+     */
+    public String formatTimeStamp(Timestamp stamp) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss a");
+        return formatter.format(stamp);
     }
 
 }

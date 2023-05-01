@@ -9,6 +9,8 @@ import DatabaseManagement.Attribute.Name;
 import DatabaseManagement.AttributeCollection;
 import DatabaseManagement.Filters;
 import DatabaseManagement.Table;
+import General.Controller;
+import java.sql.SQLException;
 
 /**
  *
@@ -295,5 +297,35 @@ public class Ticket extends TableForm {
         flightNumberCMB.setSelectedItem("");
         passengerSSNCMB.setSelectedItem("");
 
+    }
+
+    @Override
+    public String checkBusinessLogic() throws SQLException {
+
+        return checkUniqueSeats();
+    }
+
+    private String checkUniqueSeats() throws SQLException {
+        String queryBusiness = "select * from BUSINESS_TICKET A "
+                + "where A.seat = (SELECT SEAT FROM BUSINESS_TICKET B WHERE B.NUM = '"
+                + numberField.getText().trim() + "') "
+                + "AND A.NUM IN (SELECT NUM FROM TICKET C WHERE c.FLIGHT_FNUMBER = '"
+                + flightNumberCMB.getSelectedItem().toString().trim() + "')";
+        String queryEconomy = queryBusiness.replace("BUSINESS_TICKET", "ECONOMY_TICKET");
+        String queryFirst = queryBusiness.replace("BUSINESS_TICKET", "FIRST_TICKET");
+
+        Controller controller = new Controller();
+
+        if (controller.executeStatement(queryBusiness).next()) {
+            return "There is an existing business ticket booking the same seat on the same flight";
+        }
+        if (controller.executeStatement(queryEconomy).next()) {
+            return "There is an existing economy ticket booking the same seat on the same flight";
+        }
+        if (controller.executeStatement(queryFirst).next()) {
+            return "There is an existing first ticket booking the same seat on the same flight";
+        }
+
+        return "";
     }
 }

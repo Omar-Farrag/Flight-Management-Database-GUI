@@ -12,6 +12,7 @@ import DatabaseManagement.Table;
 import General.Controller;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComboBox;
@@ -93,6 +94,51 @@ public class ComboBoxFactory {
 
     public static void populateTicketNumCMB(JComboBox toPopulate) {
         Attribute attribute = new Attribute(Name.NUM, Table.TICKET);
+        fillBoxFromDB(toPopulate, attribute);
+    }
+
+    public static void populateAirportFloorCMB(JComboBox toPopulate) {
+        toPopulate.removeAllItems();
+        toPopulate.addItem("");
+        toPopulate.addItem("1");
+        toPopulate.addItem("2");
+        toPopulate.addItem("3");
+        toPopulate.addItem("4");
+    }
+
+    public static void populateAirportCodeCMB(JComboBox toPopulate) {
+        Attribute attribute = new Attribute(Name.CODE, Table.AIRPORT);
+        fillBoxFromDB(toPopulate, attribute);
+    }
+
+    public static void populateTablesCMB(JComboBox toPopulate) {
+        toPopulate.removeAllItems();
+        ArrayList<String> tableNames = Table.getApplicationTables();
+        for (String tableName : tableNames) {
+            toPopulate.addItem(tableName);
+        }
+        if (!Controller.userIsAdmin()) {
+            toPopulate.removeItem(Table.USER_ACTIVITY.getTableName().toUpperCase());
+            toPopulate.removeItem(Table.ACCOUNT.getTableName().toUpperCase());
+        }
+    }
+
+    public static void populateStatusCMB(JComboBox toPopulate) {
+        toPopulate.removeAllItems();
+        toPopulate.addItem("D");
+        toPopulate.addItem("A");
+        toPopulate.addItem("N");
+
+        toPopulate.setSelectedItem("N");
+    }
+
+    public static void populateGateNumberCMB(JComboBox toPopulate) {
+        Attribute attribute = new Attribute(Name.GNUMBER, Table.GATES);
+        fillBoxFromDB(toPopulate, attribute);
+    }
+
+    public static void populateAirplaneNumberCMB(JComboBox toPopulate) {
+        Attribute attribute = new Attribute(Name.NUM, Table.AIRPLANE);
         fillBoxFromDB(toPopulate, attribute);
     }
 

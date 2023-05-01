@@ -15,6 +15,8 @@ import SuperAccess.Airport;
 import SuperAccess.Baggage;
 import SuperAccess.City;
 import SuperAccess.CrewMember;
+import SuperAccess.Gates;
+import SuperAccess.Passenger;
 import SuperAccess.Person;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -30,16 +32,8 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        try {
-            ConstraintChecker.getInstance();
-//        (new LoginForm()).setVisible(true);
-            TableViewer viewer4 = new TableViewer("Crew Member", Table.CREWMEMBER, new CrewMember());
-            TableViewer viewer5 = new TableViewer("Person", Table.PERSON, new Person());
+        ConstraintChecker.getInstance();
+        (new LoginForm()).setVisible(true);
 
-        } catch (SQLException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (DBManagementException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 }

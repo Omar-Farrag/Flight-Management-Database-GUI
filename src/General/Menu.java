@@ -20,10 +20,6 @@ public class Menu extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null); // center form in screen
 
-        luser = user; // user details are obtained from the Login form and passed to constructor of Menu form object
-        if (!luser.isAdmin()) { // hide the user management menu if the logged in user is NOT administrator
-            UserMenu.setVisible(false);
-        }
     }
 
     /**
@@ -36,21 +32,19 @@ public class Menu extends javax.swing.JFrame {
     private void initComponents() {
 
         jMenu3 = new javax.swing.JMenu();
-        jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         FileMenu = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         UserMenu = new javax.swing.JMenu();
+        superAccessMenuItem = new javax.swing.JMenuItem();
 
         jMenu3.setText("jMenu3");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Menu - JDBC GUI");
         setResizable(false);
-
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jdbcgui/employees.jpg"))); // NOI18N
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/General/employees.jpg"))); // NOI18N
 
@@ -61,7 +55,7 @@ public class Menu extends javax.swing.JFrame {
 
         jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItem1.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 24)); // NOI18N
-        jMenuItem1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jdbcgui/logout.png"))); // NOI18N
+        jMenuItem1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/General/logout.png"))); // NOI18N
         jMenuItem1.setText("Logout");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -72,7 +66,7 @@ public class Menu extends javax.swing.JFrame {
 
         jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItem2.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 24)); // NOI18N
-        jMenuItem2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jdbcgui/close.png"))); // NOI18N
+        jMenuItem2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/General/close.png"))); // NOI18N
         jMenuItem2.setText("Exit");
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -83,8 +77,17 @@ public class Menu extends javax.swing.JFrame {
 
         jMenuBar1.add(FileMenu);
 
-        UserMenu.setText("User");
+        UserMenu.setText("Tables");
         UserMenu.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 24)); // NOI18N
+
+        superAccessMenuItem.setText("Super Access");
+        superAccessMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                superAccessMenuItemActionPerformed(evt);
+            }
+        });
+        UserMenu.add(superAccessMenuItem);
+
         jMenuBar1.add(UserMenu);
 
         setJMenuBar(jMenuBar1);
@@ -94,10 +97,6 @@ public class Menu extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 881, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
@@ -105,8 +104,6 @@ public class Menu extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 563, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(jLabel1)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -133,14 +130,20 @@ public class Menu extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
+    private void superAccessMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_superAccessMenuItemActionPerformed
+        TableSelector selector = new TableSelector();
+        selector.setVisible(true);
+        selector.setLocationRelativeTo(null);
+    }//GEN-LAST:event_superAccessMenuItemActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu FileMenu;
     private javax.swing.JMenu UserMenu;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem superAccessMenuItem;
     // End of variables declaration//GEN-END:variables
 }
