@@ -83,6 +83,25 @@ public class ReferentialResolver {
         return table_to_filters;
     }
 
+    public HashMap<Table, Filters> getLenientReferencingAttributes(Table t, Attribute attribute) {
+        ArrayList<DetailedKey> references = getReferences(t, attribute.getAttributeName());
+        HashMap<Table, Filters> table_to_filters = new HashMap<>();
+
+        for (DetailedKey key : references) {
+
+            Attribute toFilterBy = new Attribute(key.column, attribute.getValue(), key.t);
+            if (table_to_filters.containsKey(key.t)) {
+                table_to_filters.get(key.t).addEqual(toFilterBy);
+            } else {
+                Filters filter = new Filters();
+                filter.addEqual(toFilterBy);
+                table_to_filters.put(key.t, filter);
+            }
+        }
+
+        return table_to_filters;
+    }
+
     public ArrayList<DetailedKey> getPrimaryKeys(Table t) {
         ArrayList<DetailedKey> PK = new ArrayList<>();
 
@@ -142,12 +161,26 @@ public class ReferentialResolver {
 
     private ArrayList<DetailedKey> getReferences(Table t, Attribute.Name column) {
         String constraintName = column_to_P_Constraint.get(new Key(t, column));
-        DetailedKey key = new DetailedKey(t, column, constraintName, "", "");
+
+        String position = "";
+        for (DetailedKey pk : primaryKeys) {
+            if (pk.t == t && pk.column == column) {
+                position = pk.position;
+            }
+        }
+        DetailedKey key = new DetailedKey(t, column, constraintName, "", position);
 
         if (constraintName == null || !referenced_to_referencers.containsKey(key)) {
             return new ArrayList<>();
         } else {
-            return referenced_to_referencers.get(key);
+            ArrayList<DetailedKey> allReferences = referenced_to_referencers.get(key);
+            ArrayList<DetailedKey> toReturn = new ArrayList<>();
+            for (DetailedKey ref : allReferences) {
+                if (ref.position.equals(key.position)) {
+                    toReturn.add(ref);
+                }
+            }
+            return toReturn;
         }
     }
 

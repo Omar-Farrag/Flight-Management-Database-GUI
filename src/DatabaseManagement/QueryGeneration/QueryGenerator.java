@@ -72,10 +72,10 @@ public class QueryGenerator {
                     tables_to_join.remove(current);
 
                     for (Node node = current; node.getParent() != null; node = node.getParent()) {
-                        links.add(graph.getLinkTo(node.getParent(), node));
+                        links.addAll(graph.getLinksTo(node.getParent(), node));
                     }
                     if (current.getParent() == null) {
-                        links.add(graph.getLinkTo(current, current));
+                        links.addAll(graph.getLinksTo(current, current));
                     }
                     if (tables_to_join.size() == 0) {
                         return generatedFromClause();
@@ -105,19 +105,24 @@ public class QueryGenerator {
     }
 
     private String generatedFromClause() {
-        Iterator<Link> linksIterator = links.iterator();
 
         String clause = "";
 
-        Link link = linksIterator.next();
-        clause += link.getAliasedHead() + " join " + link.getAliasedTail() + " on " + link.getAliasedCondition();
-
-        while (linksIterator.hasNext()) {
-            link = linksIterator.next();
-            clause += " join " + (clause.contains(link.getAliasedTail()) ? link.getAliasedHead()
-                    : link.getAliasedTail())
-                    + " on " + link.getAliasedCondition();
+        init_tables_to_join();
+        ArrayList<String> tableNames = new ArrayList<>();
+        for (Node table : tables_to_join) {
+            tableNames.add(table.getAliasedName());
         }
+        clause += String.join(",", tableNames);
+
+        clause += " where ";
+
+        ArrayList<String> conditions = new ArrayList<>();
+        for (Link link : links) {
+            conditions.add(link.getAliasedCondition());
+        }
+        clause += String.join(" and ", conditions);
+
         return clause;
     }
 
