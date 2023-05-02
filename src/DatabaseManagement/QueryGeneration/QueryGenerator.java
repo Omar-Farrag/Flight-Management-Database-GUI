@@ -41,7 +41,7 @@ public class QueryGenerator {
         links = new HashSet<>();
     }
 
-    public String getFromClause() throws InvalidJoinException {
+    public String generateQuery() throws InvalidJoinException {
         //identify which tables to join;
         init_tables_to_join();
         Iterator<Node> nodeIterator = tables_to_join.iterator();
@@ -78,7 +78,7 @@ public class QueryGenerator {
                         links.addAll(graph.getLinksTo(current, current));
                     }
                     if (tables_to_join.size() == 0) {
-                        return generatedFromClause();
+                        return generatedQuery();
                     }
                 }
                 for (Node neighbor : graph.getNeighbors(current)) {
@@ -104,26 +104,25 @@ public class QueryGenerator {
 
     }
 
-    private String generatedFromClause() {
-
-        String clause = "";
-
-        init_tables_to_join();
-        ArrayList<String> tableNames = new ArrayList<>();
-        for (Node table : tables_to_join) {
-            tableNames.add(table.getAliasedName());
-        }
-        clause += String.join(",", tableNames);
-
-        clause += " where ";
+    private String generatedQuery() {
 
         ArrayList<String> conditions = new ArrayList<>();
+        Set<String> tableNames = new HashSet<>();
+
         for (Link link : links) {
             conditions.add(link.getAliasedCondition());
+            tableNames.add(link.getAliasedHead());
+            tableNames.add(link.getAliasedTail());
         }
-        clause += String.join(" and ", conditions);
+        if (!toFilter.getFilterClause().isEmpty()) {
+            conditions.add(toFilter.getFilterClause());
+        }
 
-        return clause;
+        String query = "SELECT " + toGet.getAliasedFormattedAtt();
+        query += " FROM " + String.join(", ", tableNames);
+        query += " WHERE " + String.join(" AND ", conditions);
+
+        return query;
     }
 
     private void init_tables_to_join() {
@@ -135,22 +134,4 @@ public class QueryGenerator {
             tables_to_join.add(new Node(attribute.getT()));
         }
     }
-
-//    public static void main(String[] args) {
-//        AttributeCollection toGet = new AttributeCollection();
-//        toGet.add(new Attribute(Attribute.Name.LEASE_NUM, Table.LEASES));
-////        toGet.add(new Attribute(Attribute.Name.USER_ID, Table.USERS));
-//        toGet.add(new Attribute(Attribute.Name.LOCATION_NUM, Table.LOCS));
-//        toGet.add(new Attribute(Attribute.Name.UTILITY_ID, Table.BILLS));
-//        toGet.add(new Attribute(Attribute.Name.BILL_NUM, Table.DISCOUNTS));
-//        toGet.add(new Attribute(Attribute.Name.BILL_NUM, Table.BILLS));
-//
-//        QueryGenerator qg = new QueryGenerator(toGet, new Filters());
-//        try {
-//
-//            System.out.println(qg.getFromClause());
-//        } catch (InvalidJoinException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
 }

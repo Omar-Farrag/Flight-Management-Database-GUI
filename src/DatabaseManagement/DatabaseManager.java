@@ -200,8 +200,7 @@ public class DatabaseManager {
         } catch (DBManagementException e) {
             throw new RuntimeException(e);
         }
-        String query
-                = "Select * from " + new QueryGenerator(new AttributeCollection(filters)).getFromClause();
+        String query = new QueryGenerator(new AttributeCollection(filters)).generateQuery();
         return handleDBOperation(error, query, false);
     }
 
@@ -227,8 +226,7 @@ public class DatabaseManager {
         } catch (DBManagementException e) {
             throw new RuntimeException(e);
         }
-        String query
-                = "Select " + toGet.getAliasedFormattedAtt() + " from " + new QueryGenerator(toGet).getFromClause();
+        String query = new QueryGenerator(toGet).generateQuery();
         return handleDBOperation(error, query, false);
 
     }
@@ -253,10 +251,7 @@ public class DatabaseManager {
     public QueryResult retrieve(AttributeCollection toGet, Filters filters) throws SQLException, DBManagementException {
         Errors error = ConstraintChecker.getInstance().checkRetrieval(filters, toGet);
 
-        QueryGenerator generator = new QueryGenerator(toGet, filters);
-        String query
-                = "Select " + toGet.getAliasedFormattedAtt() + " from " + generator.getFromClause() + " " + filters.getFilterClause();
-
+        String query = new QueryGenerator(toGet, filters).generateQuery();
         return handleDBOperation(error, query, false);
     }
 

@@ -184,8 +184,13 @@ public class Graph {
             Graph graph = new Graph();
 
             AttributeCollection collection = new AttributeCollection();
-            collection.add(new Attribute(Attribute.Name.SEAT, Table.BUSINESS_TICKET));
-            collection.add(new Attribute(Attribute.Name.FLIGHT_FNUMBER, Table.TICKET));
+            collection.add(new Attribute(Attribute.Name.FNAME, Table.PERSON));
+            collection.add(new Attribute(Attribute.Name.LNAME, Table.PERSON));
+            collection.add(new Attribute(Attribute.Name.FNUMBER, Table.FLIGHT));
+            collection.add(new Attribute(Attribute.Name.AIRPORT_INCOMING_CODE, Table.FLIGHT));
+            collection.add(new Attribute(Attribute.Name.DEPARTURE, Table.FLIGHT));
+            collection.add(new Attribute(Attribute.Name.GNUMBER, Table.GATES));
+            collection.add(new Attribute(Attribute.Name.LOCATION, Table.GATES));
 
             DatabaseManager.getInstance().retrieve(collection);
         } catch (SQLException ex) {
