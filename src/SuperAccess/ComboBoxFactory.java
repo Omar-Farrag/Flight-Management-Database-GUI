@@ -13,6 +13,7 @@ import General.Controller;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComboBox;
@@ -125,6 +126,7 @@ public class ComboBoxFactory {
 
     public static void populateStatusCMB(JComboBox toPopulate) {
         toPopulate.removeAllItems();
+        toPopulate.addItem("");
         toPopulate.addItem("D");
         toPopulate.addItem("A");
         toPopulate.addItem("N");
@@ -149,10 +151,21 @@ public class ComboBoxFactory {
         ResultSet result = controller.retrieve(collection).getResult();
 
         toPopulate.removeAllItems();
-        toPopulate.addItem("");
+        HashSet<String> itemsAdded = new HashSet<>();
+
         try {
+            String toAdd = "";
+            toPopulate.addItem(toAdd);
+            itemsAdded.add(toAdd);
+
             while (result.next()) {
-                toPopulate.addItem(result.getString(1));
+                toAdd = result.getString(1);
+
+                if (!itemsAdded.contains(toAdd)) {
+                    itemsAdded.add(toAdd);
+                    toPopulate.addItem(toAdd);
+                }
+
             }
         } catch (SQLException ex) {
             controller.displaySQLError(ex);

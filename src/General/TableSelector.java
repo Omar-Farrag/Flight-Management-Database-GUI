@@ -11,8 +11,6 @@ import SuperAccess.Form;
 import java.util.HashMap;
 import SuperAccess.*;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -43,9 +41,9 @@ public class TableSelector extends javax.swing.JFrame {
         table_to_form.put(Table.GATES, new Gates());
         table_to_form.put(Table.PASSENGER, new Passenger());
         table_to_form.put(Table.PERSON, new Person());
-//        table_to_form.put(Table.PERSON_FLIGHT, new Person_Flight());
+        table_to_form.put(Table.PERSON_FLIGHT, new PersonFlight());
         table_to_form.put(Table.TICKET, new Ticket());
-//        table_to_form.put(Table.USER_ACTIVITY, new UserActivity());
+        table_to_form.put(Table.USER_ACTIVITY, new UserActivity());
     }
 
     /**

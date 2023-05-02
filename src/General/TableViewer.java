@@ -27,6 +27,8 @@ import java.util.Vector;
 import javax.swing.JButton;
 
 import java.sql.Timestamp;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -162,6 +164,7 @@ public class TableViewer extends JFrame {
         String message = form.checkBusinessLogic();
         if (!message.isBlank()) {
             controller.displayErrors(message);
+            return;
         }
 
         QueryResult result = controller.modify(t, newValues, filters);
@@ -170,15 +173,11 @@ public class TableViewer extends JFrame {
             return;
         }
 
-        initModel(controller.retrieve(t).getResult());
+        QueryResult latestTable = controller.retrieve(t);
+        refresh(latestTable.getResult());
 
-        initTable();
-
-        sorter = new TableRowSorter<>(model);
-        table.setRowSorter(sorter);
-
-        scrollPane.setViewportView(table);
-        form.getFrame().dispose();
+        controller.logActivity(result, new Table[]{t});
+        controller.logActivity(latestTable, new Table[]{t});
 
     }
 
@@ -191,21 +190,19 @@ public class TableViewer extends JFrame {
         String message = form.checkBusinessLogic();
         if (!message.isBlank()) {
             controller.displayErrors(message);
+            return;
         }
         QueryResult result = controller.insert(t, newValues);
 
         if (!result.noErrors()) {
             return;
         }
-        initModel(controller.retrieve(t).getResult());
+        QueryResult latestTable = controller.retrieve(t);
+        refresh(latestTable.getResult());
 
-        initTable();
+        controller.logActivity(result, new Table[]{t});
+        controller.logActivity(latestTable, new Table[]{t});
 
-        sorter = new TableRowSorter<>(model);
-        table.setRowSorter(sorter);
-
-        scrollPane.setViewportView(table);
-        form.getFrame().dispose();
     }
 
     public void applyDeletion() throws SQLException {
@@ -220,16 +217,26 @@ public class TableViewer extends JFrame {
             if (!result.noErrors()) {
                 break;
             }
-        }
+            controller.logActivity(result, new Table[]{t});
 
-        initModel(controller.retrieve(t).getResult());
+        }
+        QueryResult latestTable = controller.retrieve(t);
+        refresh(latestTable.getResult());
+
+        controller.logActivity(latestTable, new Table[]{t});
+
+    }
+
+    private void refresh(ResultSet result) throws SQLException {
+        initModel(result);
+
         initTable();
+
         sorter = new TableRowSorter<>(model);
         table.setRowSorter(sorter);
 
         scrollPane.setViewportView(table);
         form.getFrame().dispose();
-
     }
 
     private void init(String title, ResultSet resultSet, Form form) throws SQLException {
@@ -326,10 +333,29 @@ public class TableViewer extends JFrame {
         label.setOpaque(true);
         label.setHorizontalAlignment(SwingConstants.CENTER);
 
-        JPanel buttonsPanel = new JPanel(new GridLayout(1, 3));
+        JPanel buttonsPanel = new JPanel(new GridLayout(1, 4));
+
+        JButton refreshButton = new JButton("Refresh");
+        refreshButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (form != null) {
+                    Controller controller = new Controller();
+                    QueryResult latestTable = controller.retrieve(form.getTable());
+                    try {
+                        refresh(latestTable.getResult());
+                        controller.logActivity(latestTable, new Table[]{form.getTable()});
+
+                    } catch (SQLException ex) {
+                        controller.displaySQLError(ex);
+                    }
+
+                }
+            }
+        });
+        refreshButton.setBackground(Color.ORANGE);
+        refreshButton.setPreferredSize(new Dimension(100, 30));
 
         JButton filterButton = new JButton("Filter");
-
         filterButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 form.setInitStrategy(new FilterForm());
@@ -373,9 +399,10 @@ public class TableViewer extends JFrame {
             deleteButton.setVisible(false);
         }
 
-        buttonsPanel.add(filterButton, BorderLayout.WEST);
-        buttonsPanel.add(deleteButton, BorderLayout.CENTER);
-        buttonsPanel.add(insertButton, BorderLayout.EAST);
+        buttonsPanel.add(refreshButton);
+        buttonsPanel.add(filterButton);
+        buttonsPanel.add(deleteButton);
+        buttonsPanel.add(insertButton);
 
         panel.add(label, BorderLayout.NORTH);
         panel.add(buttonsPanel, BorderLayout.SOUTH);

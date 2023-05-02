@@ -18,6 +18,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.logging.Level;
@@ -72,13 +73,13 @@ public class Controller {
         return loggedInUser.isAdmin();
     }
 
+    static int counter = 0;
+
     /**
      * Displays all errors in a database operation in a separate dialog window
      *
      * @param result The returned QueryResult from the database operation
      */
-    static int counter = 0;
-
     public void displayErrors(QueryResult result) {
         System.out.println(++counter);
         HashSet<String> errors = result.getAllErrors();
@@ -139,25 +140,41 @@ public class Controller {
     }
 
     /**
-     * Updates the values of certain rows in the given table
+     * Updates the values of certain rows in the given table. Displays a
+     * success/error message upon completion
      *
      * @param t Table whose rows are to be modified
      * @param filters Conditions that a row must satisfy to be updated
-     * @param toModify Attribute collection containing the attributes to be
+     * @param newValues Attribute collection containing the attributes to be
      * modified and their new values
-     * @param cascade A flag determining whether the changes in the given table
-     * must be cascaded to the referencing foreign keys. If they are to be
-     * cascaded, then the foreign key attributes referencing them must have the
-     * on Update Cascade option in the DBMS. Otherwise, an exception is thrown.
-     * @return Result of modification operation
-     * @throws SQLException If an error occurs while updating the data in the
-     * DB.
-     * @throws DBManagementException Print the message to know why the exception
-     * was thrown
+     * @return result of the modification operation
+     *
      */
     public QueryResult modify(Table t, AttributeCollection newValues, Filters filters) {
+        return modifyHelper(t, newValues, filters, false);
+    }
+
+    /**
+     * Updates the values of certain rows in the given table. Does not display a
+     * success/error message upon completion
+     *
+     * @param t Table whose rows are to be modified
+     * @param filters Conditions that a row must satisfy to be updated
+     * @param newValues Attribute collection containing the attributes to be
+     * modified and their new values
+     * @return result of the modification operation
+     *
+     */
+    public QueryResult quietModify(Table t, AttributeCollection newValues, Filters filters) {
+        return modifyHelper(t, newValues, filters, true);
+    }
+
+    private QueryResult modifyHelper(Table t, AttributeCollection newValues, Filters filters, boolean quiet) {
         try {
             QueryResult result = DB.modify(t, filters, newValues, true);
+            if (quiet) {
+                return result;
+            }
             if (result.noErrors()) {
                 displaySuccessMessage("Entry Modified Successfully!");
             } else {
@@ -178,15 +195,39 @@ public class Controller {
      * in the collection must match the attributes in the table, but the order
      * is irrelevant. If you want to set one of the attributes in the table to
      * null, then set the value of that attribute in the attribute collection to
-     * null, pass an empty string to the attribute's value.
+     * null, pass an empty string to the attribute's value. Displays a
+     * success/error message upon completion
      *
      * @param newValues list of attributes forming the tuple to be inserted
      * @param t Table where the tuple will be inserted
      * @return The result of the insertion operation
      */
     public QueryResult insert(Table t, AttributeCollection newValues) {
+        return insertHelper(t, newValues, false);
+    }
+
+    /**
+     * Inserts the given attribute collection to the given table. The attributes
+     * in the collection must match the attributes in the table, but the order
+     * is irrelevant. If you want to set one of the attributes in the table to
+     * null, then set the value of that attribute in the attribute collection to
+     * null, pass an empty string to the attribute's value. Does not display a
+     * success/error message upon completion
+     *
+     * @param newValues list of attributes forming the tuple to be inserted
+     * @param t Table where the tuple will be inserted
+     * @return The result of the insertion operation
+     */
+    public QueryResult quietInsert(Table t, AttributeCollection newValues) {
+        return insertHelper(t, newValues, true);
+    }
+
+    public QueryResult insertHelper(Table t, AttributeCollection newValues, boolean quiet) {
         try {
             QueryResult result = DB.insert(t, newValues);
+            if (quiet) {
+                return result;
+            }
             if (result.noErrors()) {
                 displaySuccessMessage("Entry Inserted Successfully!");
             } else {
@@ -197,6 +238,98 @@ public class Controller {
             displaySQLError(ex);
         } catch (DBManagementException ex) {
             displayErrors("Something went wrong while inserting an entry into  " + t.getTableName().toUpperCase());
+        }
+        return null;
+    }
+
+    /**
+     * Deletes rows in the given table that satisfy all the given filters
+     * provided these rows are not referenced by other rows. Passing an empty
+     * filters object will delete the whole table. Displays a success/error
+     * message after completion
+     *
+     * @param t Table whose entries are to be deleted.
+     * @param filters Conditions that a row must satisfy to be deleted
+     * @return Query result of the delete operation
+     */
+    public QueryResult delete(Table t, Filters filters) {
+        return deleteHelper(t, filters, false);
+    }
+
+    /**
+     * Deletes rows in the given table that satisfy all the given filters
+     * provided these rows are not referenced by other rows. Passing an empty
+     * filters object will delete the whole table. Does not display a
+     * success/error message after completion
+     *
+     * @param t Table whose entries are to be deleted.
+     * @param filters Conditions that a row must satisfy to be deleted
+     * @return Query result of the delete operation
+     */
+    public QueryResult quiteDelete(Table t, Filters filters) {
+        return deleteHelper(t, filters, true);
+    }
+
+    private QueryResult deleteHelper(Table t, Filters filters, boolean quiet) {
+        try {
+            QueryResult result = DB.delete(t, filters);
+
+            if (quiet) {
+                return result;
+            }
+
+            if (result.noErrors()) {
+                displaySuccessMessage("Entry Deleted Successfully!");
+            } else {
+                displayErrors(result);
+            }
+            return result;
+        } catch (SQLException ex) {
+            displaySQLError(ex);
+        } catch (DBManagementException ex) {
+            displayErrors("Something went wrong while deleting an entry from " + t.getTableName().toUpperCase());
+        }
+        return null;
+    }
+
+    /**
+     * Retrieves all rows from a specific table
+     *
+     * @param t Table whose rows are to be retrieved
+     * @return QueryResult containing the result set of the retrieved table
+     *
+     */
+    public QueryResult retrieve(Table t) {
+        try {
+            QueryResult result = DB.retrieve(t);
+            if (!result.noErrors()) {
+                displayErrors(result);
+            }
+            return result;
+        } catch (SQLException ex) {
+            displaySQLError(ex);
+        }
+        return null;
+    }
+
+    /**
+     * Retrieves all rows from the tables containing the attributes in the given
+     * collection. Only the attribute values are retrieved
+     *
+     * @param toGet Table whose rows are to be retrieved
+     * @return QueryResult containing the result set of the retrievedd e
+     */
+    public QueryResult retrieve(AttributeCollection toGet) {
+        try {
+            QueryResult result = DB.retrieve(toGet);
+            if (!result.noErrors()) {
+                displayErrors(result);
+            }
+            return result;
+        } catch (SQLException ex) {
+            displaySQLError(ex);
+        } catch (DBManagementException ex) {
+            displayErrors("Something went wrong while retrieving data from database");
         }
         return null;
     }
@@ -256,74 +389,6 @@ public class Controller {
     }
 
     /**
-     * Deletes rows in the given table that satisfy all the given filters
-     * provided these rows are not referenced by other rows. Passing an empty
-     * filters object will delete the whole table.
-     *
-     * @param t Table whose entries are to be deleted.
-     * @param filters Conditions that a row must satisfy to be deleted
-     * @return Query result of the delete operation
-     */
-    public QueryResult delete(Table t, Filters filters) {
-        try {
-            QueryResult result = DB.delete(t, filters);
-            if (result.noErrors()) {
-                displaySuccessMessage("Entry Deleted Successfully!");
-            } else {
-                displayErrors(result);
-            }
-            return result;
-        } catch (SQLException ex) {
-            displaySQLError(ex);
-        } catch (DBManagementException ex) {
-            displayErrors("Something went wrong while deleting an entry from " + t.getTableName().toUpperCase());
-        }
-        return null;
-    }
-
-    /**
-     * Retrieves all rows from a specific table
-     *
-     * @param t Table whose rows are to be retrieved
-     * @return QueryResult containing the result set of the retrieved table
-     *
-     */
-    public QueryResult retrieve(Table t) {
-        try {
-            QueryResult result = DB.retrieve(t);
-            if (!result.noErrors()) {
-                displayErrors(result);
-            }
-            return result;
-        } catch (SQLException ex) {
-            displaySQLError(ex);
-        }
-        return null;
-    }
-
-    /**
-     * Retrieves all rows from the tables containing the attributes in the given
-     * collection. Only the attribute values are retrieved
-     *
-     * @param toGet Table whose rows are to be retrieved
-     * @return QueryResult containing the result set of the retrievedd e
-     */
-    public QueryResult retrieve(AttributeCollection toGet) {
-        try {
-            QueryResult result = DB.retrieve(toGet);
-            if (!result.noErrors()) {
-                displayErrors(result);
-            }
-            return result;
-        } catch (SQLException ex) {
-            displaySQLError(ex);
-        } catch (DBManagementException ex) {
-            displayErrors("Something went wrong while retrieving data from database");
-        }
-        return null;
-    }
-
-    /**
      * Executes the given SQL statement. Only Select SQL statements allowed
      *
      * @param sqlStatement Statement to be executed
@@ -358,4 +423,26 @@ public class Controller {
         return formatter.format(stamp);
     }
 
+    /**
+     * Logs an interaction between the logged in user and the database
+     *
+     * @param result QueryResult of the database operation
+     * @param tables Array of tables that was affected;
+     */
+    public void logActivity(QueryResult result, Table[] tables) {
+        String numRows = String.valueOf(result.getRowsAffected());
+        String activityDate = formatTimeStamp(Timestamp.valueOf(LocalDateTime.now()));
+        String user = loggedInUser.getUsername();
+        String activity = result.getQuery().toUpperCase();
+
+        for (Table table : tables) {
+            AttributeCollection collection = new AttributeCollection();
+            collection.add(new Attribute(Name.ROWS_AFFECTED, numRows, Table.USER_ACTIVITY));
+            collection.add(new Attribute(Name.ACTIVITY_DATE, activityDate, Table.USER_ACTIVITY));
+            collection.add(new Attribute(Name.ACCOUNT_USERNAME, user, Table.USER_ACTIVITY));
+            collection.add(new Attribute(Name.ACTIVITY, activity, Table.USER_ACTIVITY));
+            collection.add(new Attribute(Name.TABLE_NAME, table.getTableName(), Table.USER_ACTIVITY));
+            quietInsert(Table.USER_ACTIVITY, collection);
+        }
+    }
 }

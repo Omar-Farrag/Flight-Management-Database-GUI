@@ -14,15 +14,15 @@ import DatabaseManagement.Table;
  *
  * @author Dell
  */
-public class Passenger extends TableForm {
+public class PersonFlight extends TableForm {
 
     /**
      * Creates new form InsertForm
      */
-    public Passenger() {
+    public PersonFlight() {
         initComponents();
 
-        initBaseComponents(Table.PASSENGER, TopLabel, ActionBtn);
+        initBaseComponents(Table.PERSON_FLIGHT, TopLabel, ActionBtn);
     }
 
     /**
@@ -41,6 +41,8 @@ public class Passenger extends TableForm {
         jLabel26 = new javax.swing.JLabel();
         ActionBtn = new javax.swing.JButton();
         ssnCMB = new javax.swing.JComboBox<>();
+        jLabel27 = new javax.swing.JLabel();
+        flightNumberCMB = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -73,6 +75,16 @@ public class Passenger extends TableForm {
         ssnCMB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         ssnCMB.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
+        jLabel27.setBackground(new java.awt.Color(204, 204, 204));
+        jLabel27.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        jLabel27.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel27.setText("Flight Number:");
+        jLabel27.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        jLabel27.setOpaque(true);
+
+        flightNumberCMB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        flightNumberCMB.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -85,9 +97,15 @@ public class Passenger extends TableForm {
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 25, Short.MAX_VALUE)
-                        .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(ssnCMB, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(ssnCMB, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel27, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(flightNumberCMB, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(29, 29, 29))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -102,9 +120,13 @@ public class Passenger extends TableForm {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel26)
                     .addComponent(ssnCMB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(26, 26, 26)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel27)
+                    .addComponent(flightNumberCMB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(43, 43, 43)
                 .addComponent(ActionBtn)
-                .addContainerGap(297, Short.MAX_VALUE))
+                .addContainerGap(197, Short.MAX_VALUE))
         );
 
         jScrollPane1.setViewportView(jPanel1);
@@ -130,8 +152,10 @@ public class Passenger extends TableForm {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ActionBtn;
     private javax.swing.JLabel TopLabel;
+    private javax.swing.JComboBox<String> flightNumberCMB;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel27;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JComboBox<String> ssnCMB;
@@ -141,7 +165,10 @@ public class Passenger extends TableForm {
         AttributeCollection collection = new AttributeCollection();
 
         String ssn = ssnCMB.getSelectedItem().toString().trim();
-        collection.add(new Attribute(Name.SSN, ssn, table));
+        String flightNumber = flightNumberCMB.getSelectedItem().toString().trim();
+
+        collection.add(new Attribute(Name.PERSON_SSN, ssn, table));
+        collection.add(new Attribute(Name.FLIGHT_FNUMBER, flightNumber, table));
 
         return collection;
     }
@@ -151,9 +178,13 @@ public class Passenger extends TableForm {
         Filters filters = new Filters();
 
         String ssn = ssnCMB.getSelectedItem().toString().trim();
+        String flightNumber = flightNumberCMB.getSelectedItem().toString().trim();
 
         if (!ssn.isBlank()) {
-            filters.addEqual(new Attribute(Name.SSN, ssn, table));
+            filters.addEqual(new Attribute(Name.PERSON_SSN, ssn, table));
+        }
+        if (!flightNumber.isBlank()) {
+            filters.addEqual(new Attribute(Name.FLIGHT_FNUMBER, flightNumber, table));
         }
 
         return filters;
@@ -164,8 +195,10 @@ public class Passenger extends TableForm {
         Filters filters = new Filters();
 
         String ssn = ssnCMB.getSelectedItem().toString().trim();
+        String flightNumber = flightNumberCMB.getSelectedItem().toString().trim();
 
-        filters.addEqual(new Attribute(Name.SSN, ssn, table));
+        filters.addEqual(new Attribute(Name.PERSON_SSN, ssn, table));
+        filters.addEqual(new Attribute(Name.FLIGHT_FNUMBER, flightNumber, table));
 
         return filters;
 
@@ -174,25 +207,35 @@ public class Passenger extends TableForm {
     @Override
     public void enableFields() {
         ssnCMB.setEnabled(true);
+        flightNumberCMB.setEnabled(true);
     }
 
     @Override
     public void disableUnmodifiableFields() {
         ssnCMB.setEnabled(false);
+        flightNumberCMB.setEnabled(false);
     }
 
     @Override
     public void populateFields(AttributeCollection toPopulateWith) {
 
         ComboBoxFactory.populatePersonCMB(ssnCMB);
-        String ssn = toPopulateWith.getValue(new Attribute(Name.SSN, table));
+        ComboBoxFactory.populateFlightNumberCMB(flightNumberCMB);
+
+        String ssn = toPopulateWith.getValue(new Attribute(Name.PERSON_SSN, table));
+        String flightNumber = toPopulateWith.getValue(new Attribute(Name.FLIGHT_FNUMBER, table));
+
         ssnCMB.setSelectedItem(ssn);
+        flightNumberCMB.setSelectedItem(flightNumber);
     }
 
     @Override
     public void clearFields() {
         ComboBoxFactory.populatePersonCMB(ssnCMB);
+        ComboBoxFactory.populateFlightNumberCMB(flightNumberCMB);
+
         ssnCMB.setSelectedItem("");
+        flightNumberCMB.setSelectedItem("");
 
     }
 

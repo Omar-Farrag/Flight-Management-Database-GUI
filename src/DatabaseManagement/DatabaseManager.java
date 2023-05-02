@@ -1,5 +1,6 @@
 package DatabaseManagement;
 
+import DatabaseManagement.Attribute.Name;
 import java.sql.*;
 
 import DatabaseManagement.ConstraintsHandling.ConstraintChecker;
@@ -7,6 +8,7 @@ import DatabaseManagement.ConstraintsHandling.ConstraintChecker.Errors;
 import DatabaseManagement.ConstraintsHandling.MetaDataExtractor;
 import DatabaseManagement.Exceptions.*;
 import DatabaseManagement.QueryGeneration.QueryGenerator;
+import General.LoginUser;
 
 public class DatabaseManager {
 
@@ -332,7 +334,7 @@ public class DatabaseManager {
                 rows = executePreparedStatement(query);
             }
         }
-        return new QueryResult(rs, rows, error);
+        return new QueryResult(rs, rows, error, query);
     }
 
 }

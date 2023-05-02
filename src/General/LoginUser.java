@@ -28,4 +28,11 @@ public class LoginUser {
         return type.equals("0");
     }
 
+    /**
+     * @return username
+     */
+    public String getUsername() {
+        return username;
+    }
+
 }
