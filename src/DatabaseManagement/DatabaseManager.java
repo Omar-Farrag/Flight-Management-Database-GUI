@@ -7,8 +7,12 @@ import DatabaseManagement.ConstraintsHandling.ConstraintChecker;
 import DatabaseManagement.ConstraintsHandling.ConstraintChecker.Errors;
 import DatabaseManagement.ConstraintsHandling.MetaDataExtractor;
 import DatabaseManagement.Exceptions.*;
+import DatabaseManagement.QueryGeneration.Graph;
+import DatabaseManagement.QueryGeneration.Graph.Node;
 import DatabaseManagement.QueryGeneration.QueryGenerator;
 import General.LoginUser;
+import java.util.HashSet;
+import java.util.Set;
 
 public class DatabaseManager {
 
@@ -94,7 +98,10 @@ public class DatabaseManager {
         } catch (DBManagementException e) {
             throw new RuntimeException(e);
         }
-        String query = "Delete From " + t.getAliasedName() + " " + filters.getFilterClause();
+        String query = "Delete From " + t.getAliasedName();
+        if (!filters.getFilterClause().isEmpty()) {
+            query += " WHERE " + filters.getFilterClause();
+        }
 
         return handleDBOperation(error, query, true);
     }
@@ -129,7 +136,11 @@ public class DatabaseManager {
             throw new RuntimeException(e);
         }
         String query
-                = "Update " + t.getAliasedName() + " " + QueryGenerator.getSetClause(toModify) + " " + filters.getFilterClause();
+                = "Update " + t.getAliasedName() + " " + QueryGenerator.getSetClause(toModify);
+
+        if (!filters.getFilterClause().isEmpty()) {
+            query += " WHERE " + filters.getFilterClause();
+        }
 
         return handleDBOperation(error, query, true);
 
@@ -171,7 +182,10 @@ public class DatabaseManager {
         } catch (DBManagementException e) {
             throw new RuntimeException(e);
         }
-        String query = "Select * from " + t.getAliasedName() + " " + filters.getFilterClause();
+        String query = "Select * from " + t.getAliasedName();
+        if (!filters.getFilterClause().isEmpty()) {
+            query += " WHERE " + filters.getFilterClause();
+        }
         return handleDBOperation(error, query, false);
     }
 
@@ -277,6 +291,16 @@ public class DatabaseManager {
      */
     public AttributeCollection getAttributes(Table t) {
         return MetaDataExtractor.getInstance().getAttributeCollection(t);
+    }
+
+    public Set<Table> getNeighbors(Table t) {
+        Node table = new Node(t);
+        Set<Node> neighboringNodes = Graph.getInstance().getNeighbors(table);
+        Set<Table> tables = new HashSet<>();
+        for (Node node : neighboringNodes) {
+            tables.add(node.getTable());
+        }
+        return tables;
     }
 
     /**

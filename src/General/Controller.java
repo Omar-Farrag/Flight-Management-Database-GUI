@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JDialog;
@@ -421,6 +422,52 @@ public class Controller {
     public String formatTimeStamp(Timestamp stamp) {
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss a");
         return formatter.format(stamp);
+    }
+
+    /**
+     * Retrieves the attributes of the given table
+     *
+     * @param t Table whose attributes are to be retrieved
+     * @return An AttributeCollection consisting of all the attributes in table
+     * t
+     */
+    public AttributeCollection getTableAttributes(Table t) {
+        return DB.getAttributes(t);
+    }
+
+    /**
+     * Returns all attributes in tables that can be joined with the given table
+     *
+     * @param t
+     * @return
+     */
+    public AttributeCollection getNeighboringAttributes(Table t) {
+
+        return addNeighbors(t, new HashSet<>(), new AttributeCollection());
+    }
+
+    private AttributeCollection addNeighbors(Table table, Set<Table> visited, AttributeCollection accumulator) {
+
+        accumulator.append(getTableAttributes(table));
+        visited.add(table);
+        Set<Table> neighbors = getNeighbors(table);
+        if (neighbors.isEmpty()) {
+            return accumulator;
+        }
+        if (accumulator.attributes().containsAll(neighbors)) {
+            return accumulator;
+        }
+
+        for (Table t : neighbors) {
+            if (!visited.contains(t)) {
+                addNeighbors(t, visited, accumulator);
+            }
+        }
+        return accumulator;
+    }
+
+    private Set<Table> getNeighbors(Table t) {
+        return DB.getNeighbors(t);
     }
 
     /**

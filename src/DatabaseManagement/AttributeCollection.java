@@ -1,6 +1,9 @@
 package DatabaseManagement;
 
+import DatabaseManagement.Attribute;
 import DatabaseManagement.Attribute.Name;
+import DatabaseManagement.Filters;
+import DatabaseManagement.Table;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -108,6 +111,17 @@ public class AttributeCollection {
      */
     public void clear() {
         attributes.clear();
+    }
+
+    /**
+     *
+     */
+    public Set<Table> getPresentTables() {
+        Set<Table> tables = new HashSet<>();
+        for (Attribute attribute : attributes) {
+            tables.add(attribute.getT());
+        }
+        return tables;
     }
 
     /**

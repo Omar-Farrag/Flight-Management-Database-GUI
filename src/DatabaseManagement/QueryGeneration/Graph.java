@@ -1,8 +1,8 @@
 package DatabaseManagement.QueryGeneration;
 
+import DatabaseManagement.AttributeCollection;
 import DatabaseManagement.ConstraintsHandling.ReferentialResolver;
 import DatabaseManagement.Attribute;
-import DatabaseManagement.AttributeCollection;
 import DatabaseManagement.ConstraintsHandling.ConstraintChecker;
 import DatabaseManagement.DatabaseManager;
 import DatabaseManagement.Exceptions.DBManagementException;
@@ -19,7 +19,13 @@ public class Graph {
     private HashMap<Node, ArrayList<Link>> graph;
     private ReferentialResolver resolver;
 
-    public Graph() {
+    private static Graph instance;
+
+    public static Graph getInstance() {
+        return instance == null ? instance = new Graph() : instance;
+    }
+
+    private Graph() {
         graph = new HashMap<>();
         resolver = ReferentialResolver.getInstance();
         initGraph();
@@ -181,7 +187,7 @@ public class Graph {
     public static void main(String[] args) {
         try {
             ConstraintChecker.getInstance();
-            Graph graph = new Graph();
+            Graph.getInstance();
 
             AttributeCollection collection = new AttributeCollection();
             collection.add(new Attribute(Attribute.Name.FNAME, Table.PERSON));

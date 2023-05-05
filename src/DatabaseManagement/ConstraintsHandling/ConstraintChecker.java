@@ -1,5 +1,6 @@
 package DatabaseManagement.ConstraintsHandling;
 
+import DatabaseManagement.AttributeCollection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;

@@ -2,7 +2,9 @@ package DatabaseManagement.QueryGeneration;
 
 import DatabaseManagement.Exceptions.InvalidJoinException;
 import DatabaseManagement.Attribute;
+import DatabaseManagement.Attribute;
 import DatabaseManagement.AttributeCollection;
+import DatabaseManagement.Filters;
 import DatabaseManagement.Filters;
 import DatabaseManagement.QueryGeneration.Graph.Link;
 import DatabaseManagement.QueryGeneration.Graph.Node;
@@ -20,7 +22,7 @@ public class QueryGenerator {
     public QueryGenerator(AttributeCollection toGet, Filters toFilter) {
         this.toGet = toGet;
         this.toFilter = toFilter;
-        graph = new Graph();
+        graph = Graph.getInstance();
         tables_to_join = new HashSet<>();
         links = new HashSet<>();
     }
@@ -28,7 +30,7 @@ public class QueryGenerator {
     public QueryGenerator(Filters toFilter) {
         this.toGet = new AttributeCollection();
         this.toFilter = toFilter;
-        graph = new Graph();
+        graph = Graph.getInstance();
         tables_to_join = new HashSet<>();
         links = new HashSet<>();
     }
@@ -36,7 +38,7 @@ public class QueryGenerator {
     public QueryGenerator(AttributeCollection toGet) {
         this.toGet = toGet;
         this.toFilter = new Filters();
-        graph = new Graph();
+        graph = Graph.getInstance();
         tables_to_join = new HashSet<>();
         links = new HashSet<>();
     }
@@ -46,7 +48,12 @@ public class QueryGenerator {
         init_tables_to_join();
         Iterator<Node> nodeIterator = tables_to_join.iterator();
         if (tables_to_join.size() == 1) {
-            return nodeIterator.next().getAliasedName();
+            String query = "SELECT " + toGet.getAliasedFormattedAtt() + " FROM " + nodeIterator.next().getAliasedName();
+
+            if (!toFilter.getFilterClause().isEmpty()) {
+                query += " WHERE " + toFilter.getFilterClause();
+            }
+            return query;
         }
 
         Set<Node> foundNodes = new HashSet<>();
@@ -120,7 +127,11 @@ public class QueryGenerator {
 
         String query = "SELECT " + toGet.getAliasedFormattedAtt();
         query += " FROM " + String.join(", ", tableNames);
-        query += " WHERE " + String.join(" AND ", conditions);
+
+        String allConditions = String.join(" AND ", conditions);
+        if (!allConditions.isEmpty()) {
+            query += " WHERE " + allConditions;
+        }
 
         return query;
     }
