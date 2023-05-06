@@ -83,6 +83,12 @@ public class AttributeCollection {
         attributes.remove(attribute);
     }
 
+    public void dispose(Set<Attribute> toDispose) {
+        for (Attribute attribute : toDispose) {
+            remove(attribute);
+        }
+    }
+
     /**
      * @return Set of attributes added to the collection so far
      */

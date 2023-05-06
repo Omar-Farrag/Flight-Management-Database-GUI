@@ -159,6 +159,8 @@ public class TableViewer extends JFrame implements Viewer {
         Controller controller = new Controller();
         Filters filters = form.getPKFilter();
         AttributeCollection newValues = form.getAllAttributes();
+        newValues.dispose(filters.getAttributes());
+
         Table t = form.getTable();
 
         String message = form.checkBusinessLogic();
