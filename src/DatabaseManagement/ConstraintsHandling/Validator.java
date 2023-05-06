@@ -1,9 +1,11 @@
 package DatabaseManagement.ConstraintsHandling;
 
-import DatabaseManagement.AttributeCollection;
 import DatabaseManagement.*;
 import DatabaseManagement.Attribute.Name;
 import DatabaseManagement.Attribute.Type;
+import static DatabaseManagement.Attribute.Type.DATE;
+import static DatabaseManagement.Attribute.Type.NUMBER;
+import static DatabaseManagement.Attribute.Type.TIMESTAMP;
 import DatabaseManagement.ConstraintsHandling.MetaDataExtractor.Key;
 import DatabaseManagement.ConstraintsHandling.ValidationParameters.OperationType;
 import DatabaseManagement.Exceptions.ConstraintNotFoundException;
@@ -75,7 +77,7 @@ public class Validator {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
 
         return "";
@@ -96,7 +98,10 @@ public class Validator {
             Attribute valuedAttribute = new Attribute(name, value, t);
             filters.addEqual(valuedAttribute);
         }
-        String query = "Select * from " + toValidate.getT().getAliasedName() + " "
+        if (!validateType(filters).isEmpty()) {
+            return false;
+        }
+        String query = "Select * from " + toValidate.getT().getAliasedName() + " WHERE "
                 + filters.getFilterClause();
 
         ResultSet result = DatabaseManager.getInstance().executeStatement(query);
@@ -110,6 +115,9 @@ public class Validator {
         Key primaryKeys = MetaDataExtractor.getInstance().getPrimaryKeys(toValidate.getT());
 
         HashSet<Key> keys = new HashSet<>();
+        if (!validateType(toValidate).isEmpty()) {
+            return false;
+        }
         String query = "Select * from " + toValidate.getT().getAliasedName()
                 + " where " + toValidate.getStringName() + " = " + toValidate.getStringValue();
         ResultSet result = DatabaseManager.getInstance().executeStatement(query);
@@ -126,8 +134,10 @@ public class Validator {
 
             keys.add(key);
         }
-
-        query = "Select * from " + toValidate.getT().getAliasedName() + " " + filters.getFilterClause();
+        if (!validateType(filters).isEmpty()) {
+            return false;
+        }
+        query = "Select * from " + toValidate.getT().getAliasedName() + " WHERE " + filters.getFilterClause();
         result = DatabaseManager.getInstance().executeStatement(query);
 
         while (result.next()) {
@@ -199,7 +209,10 @@ public class Validator {
                 Attribute valuedAttribute = new Attribute(name, value, t);
                 filters.addEqual(valuedAttribute);
             }
-            String query = "Select * from " + toValidate.getT().getAliasedName() + " "
+            if (!validateType(filters).isEmpty()) {
+                return false;
+            }
+            String query = "Select * from " + toValidate.getT().getAliasedName() + " WHERE "
                     + filters.getFilterClause();
 
             ResultSet result = DatabaseManager.getInstance().executeStatement(query);
@@ -221,6 +234,9 @@ public class Validator {
 //            ResultSet result = DatabaseManager.getInstance().executeStatement(query);
 //            return !result.next();
 //        }
+        if (!validateType(toValidate).isEmpty()) {
+            return false;
+        }
         String query = "Select * from " + toValidate.getT().getAliasedName()
                 + " where " + toValidate.getStringName() + " = " + toValidate.getStringValue();
         ResultSet result = DatabaseManager.getInstance().executeStatement(query);
@@ -240,8 +256,10 @@ public class Validator {
                 keys.add(key);
             }
         }
-
-        query = "Select * from " + toValidate.getT().getAliasedName() + " " + filters.getFilterClause();
+        if (!validateType(filters).isEmpty()) {
+            return false;
+        }
+        query = "Select * from " + toValidate.getT().getAliasedName() + " WHERE " + filters.getFilterClause();
         result = DatabaseManager.getInstance().executeStatement(query);
 
         while (result.next()) {
@@ -308,6 +326,11 @@ public class Validator {
             String query = "Select * From " + referencedTable + " where ";
 
             for (Entry<Attribute, Attribute> entry : group.entrySet()) {
+                ArrayList<String> value = new ArrayList<>();
+                value.add(allAttributes.getStringValue(entry.getKey()));
+                if (!validateType(toValidate, value).isEmpty()) {
+                    return "Could not verfiy referential integrity because the given value is of the wrong type";
+                }
                 query += entry.getValue().getStringName() + " = " + allAttributes.getStringValue(entry.getKey()) + " AND ";
             }
             query = query.substring(0, query.length() - 5);
@@ -357,6 +380,7 @@ public class Validator {
             while (toBeModified.next()) {
 
                 for (HashMap<Attribute, Attribute> group : referencer_to_referenced) {
+
                     String query = "Select * From " + referencedTable + " where ";
 
                     for (Entry<Attribute, Attribute> entry : group.entrySet()) {
@@ -368,6 +392,11 @@ public class Validator {
                         } else {
                             String value = toBeModified.getString(entry.getKey().getStringName());
                             valuedAttribute = new Attribute(name, value, t);
+                        }
+                        ArrayList<String> value = new ArrayList<>();
+                        value.add(allAttributes.getStringValue(entry.getKey()));
+                        if (!validateType(toValidate, value).isEmpty()) {
+                            return "Could not verfiy referential integrity because the given value is of the wrong type";
                         }
 
                         query += valuedAttribute.getStringName() + " = " + valuedAttribute.getStringValue() + " AND ";
@@ -822,6 +851,49 @@ public class Validator {
 
     }
 
+    public String validateType(Attribute attribute) {
+        String value = attribute.getStringValue();
+        if (null != attribute.getType()) {
+            switch (attribute.getType()) {
+                case NUMBER -> {
+                    try {
+                        BigDecimal number = new BigDecimal(value);
+                    } catch (NumberFormatException ex) {
+                        return attribute.getStringName() + ": Value entered is not a number";
+                    }
+                }
+                case DATE -> {
+                    Attribute currAttribute = new Attribute(attribute.getAttributeName(), value, attribute.getT());
+                    ValidationParameters parameters = new ValidationParameters("", currAttribute, new AttributeCollection(), null, new Filters());
+                    return validateDATE(parameters);
+
+                }
+                case TIMESTAMP -> {
+                    Attribute currAttribute = new Attribute(attribute.getAttributeName(), value, attribute.getT());
+                    ValidationParameters parameters = new ValidationParameters("", currAttribute, new AttributeCollection(), null, new Filters());
+                    return validateTIMESTAMP(parameters);
+
+                }
+                default -> {
+                }
+            }
+        }
+        return "";
+
+    }
+
+    public ArrayList<String> validateType(Filters values) {
+        ArrayList<String> messages = new ArrayList<>();
+        for (Attribute attribute : values.getAttributes()) {
+            String result = validateType(attribute);
+            if (!result.isEmpty()) {
+                messages.add(result);
+            }
+        }
+        return messages;
+
+    }
+
     private void initConstraintsToValidatorMap() {
         constraints = new ArrayList<>();
 
@@ -903,76 +975,4 @@ public class Validator {
         }
     }
 
-    public static void main(String[] args) {
-        try {
-            ConstraintChecker.getInstance();
-            ReferentialResolver resolver = ReferentialResolver.getInstance();
-
-            String constraint = "R_1_GATES_PK(SET NULL)[FLIGHT_GATES_FK]";
-            Attribute toValidate = new Attribute(Name.GATES_GNUMBER, "5", Table.FLIGHT);
-
-            Filters filters = new Filters();
-            filters.addEqual(new Attribute(Name.GATES_GNUMBER, "6", Table.FLIGHT));
-
-            int leftParenIndex = constraint.indexOf('(');
-            constraint = constraint.substring(4, leftParenIndex).trim();
-
-            //Get a hashmap mapping between the foreign key in this table and the primary key given in the constraint name.
-            Collection<HashMap<Attribute, Attribute>> referencer_to_referenced
-                    = resolver.get_referencer_to_referenced(constraint, toValidate.getT());
-
-            Table referencedTable = resolver.getReferencedTable(constraint).t;
-
-            if (toValidate.getStringValue().isBlank()) {
-                System.out.println("All Clear");
-            }
-
-            ResultSet toBeModified = DatabaseManager.getInstance().retrieve(toValidate.getT(), filters).getResult();
-            while (toBeModified.next()) {
-
-                for (HashMap<Attribute, Attribute> group : referencer_to_referenced) {
-                    String query = "Select * From " + referencedTable + " where ";
-
-                    for (Entry<Attribute, Attribute> entry : group.entrySet()) {
-                        Name name = entry.getValue().getAttributeName();
-                        Table t = entry.getValue().getT();
-                        Attribute valuedAttribute;
-                        if (entry.getKey().equals(toValidate)) {
-                            valuedAttribute = new Attribute(name, toValidate.getValue(), t);
-                        } else {
-                            String value = toBeModified.getString(entry.getKey().getStringName());
-                            valuedAttribute = new Attribute(name, value, t);
-                        }
-
-                        query += valuedAttribute.getStringName() + " = " + valuedAttribute.getStringValue() + " AND ";
-                    }
-                    query = query.substring(0, query.length() - 5);
-
-                    ResultSet result = null;
-
-                    try {
-                        result = DatabaseManager.getInstance().executeStatement(query);
-                        if (!result.next()) {
-                            String atts = "";
-                            for (Attribute attribute : group.keySet()) {
-                                atts += "," + attribute.getStringName();
-                            }
-                            atts = atts.substring(1);
-                            System.out.println("No entry in table " + referencedTable.getTableName() + " has a matching combination of values as the given " + atts);
-                        }
-                    } catch (SQLException e) {
-                        System.out.println(e.getMessage());
-                        e.printStackTrace();
-                        System.out.println("Something went wrong");
-                    }
-                }
-
-                System.out.println("GUCCI");
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(Validator.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (DBManagementException ex) {
-            Logger.getLogger(Validator.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
 }

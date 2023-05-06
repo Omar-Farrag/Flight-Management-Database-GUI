@@ -9,6 +9,7 @@ import DatabaseManagement.Filters;
 import DatabaseManagement.Table;
 import FormManipulationStrategies.FormInitializationStrategy;
 import General.TableViewer;
+import General.Viewer;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import java.sql.SQLException;
@@ -95,13 +96,13 @@ public interface Form {
      *
      * @param viewer
      */
-    public void setViewer(TableViewer viewer);
+    public void setViewer(Viewer viewer);
 
     /**
      *
      * @return Viewer object displaying the form
      */
-    public TableViewer getViewer();
+    public Viewer getViewer();
 
     /**
      * Sets the initialization strategy to the given strategy. Strategy is used

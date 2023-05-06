@@ -7,6 +7,7 @@ package SuperAccess;
 import DatabaseManagement.Table;
 import FormManipulationStrategies.FormInitializationStrategy;
 import General.TableViewer;
+import General.Viewer;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -22,7 +23,7 @@ public abstract class TableForm extends JFrame implements Form {
     private JLabel TopLabel;
     private JButton ActionBtn;
     private FormInitializationStrategy initStrategy;
-    private TableViewer viewer;
+    private Viewer viewer;
 
     protected void initBaseComponents(Table table, JLabel TopLabel, JButton ActionBtn) {
         this.table = table;
@@ -51,7 +52,7 @@ public abstract class TableForm extends JFrame implements Form {
     }
 
     @Override
-    public TableViewer getViewer() {
+    public Viewer getViewer() {
         return viewer;
     }
 
@@ -66,7 +67,7 @@ public abstract class TableForm extends JFrame implements Form {
     }
 
     @Override
-    public void setViewer(TableViewer viewer) {
+    public void setViewer(Viewer viewer) {
         this.viewer = viewer;
     }
 

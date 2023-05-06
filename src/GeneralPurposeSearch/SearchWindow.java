@@ -207,7 +207,7 @@ public class SearchWindow extends javax.swing.JFrame {
     private void initListeners() {
         availableAttributesTable.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
+                if (e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON3) {
                     try {
                         int row = availableAttributesTable.getSelectedRow();
                         Attribute attribute = getAvailableAttributesRow(row);
@@ -226,7 +226,7 @@ public class SearchWindow extends javax.swing.JFrame {
 
         worksheetTable.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
+                if (e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON3) {
                     try {
                         int row = worksheetTable.getSelectedRow();
                         Attribute attribute = getWorksheetRow(row);
@@ -275,7 +275,7 @@ public class SearchWindow extends javax.swing.JFrame {
         DefaultTableModel model = new DefaultTableModel(data, columnNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false;
+                return true;
             }
         };
 
@@ -323,10 +323,20 @@ public class SearchWindow extends javax.swing.JFrame {
         DefaultTableModel model = new DefaultTableModel(data, columnNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false;
+                return true;
             }
         };
+
         initTable(worksheetTable, model);
+
+        worksheetTable.getColumnModel().getColumn(3).setCellRenderer(new TableComponentRenderer());
+        worksheetTable.getColumnModel().getColumn(3).setCellEditor(new CheckboxCellEditor());
+
+        worksheetTable.getColumnModel().getColumn(2).setCellRenderer(new TableComponentRenderer());
+        worksheetTable.getColumnModel().getColumn(2).setCellEditor(new ComboBoxCellEditor(new String[]{"Option 1", "Option 2", "Option 3"}));
+
+        worksheetTable.getColumnModel().getColumn(4).setCellRenderer(new TableComponentRenderer());
+        worksheetTable.getColumnModel().getColumn(4).setCellEditor(new ButtonCellEditor("Click Me"));
 
     }
 
@@ -364,7 +374,7 @@ public class SearchWindow extends javax.swing.JFrame {
             addFiltersBtn = new JButton();
             addFiltersBtn.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    filtersForm = new SearchFilters(this);
+                    filtersForm = new SearchFilters(WorksheetRow.this);
                     filtersForm.setVisible(true);
                 }
             });

@@ -2,9 +2,7 @@ package DatabaseManagement.QueryGeneration;
 
 import DatabaseManagement.Exceptions.InvalidJoinException;
 import DatabaseManagement.Attribute;
-import DatabaseManagement.Attribute;
 import DatabaseManagement.AttributeCollection;
-import DatabaseManagement.Filters;
 import DatabaseManagement.Filters;
 import DatabaseManagement.QueryGeneration.Graph.Link;
 import DatabaseManagement.QueryGeneration.Graph.Node;

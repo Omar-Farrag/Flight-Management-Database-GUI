@@ -4,6 +4,8 @@
  */
 package GeneralPurposeSearch;
 
+import GeneralPurposeSearch.SearchWindow.WorksheetRow;
+
 /**
  *
  * @author Dell

@@ -287,17 +287,4 @@ public class ReferentialResolver {
         }
 
     }
-
-    public static void main(String[] args) {
-        ConstraintChecker.getInstance();
-        Collection<HashMap<Attribute, Attribute>> x
-                = ReferentialResolver.getInstance().get_referencer_to_referenced("AIRPORT_PK", Table.FLIGHT);
-
-        for (HashMap<Attribute, Attribute> map : x) {
-            System.out.println("GROUP");
-            for (Entry<Attribute, Attribute> innerEntry : map.entrySet()) {
-                System.out.println(innerEntry.getKey().getStringName() + " --> " + innerEntry.getValue().getStringName());
-            }
-        }
-    }
 }

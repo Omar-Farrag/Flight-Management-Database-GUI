@@ -42,7 +42,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-public class TableViewer extends JFrame {
+public class TableViewer extends JFrame implements Viewer {
 
     private JTable table;
     private String title;

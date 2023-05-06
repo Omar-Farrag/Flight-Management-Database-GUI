@@ -5,6 +5,12 @@
  */
 package General;
 
+import DatabaseManagement.Exceptions.DBManagementException;
+import Queries.FlightSummaryFilter;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author wissam
@@ -12,12 +18,14 @@ package General;
 public class Menu extends javax.swing.JFrame {
 
     LoginUser luser; // the login user details are obtained from the Login form
+    private Controller controller;
 
     /**
      * Creates new form Menu
      */
     public Menu(LoginUser user) {
         initComponents();
+        controller = new Controller();
         this.setLocationRelativeTo(null); // center form in screen
 
     }
@@ -32,6 +40,7 @@ public class Menu extends javax.swing.JFrame {
     private void initComponents() {
 
         jMenu3 = new javax.swing.JMenu();
+        jMenuItem3 = new javax.swing.JMenuItem();
         jLabel2 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         FileMenu = new javax.swing.JMenu();
@@ -39,8 +48,12 @@ public class Menu extends javax.swing.JFrame {
         jMenuItem2 = new javax.swing.JMenuItem();
         UserMenu = new javax.swing.JMenu();
         superAccessMenuItem = new javax.swing.JMenuItem();
+        QueriesMenu = new javax.swing.JMenu();
+        numFlightsSummaryItem = new javax.swing.JMenuItem();
 
         jMenu3.setText("jMenu3");
+
+        jMenuItem3.setText("jMenuItem3");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Menu - JDBC GUI");
@@ -90,6 +103,19 @@ public class Menu extends javax.swing.JFrame {
 
         jMenuBar1.add(UserMenu);
 
+        QueriesMenu.setText("Queries");
+        QueriesMenu.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 24)); // NOI18N
+
+        numFlightsSummaryItem.setText("Flight Summary");
+        numFlightsSummaryItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                numFlightsSummaryItemActionPerformed(evt);
+            }
+        });
+        QueriesMenu.add(numFlightsSummaryItem);
+
+        jMenuBar1.add(QueriesMenu);
+
         setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -136,14 +162,38 @@ public class Menu extends javax.swing.JFrame {
         selector.setLocationRelativeTo(null);
     }//GEN-LAST:event_superAccessMenuItemActionPerformed
 
+    private void numFlightsSummaryItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_numFlightsSummaryItemActionPerformed
+        String query = """
+                       SELECT P.NAME, A.CODE, A.NUM_ARRIVALS, D.NUM_DEPARTURES
+                       FROM AIRPORT P
+                       JOIN (SELECT ARR.AIRPORT_INCOMING_CODE CODE, COUNT(ARR.AIRPORT_INCOMING_CODE) NUM_ARRIVALS
+                       FROM FLIGHT ARR
+                       GROUP BY ARR.AIRPORT_INCOMING_CODE) A
+                       ON P.CODE = A.CODE
+                       JOIN (SELECT ARR.AIRPORT_OUTCOMING_CODE2 CODE, COUNT(ARR.AIRPORT_OUTCOMING_CODE2) NUM_DEPARTURES
+                       FROM FLIGHT ARR
+                       GROUP BY ARR.AIRPORT_OUTCOMING_CODE2) D
+                       ON P.CODE = D.CODE""";
+        try {
+            new Queries.TableViewer("FLIGHT SUMMARY", query, new FlightSummaryFilter());
+        } catch (SQLException ex) {
+            controller.displaySQLError(ex);
+        } catch (DBManagementException ex) {
+            controller.displayErrors("Something went wrong when retrieving flight summary. Try again later");
+        }
+    }//GEN-LAST:event_numFlightsSummaryItemActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu FileMenu;
+    private javax.swing.JMenu QueriesMenu;
     private javax.swing.JMenu UserMenu;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
+    private javax.swing.JMenuItem numFlightsSummaryItem;
     private javax.swing.JMenuItem superAccessMenuItem;
     // End of variables declaration//GEN-END:variables
 }

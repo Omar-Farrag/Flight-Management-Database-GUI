@@ -1,8 +1,8 @@
 package DatabaseManagement.QueryGeneration;
 
-import DatabaseManagement.AttributeCollection;
 import DatabaseManagement.ConstraintsHandling.ReferentialResolver;
 import DatabaseManagement.Attribute;
+import DatabaseManagement.AttributeCollection;
 import DatabaseManagement.ConstraintsHandling.ConstraintChecker;
 import DatabaseManagement.DatabaseManager;
 import DatabaseManagement.Exceptions.DBManagementException;
@@ -182,29 +182,6 @@ public class Graph {
         public String getAliasedTail() {
             return tail.getAliasedName();
         }
-    }
-
-    public static void main(String[] args) {
-        try {
-            ConstraintChecker.getInstance();
-            Graph.getInstance();
-
-            AttributeCollection collection = new AttributeCollection();
-            collection.add(new Attribute(Attribute.Name.FNAME, Table.PERSON));
-            collection.add(new Attribute(Attribute.Name.LNAME, Table.PERSON));
-            collection.add(new Attribute(Attribute.Name.FNUMBER, Table.FLIGHT));
-            collection.add(new Attribute(Attribute.Name.AIRPORT_INCOMING_CODE, Table.FLIGHT));
-            collection.add(new Attribute(Attribute.Name.DEPARTURE, Table.FLIGHT));
-            collection.add(new Attribute(Attribute.Name.GNUMBER, Table.GATES));
-            collection.add(new Attribute(Attribute.Name.LOCATION, Table.GATES));
-
-            DatabaseManager.getInstance().retrieve(collection);
-        } catch (SQLException ex) {
-            Logger.getLogger(Graph.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (DBManagementException ex) {
-            Logger.getLogger(Graph.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
     }
 
 }

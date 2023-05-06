@@ -82,14 +82,15 @@ public class Controller {
      * @param result The returned QueryResult from the database operation
      */
     public void displayErrors(QueryResult result) {
-        System.out.println(++counter);
-        HashSet<String> errors = result.getAllErrors();
+        displayErrors(result.getAllErrors());
+    }
+
+    public void displayErrors(HashSet<String> errors) {
         String messageToDisplay = "";
         for (String error : errors) {
             messageToDisplay += "\u2022 " + error + "\n";
         }
         JTextArea text = new JTextArea(messageToDisplay);
-//        javax.swing.JLabel label = new javax.swing.JLabel(messageToDisplay);
         text.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 18));
         Color bgColor = UIManager.getColor("OptionPane.background");
         text.setBackground(bgColor);

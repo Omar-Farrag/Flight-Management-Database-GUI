@@ -1,6 +1,5 @@
 package DatabaseManagement.ConstraintsHandling;
 
-import DatabaseManagement.AttributeCollection;
 import DatabaseManagement.*;
 import DatabaseManagement.Attribute.Name;
 import DatabaseManagement.Exceptions.*;
