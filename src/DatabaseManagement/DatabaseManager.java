@@ -7,9 +7,9 @@ import DatabaseManagement.ConstraintsHandling.ConstraintChecker;
 import DatabaseManagement.ConstraintsHandling.ConstraintChecker.Errors;
 import DatabaseManagement.ConstraintsHandling.MetaDataExtractor;
 import DatabaseManagement.Exceptions.*;
-import DatabaseManagement.QueryGeneration.Graph;
+import DatabaseManagement.QueryGeneration.*;
 import DatabaseManagement.QueryGeneration.Graph.Node;
-import DatabaseManagement.QueryGeneration.QueryGenerator;
+import General.Controller;
 import General.LoginUser;
 import java.util.HashSet;
 import java.util.Set;
@@ -66,17 +66,19 @@ public class DatabaseManager {
      * @throws DBManagementException If the attributes in toInsert do not match
      * the attributes in table T
      */
-    public QueryResult insert(Table t, AttributeCollection toInsert) throws SQLException, DBManagementException {
-        Errors error = null;
-        try {
-            error = ConstraintChecker.getInstance().checkInsertion(t, toInsert);
-        } catch (DBManagementException e) {
-            throw new RuntimeException(e);
+    public QueryResult insert(Table t, AttributeCollection toInsert) throws SQLException, DBManagementException, IllegalArgumentException {
+        if (t == null || toInsert == null) {
+            throw new IllegalArgumentException("Neither table nor collection to insert can be null");
         }
+        Errors error = null;
+
+        error = ConstraintChecker.getInstance().checkInsertion(t, toInsert);
+
         String query = "Insert into " + t.getTableName() + "(" + toInsert.getFormattedAtt() + ") "
                 + "values(" + toInsert.getFormattedValues() + ")";
 
-        return handleDBOperation(error, query, true);
+        return handleDBOperation(error, query,
+                true);
     }
 
     /**
@@ -311,18 +313,14 @@ public class DatabaseManager {
      * @throws SQLException If an error occurs while executing the SQL statement
      * in the DBMS
      */
-    public ResultSet executeStatement(String sqlStatement) throws SQLException {
+    public ResultSet executeStatement(String sqlStatement) throws SQLException, NullPointerException {
 
         System.out.println(sqlStatement);
-        Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-        try {
-            return stmt.executeQuery(sqlStatement);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            System.out.println(sqlStatement);
-            throw new SQLException();
+        if (conn == null) {
+            throw new NullPointerException("Cant perform any database operations database because the connection was not established");
         }
-
+        Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        return stmt.executeQuery(sqlStatement);
     }
 
     /**
@@ -334,8 +332,11 @@ public class DatabaseManager {
      * @throws SQLException If an error occurs while executing SQL Prepared
      * Statement in the DBMS.
      */
-    public int executePreparedStatement(String sqlPreparedStatement) throws SQLException {
+    private int executePreparedStatement(String sqlPreparedStatement) throws SQLException, NullPointerException {
         System.out.println(sqlPreparedStatement);
+        if (conn == null) {
+            throw new NullPointerException("Cant perform any database operations database because the connection was not established");
+        }
         PreparedStatement prep = conn.prepareStatement(sqlPreparedStatement);
         return prep.executeUpdate();
     }

@@ -63,18 +63,6 @@ public class AttributeCollection {
     }
 
     /**
-     * Adds an attribute to the attribute collection
-     *
-     * @param attribute Attribute to be added to the collection
-     * @return The current attribute collection with the new attribute added.
-     * Useful for cascading the adds;
-     */
-    public AttributeCollection add(Attribute attribute) {
-        attributes.add(attribute);
-        return this;
-    }
-
-    /**
      * Removes the given attribute from the attribute collection if present
      *
      * @param attribute Attribute to be removed
@@ -221,6 +209,34 @@ public class AttributeCollection {
             }
         }
         return "";
+    }
+
+    /**
+     * Adds an attribute to the attribute collection
+     *
+     * @param attribute Attribute to be added to the collection
+     * @return The current attribute collection with the new attribute added.
+     * Useful for cascading the adds;
+     */
+    public AttributeCollection add(Attribute attribute) throws IllegalArgumentException {
+        if (attribute == null) {
+            throw new IllegalArgumentException("Cannot add null to this collection");
+        }
+        attributes.add(attribute);
+        return this;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof AttributeCollection)) {
+            return false;
+        }
+        AttributeCollection other = (AttributeCollection) obj;
+
+        return attributes.equals(other.attributes);
     }
 
 }

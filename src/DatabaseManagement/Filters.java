@@ -117,7 +117,10 @@ public class Filters {
      * attribute to place the condition on and attribute's value is the value
      * that the attribute must be equal to
      */
-    public void addEqual(Attribute attribute) {
+    public void addEqual(Attribute attribute) throws IllegalArgumentException {
+        if (attribute == null) {
+            throw new IllegalArgumentException("Cannot add null to filters");
+        }
         if (!filters.containsKey(attribute)) {
             filters.put(attribute, new ArrayList<Filter>());
         }
@@ -285,6 +288,20 @@ public class Filters {
 
     public Set<Attribute> getAttributes() {
         return filters.keySet();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof Filters)) {
+            return false;
+        }
+        Filters other = (Filters) obj;
+
+        return getAttributes().equals(other.getAttributes());
+
     }
 
     private class Filter {
