@@ -7,6 +7,10 @@ package General;
 
 import DatabaseManagement.Exceptions.DBManagementException;
 import Queries.FlightSummaryFilter;
+import Queries.Search;
+import Queries.Seats;
+import Queries.TotalRevenue;
+import Queries.Baggage;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,6 +54,10 @@ public class Menu extends javax.swing.JFrame {
         superAccessMenuItem = new javax.swing.JMenuItem();
         QueriesMenu = new javax.swing.JMenu();
         numFlightsSummaryItem = new javax.swing.JMenuItem();
+        baggageSummaryBtn = new javax.swing.JMenuItem();
+        flightSearchBtn = new javax.swing.JMenuItem();
+        seatsBookedBtn = new javax.swing.JMenuItem();
+        flightRevenueBtn = new javax.swing.JMenuItem();
 
         jMenu3.setText("jMenu3");
 
@@ -113,6 +121,38 @@ public class Menu extends javax.swing.JFrame {
             }
         });
         QueriesMenu.add(numFlightsSummaryItem);
+
+        baggageSummaryBtn.setText("Baggage Summary");
+        baggageSummaryBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                baggageSummaryBtnActionPerformed(evt);
+            }
+        });
+        QueriesMenu.add(baggageSummaryBtn);
+
+        flightSearchBtn.setText("Flight Search");
+        flightSearchBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                flightSearchBtnActionPerformed(evt);
+            }
+        });
+        QueriesMenu.add(flightSearchBtn);
+
+        seatsBookedBtn.setText("Seats Booked");
+        seatsBookedBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                seatsBookedBtnActionPerformed(evt);
+            }
+        });
+        QueriesMenu.add(seatsBookedBtn);
+
+        flightRevenueBtn.setText("Flight Revenues");
+        flightRevenueBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                flightRevenueBtnActionPerformed(evt);
+            }
+        });
+        QueriesMenu.add(flightRevenueBtn);
 
         jMenuBar1.add(QueriesMenu);
 
@@ -183,10 +223,29 @@ public class Menu extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_numFlightsSummaryItemActionPerformed
 
+    private void flightRevenueBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_flightRevenueBtnActionPerformed
+        new TotalRevenue().setVisible(true);
+    }//GEN-LAST:event_flightRevenueBtnActionPerformed
+
+    private void baggageSummaryBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_baggageSummaryBtnActionPerformed
+        new Baggage().setVisible(true);
+    }//GEN-LAST:event_baggageSummaryBtnActionPerformed
+
+    private void flightSearchBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_flightSearchBtnActionPerformed
+        new Search().setVisible(true);
+    }//GEN-LAST:event_flightSearchBtnActionPerformed
+
+    private void seatsBookedBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seatsBookedBtnActionPerformed
+        new Seats().setVisible(true);
+    }//GEN-LAST:event_seatsBookedBtnActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu FileMenu;
     private javax.swing.JMenu QueriesMenu;
     private javax.swing.JMenu UserMenu;
+    private javax.swing.JMenuItem baggageSummaryBtn;
+    private javax.swing.JMenuItem flightRevenueBtn;
+    private javax.swing.JMenuItem flightSearchBtn;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
@@ -194,6 +253,7 @@ public class Menu extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem numFlightsSummaryItem;
+    private javax.swing.JMenuItem seatsBookedBtn;
     private javax.swing.JMenuItem superAccessMenuItem;
     // End of variables declaration//GEN-END:variables
 }

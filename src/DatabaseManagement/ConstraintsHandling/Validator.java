@@ -2,7 +2,6 @@ package DatabaseManagement.ConstraintsHandling;
 
 import DatabaseManagement.*;
 import DatabaseManagement.Attribute.Name;
-import DatabaseManagement.Attribute.Type;
 import static DatabaseManagement.Attribute.Type.DATE;
 import static DatabaseManagement.Attribute.Type.NUMBER;
 import static DatabaseManagement.Attribute.Type.TIMESTAMP;
@@ -11,25 +10,17 @@ import DatabaseManagement.ConstraintsHandling.ValidationParameters.OperationType
 import DatabaseManagement.Exceptions.ConstraintNotFoundException;
 import DatabaseManagement.Exceptions.DBManagementException;
 import DatabaseManagement.Exceptions.MissingValidatorException;
-import DatabaseManagement.ConstraintsHandling.ReferentialResolver.DetailedKey;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.DateTimeException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.ResolverStyle;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -331,9 +322,9 @@ public class Validator {
             String query = "Select * From " + referencedTable + " where ";
 
             for (Entry<Attribute, Attribute> entry : group.entrySet()) {
-                ArrayList<String> value = new ArrayList<>();
-                value.add(allAttributes.getStringValue(entry.getKey()));
-                if (!validateType(toValidate, value).isEmpty()) {
+                ArrayList<String> values = new ArrayList<>();
+                values.add(allAttributes.getStringValue(entry.getKey()));
+                if (!validateType(entry.getValue(), values).isEmpty()) {
                     return "Could not verfiy referential integrity because the given value is of the wrong type";
                 }
                 query += entry.getValue().getStringName() + " = " + allAttributes.getStringValue(entry.getKey()) + " AND ";

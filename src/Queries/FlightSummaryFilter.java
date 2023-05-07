@@ -271,7 +271,7 @@ public class FlightSummaryFilter extends FilterFrame {
             conditions.add("D.NUM_DEPARTURES <= " + maxDepartures);
         }
         if (!minDepartures.isEmpty()) {
-            conditions.add("D.NUM_DEPARTRUES >= " + minDepartures);
+            conditions.add("D.NUM_DEPARTURES >= " + minDepartures);
         }
         if (!airportNameCMB.getSelectedItem().toString().trim().isEmpty()) {
             String airportName = airportNameCMB.getSelectedItem().toString().trim();
