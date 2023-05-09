@@ -42,7 +42,7 @@ public class ModifyForm implements FormInitializationStrategy {
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    int option = JOptionPane.showConfirmDialog(null, "Are you sure you want to modify entry?", "Delete Confirmation", JOptionPane.YES_NO_OPTION);
+                    int option = JOptionPane.showConfirmDialog(null, "Are you sure you want to modify entry?", "Modification Confirmation", JOptionPane.YES_NO_OPTION);
                     if (option == JOptionPane.NO_OPTION || option == JOptionPane.CLOSED_OPTION || option == JOptionPane.CLOSED_OPTION) {
                         return;
                     }
