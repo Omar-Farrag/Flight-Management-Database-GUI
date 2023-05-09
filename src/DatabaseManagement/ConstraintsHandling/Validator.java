@@ -848,7 +848,7 @@ public class Validator {
     }
 
     public String validateType(Attribute attribute) {
-        String value = attribute.getStringValue();
+        String value = attribute.getValue();
         if (null != attribute.getType()) {
             switch (attribute.getType()) {
                 case NUMBER -> {

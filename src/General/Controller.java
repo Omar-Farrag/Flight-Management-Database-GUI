@@ -74,8 +74,6 @@ public class Controller {
         return loggedInUser.isAdmin();
     }
 
-    static int counter = 0;
-
     /**
      * Displays all errors in a database operation in a separate dialog window
      *
