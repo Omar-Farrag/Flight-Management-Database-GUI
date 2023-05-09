@@ -54,7 +54,7 @@ public class ViewBookingForm extends javax.swing.JFrame {
         ViewBookingTable = new javax.swing.JTable();
         ViewAllBtn = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         TopLabel.setBackground(new java.awt.Color(0, 0, 0));
         TopLabel.setFont(new java.awt.Font("Verdana", 1, 24)); // NOI18N

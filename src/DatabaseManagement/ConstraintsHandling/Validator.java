@@ -21,6 +21,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,6 +71,8 @@ public class Validator {
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (DBManagementException e) {
+            e.printStackTrace();
         }
 
         return "";
@@ -100,16 +104,20 @@ public class Validator {
 
     }
 
-    private boolean validPKUpdate(ValidationParameters parameters) throws SQLException {
+    private boolean validPKUpdate(ValidationParameters parameters) throws SQLException, DBManagementException {
         Attribute toValidate = parameters.getToValidate();
         Table table = toValidate.getT();
         Filters filters = parameters.getFilters();
         Key primaryKeys = MetaDataExtractor.getInstance().getPrimaryKeys(toValidate.getT());
 
         HashMap<Table, Filters> referencerMap = ReferentialResolver.getInstance().getLenientReferencingAttributes(table, toValidate);
-        if (!referencerMap.isEmpty()) {
-            return false;
+        for (Entry<Table, Filters> entry : referencerMap.entrySet()) {
+            QueryResult result = DatabaseManager.getInstance().retrieve(entry.getKey(), entry.getValue());
+            if (result.getRowsAffected() > 0) {
+                return false;
+            }
         }
+
         HashSet<Key> keys = new HashSet<>();
         if (!validateType(toValidate).isEmpty()) {
             return false;
