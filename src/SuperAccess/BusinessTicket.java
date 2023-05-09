@@ -277,8 +277,12 @@ public class BusinessTicket extends TableForm {
     }
 
     private boolean checkSeatUnique() throws SQLException {
-        String query = "SELECT * FROM TICKET A JOIN BUSINESS_TICKET B ON A.NUM = B.NUM WHERE FLIGHT_FNUMBER IN (SELECT FLIGHT_FNUMBER FROM TICKET C WHERE C.NUM = '" + numberCMB.getSelectedItem().toString().trim() + "') AND SEAT = " + seatField.getText().trim();
-
+        String query = "SELECT * FROM TICKET A "
+                + "JOIN BUSINESS_TICKET B ON A.NUM = B.NUM WHERE FLIGHT_FNUMBER "
+                + "IN (SELECT FLIGHT_FNUMBER FROM TICKET C "
+                + "WHERE C.NUM = '" + numberCMB.getSelectedItem().toString().trim() + "') "
+                + "AND SEAT = " + seatField.getText().trim() + " "
+                + "AND B.NUM != '" + numberCMB.getSelectedItem().toString().trim() + "'";
         ResultSet result = new Controller().executeStatement(query);
         if (result.next()) {
             return false;

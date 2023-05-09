@@ -27,6 +27,7 @@ import java.util.Vector;
 import javax.swing.JButton;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -182,7 +183,6 @@ public class TableViewer extends JFrame implements Viewer {
         refresh(latestTable.getResult());
 
         controller.logActivity(result, new Table[]{t});
-        controller.logActivity(latestTable, new Table[]{t});
 
     }
 
@@ -206,7 +206,6 @@ public class TableViewer extends JFrame implements Viewer {
         refresh(latestTable.getResult());
 
         controller.logActivity(result, new Table[]{t});
-        controller.logActivity(latestTable, new Table[]{t});
 
     }
 
@@ -214,6 +213,7 @@ public class TableViewer extends JFrame implements Viewer {
         Controller controller = new Controller();
         Table t = form.getTable();
         boolean completed = true;
+        ArrayList<QueryResult> results = new ArrayList<>();
 
         int[] selectedRows = table.getSelectedRows();
         for (int row : selectedRows) {
@@ -222,13 +222,20 @@ public class TableViewer extends JFrame implements Viewer {
             if (!result.noErrors()) {
                 break;
             }
-            controller.logActivity(result, new Table[]{t});
+            results.add(result);
 
         }
+
         QueryResult latestTable = controller.retrieve(t);
         refresh(latestTable.getResult());
-
-        controller.logActivity(latestTable, new Table[]{t});
+        for (QueryResult result : results) {
+            controller.logActivity(result, new Table[]{t});
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(TableViewer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
 
     }
 

@@ -476,11 +476,6 @@ public class Controller {
      * @param tables Array of tables that was affected;
      */
     public void logActivity(QueryResult result, Table[] tables) {
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(TableViewer.class.getName()).log(Level.SEVERE, null, ex);
-        }
         String numRows = String.valueOf(result.getRowsAffected());
         String activityDate = formatTimeStamp(Timestamp.valueOf(LocalDateTime.now()));
         String user = loggedInUser.getUsername();
