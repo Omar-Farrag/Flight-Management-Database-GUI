@@ -144,6 +144,9 @@ public class TableViewer extends JFrame implements Viewer {
         Table t = form.getTable();
 
         QueryResult result = controller.retrieve(toDisplay, filters);
+        if (!result.noErrors()) {
+            return;
+        }
         initModel(result.getResult());
 
         initTable();

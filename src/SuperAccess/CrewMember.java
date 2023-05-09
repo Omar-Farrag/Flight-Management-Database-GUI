@@ -39,7 +39,7 @@ public class CrewMember extends TableForm {
         jLabel27 = new javax.swing.JLabel();
         jLabel28 = new javax.swing.JLabel();
         ssnCMB = new javax.swing.JComboBox<>();
-        roleCMB = new javax.swing.JComboBox<>();
+        roleField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -79,8 +79,8 @@ public class CrewMember extends TableForm {
         ssnCMB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         ssnCMB.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
-        roleCMB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        roleCMB.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        roleField.setFont(new java.awt.Font("Verdana", 3, 14)); // NOI18N
+        roleField.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -94,15 +94,15 @@ public class CrewMember extends TableForm {
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 25, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel27, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(roleCMB, 0, 474, Short.MAX_VALUE))
+                                .addComponent(roleField, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel28, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(ssnCMB, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addComponent(ssnCMB, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(29, 29, 29))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -120,8 +120,8 @@ public class CrewMember extends TableForm {
                 .addGap(24, 24, 24)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel27)
-                    .addComponent(roleCMB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(56, 56, 56)
+                    .addComponent(roleField, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(58, 58, 58)
                 .addComponent(ActionBtn)
                 .addContainerGap(187, Short.MAX_VALUE))
         );
@@ -154,7 +154,7 @@ public class CrewMember extends TableForm {
     private javax.swing.JLabel jLabel28;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JComboBox<String> roleCMB;
+    private javax.swing.JTextField roleField;
     private javax.swing.JComboBox<String> ssnCMB;
     // End of variables declaration//GEN-END:variables
     @Override
@@ -162,7 +162,7 @@ public class CrewMember extends TableForm {
         AttributeCollection collection = new AttributeCollection();
 
         String crewMemberSSN = ssnCMB.getSelectedItem().toString().trim();
-        String role = roleCMB.getSelectedItem().toString().trim();
+        String role = roleField.getText().trim();
 
         collection.add(new Attribute(Name.SSN, crewMemberSSN, table));
         collection.add(new Attribute(Name.ROLE, role, table));
@@ -174,7 +174,7 @@ public class CrewMember extends TableForm {
     public Filters getBrowsingFilters() {
         Filters filters = new Filters();
 
-        String role = roleCMB.getSelectedItem().toString().trim();
+        String role = roleField.getText().trim();
         String crewMemberSSN = ssnCMB.getSelectedItem().toString().trim();
 
         if (!role.isBlank()) {
@@ -200,7 +200,7 @@ public class CrewMember extends TableForm {
 
     @Override
     public void enableFields() {
-        roleCMB.setEnabled(true);
+        roleField.setEnabled(true);
         ssnCMB.setEnabled(true);
     }
 
@@ -212,22 +212,20 @@ public class CrewMember extends TableForm {
     @Override
     public void populateFields(AttributeCollection toPopulateWith) {
 
-        ComboBoxFactory.populateCrewRoleCMB(roleCMB);
         ComboBoxFactory.populatePersonCMB(ssnCMB);
 
         String role = toPopulateWith.getValue(new Attribute(Name.ROLE, table));
         String crewMemberSSN = toPopulateWith.getValue(new Attribute(Name.SSN, table));
 
-        roleCMB.setSelectedItem(role);
+        roleField.setText(role);
         ssnCMB.setSelectedItem(crewMemberSSN);
     }
 
     @Override
     public void clearFields() {
-        ComboBoxFactory.populateCrewRoleCMB(roleCMB);
         ComboBoxFactory.populatePersonCMB(ssnCMB);
 
-        roleCMB.setSelectedItem("");
+        roleField.setText("");
         ssnCMB.setSelectedItem("");
 
     }
