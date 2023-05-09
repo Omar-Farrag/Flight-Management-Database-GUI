@@ -11,6 +11,7 @@ import Queries.Search;
 import Queries.Seats;
 import Queries.TotalRevenue;
 import Queries.Baggage;
+import Queries.ViewBookingForm;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -58,6 +59,7 @@ public class Menu extends javax.swing.JFrame {
         flightSearchBtn = new javax.swing.JMenuItem();
         seatsBookedBtn = new javax.swing.JMenuItem();
         flightRevenueBtn = new javax.swing.JMenuItem();
+        viewBookingsBtn = new javax.swing.JMenuItem();
 
         jMenu3.setText("jMenu3");
 
@@ -67,9 +69,11 @@ public class Menu extends javax.swing.JFrame {
         setTitle("Menu - JDBC GUI");
         setResizable(false);
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/General/employees.jpg"))); // NOI18N
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/General/airport.png"))); // NOI18N
 
+        jMenuBar1.setBackground(new java.awt.Color(252, 241, 220));
         jMenuBar1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jMenuBar1.setOpaque(true);
 
         FileMenu.setText("File");
         FileMenu.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 24)); // NOI18N
@@ -154,6 +158,14 @@ public class Menu extends javax.swing.JFrame {
         });
         QueriesMenu.add(flightRevenueBtn);
 
+        viewBookingsBtn.setText("View Bookings");
+        viewBookingsBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                viewBookingsBtnActionPerformed(evt);
+            }
+        });
+        QueriesMenu.add(viewBookingsBtn);
+
         jMenuBar1.add(QueriesMenu);
 
         setJMenuBar(jMenuBar1);
@@ -162,15 +174,11 @@ public class Menu extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 881, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 905, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 563, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 569, Short.MAX_VALUE)
         );
 
         pack();
@@ -239,6 +247,10 @@ public class Menu extends javax.swing.JFrame {
         new Seats().setVisible(true);
     }//GEN-LAST:event_seatsBookedBtnActionPerformed
 
+    private void viewBookingsBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewBookingsBtnActionPerformed
+        new ViewBookingForm().setVisible(true);
+    }//GEN-LAST:event_viewBookingsBtnActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu FileMenu;
     private javax.swing.JMenu QueriesMenu;
@@ -255,5 +267,6 @@ public class Menu extends javax.swing.JFrame {
     private javax.swing.JMenuItem numFlightsSummaryItem;
     private javax.swing.JMenuItem seatsBookedBtn;
     private javax.swing.JMenuItem superAccessMenuItem;
+    private javax.swing.JMenuItem viewBookingsBtn;
     // End of variables declaration//GEN-END:variables
 }
