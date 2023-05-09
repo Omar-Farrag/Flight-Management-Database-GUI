@@ -55,6 +55,7 @@ public class ComboBoxFactory {
     public static void populateCityCodeCMB(JComboBox toPopulate) {
         Attribute attribute = new Attribute(Name.CODE, Table.CITY);
         fillBoxFromDB(toPopulate, attribute);
+
     }
 
     public static void populateFlightNumberCMB(JComboBox toPopulate) {
