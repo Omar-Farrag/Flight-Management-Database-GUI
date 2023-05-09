@@ -63,7 +63,7 @@ public class Validator {
                 }
             } else if (operationType.equals(OperationType.INSERT)) {
                 if (!validPKInsert(parameters)) {
-                    return parameters.getToValidate().getStringName() + ": value entered is either unavailable or referenced by child record";
+                    return parameters.getToValidate().getStringName() + ": value entered is unavailable";
                 }
             }
 
