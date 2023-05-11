@@ -398,8 +398,8 @@ public class Validator {
                             valuedAttribute = new Attribute(name, value, t);
                         }
                         ArrayList<String> value = new ArrayList<>();
-                        value.add(allAttributes.getStringValue(entry.getKey()));
-                        if (!validateType(toValidate, value).isEmpty()) {
+                        value.add(allAttributes.getValue(entry.getKey()));
+                        if (!validateType(entry.getKey(), value).isEmpty()) {
                             return "Could not verfiy referential integrity because the given value is of the wrong type";
                         }
 
