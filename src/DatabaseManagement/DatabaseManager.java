@@ -6,6 +6,7 @@ import java.sql.*;
 import DatabaseManagement.ConstraintsHandling.ConstraintChecker;
 import DatabaseManagement.ConstraintsHandling.ConstraintChecker.Errors;
 import DatabaseManagement.ConstraintsHandling.MetaDataExtractor;
+import DatabaseManagement.ConstraintsHandling.Validator;
 import DatabaseManagement.Exceptions.*;
 import DatabaseManagement.QueryGeneration.*;
 import DatabaseManagement.QueryGeneration.Graph.Node;
@@ -282,6 +283,10 @@ public class DatabaseManager {
     public QueryResult retrieveMax(Attribute attribute) throws SQLException {
         String query = "Select max(" + attribute.getAliasedStringName() + ") as MAX from " + attribute.getT().getAliasedName();
         return handleDBOperation(null, query, false);
+    }
+
+    public String validateType(Attribute attribute) {
+        return new Validator().validateType(attribute);
     }
 
     /**

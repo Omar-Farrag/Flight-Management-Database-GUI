@@ -469,6 +469,10 @@ public class Controller {
         return DB.getNeighbors(t);
     }
 
+    public String validateType(Attribute attribute) {
+        return DB.validateType(attribute);
+    }
+
     /**
      * Logs an interaction between the logged in user and the database
      *
@@ -482,6 +486,9 @@ public class Controller {
         String activity = result.getQuery().toUpperCase();
 
         for (Table table : tables) {
+            if (table == Table.USER_ACTIVITY) {
+                continue;
+            }
             AttributeCollection collection = new AttributeCollection();
             collection.add(new Attribute(Name.ROWS_AFFECTED, numRows, Table.USER_ACTIVITY));
             collection.add(new Attribute(Name.ACTIVITY_DATE, activityDate, Table.USER_ACTIVITY));

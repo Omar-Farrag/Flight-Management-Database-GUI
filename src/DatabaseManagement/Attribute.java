@@ -18,7 +18,7 @@ public class Attribute {
      */
     public Attribute(Name attributeName, String value, Table t) {
         this.attributeName = attributeName;
-        this.attributeValue = value.replace("'", "''");
+        this.attributeValue = value.replaceAll("(?<!')'(?!')", "''");
         this.type = attributeName.type;
         this.t = t;
 
@@ -57,10 +57,10 @@ public class Attribute {
     }
 
     public String getStringValue() {
-        if (type.equals(Type.STRING) || type.equals((Type.DATE)) || type.equals(Type.TIMESTAMP)) {
-            return "'" + attributeValue + "'";
-        } else if (attributeValue == null) {
+        if (attributeValue == null || attributeValue.isBlank()) {
             return "NULL";
+        } else if (type.equals(Type.STRING) || type.equals((Type.DATE)) || type.equals(Type.TIMESTAMP)) {
+            return "'" + attributeValue + "'";
         } else {
             return attributeValue;
         }

@@ -116,6 +116,7 @@ public class TableViewer extends JFrame implements Viewer {
      * @return Table entry for row [rowNum]
      */
     public AttributeCollection getRow(int rowNum) {
+
         Controller controller = new Controller();
         AttributeCollection collection = new AttributeCollection();
         for (int col = 0; col < table.getColumnCount(); col++) {

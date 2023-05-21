@@ -269,25 +269,29 @@ public class BusinessTicket extends TableForm {
 
     @Override
     public String checkBusinessLogic() throws SQLException {
-        if (checkSeatUnique()) {
-            return "";
-        } else {
-            return "Seat already taken by someone else.";
-        }
+        return checkSeatUnique();
     }
 
-    private boolean checkSeatUnique() throws SQLException {
+    private String checkSeatUnique() throws SQLException {
         String query = "SELECT * FROM TICKET A "
                 + "JOIN BUSINESS_TICKET B ON A.NUM = B.NUM WHERE FLIGHT_FNUMBER "
                 + "IN (SELECT FLIGHT_FNUMBER FROM TICKET C "
                 + "WHERE C.NUM = '" + numberCMB.getSelectedItem().toString().trim() + "') "
                 + "AND SEAT = " + seatField.getText().trim() + " "
                 + "AND B.NUM != '" + numberCMB.getSelectedItem().toString().trim() + "'";
+
+        Controller controller = new Controller();
+        String error = controller.validateType(new Attribute(Name.SEAT, seatField.getText().trim(), Table.ECONOMY_TICKET));
+        if (!error.isEmpty()) {
+            return error;
+        }
+
         ResultSet result = new Controller().executeStatement(query);
         if (result.next()) {
-            return false;
+            return "Seat already taken by someone else.";
+
         }
-        return true;
+        return "";
 
     }
 }

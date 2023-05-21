@@ -321,6 +321,9 @@ public class Filters {
         }
 
         private String getStringValue() {
+            if (value.isEmpty()) {
+                return "NULL";
+            }
             if (!type.equals(Type.NUMBER)) {
                 return "'" + value + "'";
             } else {

@@ -322,7 +322,7 @@ public class Validator {
 
         Table referencedTable = resolver.getReferencedTable(constraint).t;
 
-        if (toValidate.getStringValue().isBlank()) {
+        if (toValidate.getValue().isBlank()) {
             return "";
         }
 
@@ -331,7 +331,7 @@ public class Validator {
 
             for (Entry<Attribute, Attribute> entry : group.entrySet()) {
                 ArrayList<String> values = new ArrayList<>();
-                values.add(allAttributes.getStringValue(entry.getKey()));
+                values.add(allAttributes.getValue(entry.getKey()));
                 if (!validateType(entry.getValue(), values).isEmpty()) {
                     return "Could not verfiy referential integrity because the given value is of the wrong type";
                 }
@@ -377,7 +377,7 @@ public class Validator {
 
             Table referencedTable = resolver.getReferencedTable(constraint).t;
 
-            if (toValidate.getStringValue().isBlank()) {
+            if (toValidate.getValue().isBlank()) {
                 return "";
             }
             ResultSet toBeModified = DatabaseManager.getInstance().retrieve(toValidate.getT(), filters).getResult();

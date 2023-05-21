@@ -306,8 +306,11 @@ public class UserActivity extends TableForm {
 
     @Override
     public void disableUnmodifiableFields() {
-        userField.setEnabled(false);
+        tableField.setEnabled(false);
+        activityField.setEnabled(false);
         activityTimeField.setEnabled(false);
+        userField.setEnabled(false);
+        rowsAffectedField.setEnabled(false);
 
     }
 
