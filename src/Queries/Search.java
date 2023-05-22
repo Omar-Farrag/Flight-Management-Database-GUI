@@ -316,15 +316,15 @@ public class Search extends javax.swing.JFrame {
 
             if (isValidData()) {
 
-                String query = "SELECT Al.name, C1.NAME, C2.NAME, DEPARTURE, ARRIVAL, FNUMBER "
+                String query = "SELECT Al.name, A.NAME, B.NAME, DEPARTURE, ARRIVAL, FNUMBER "
                         + "FROM Flight F "
                         + "JOIN AIRPORT A ON AIRPORT_INCOMING_CODE = A.CODE "
                         + "JOIN AIRPORT B ON AIRPORT_OUTCOMING_CODE2 = B.CODE "
                         + "JOIN CITY C1 ON A.CITY_CODE = C1.CODE "
                         + "JOIN CITY C2 ON B.CITY_CODE = C2.CODE "
                         + "JOIN Airline Al ON Airline_code = Al.Code "
-                        + "WHERE C1.NAME = '" + From + "' "
-                        + "AND C2.NAME = '" + to + "' "
+                        + "WHERE C1.NAME = '" + to + "' "
+                        + "AND C2.NAME = '" + From + "' "
                         + "AND Departure = '" + Departure + "' "
                         + "AND Arrival = '" + Arrival + "'";
 
@@ -340,8 +340,8 @@ public class Search extends javax.swing.JFrame {
 
                 while (rs.next()) {
                     String Arline_Name = rs.getString(1).trim();
-                    String Departure1 = rs.getString(2).trim();
-                    String Arrival1 = rs.getString(3);
+                    String Departure1 = rs.getString(3).trim();
+                    String Arrival1 = rs.getString(2);
                     Date Departure_Airport = rs.getDate(4);
                     Date Arrival_Airport = rs.getDate(5);
                     String FN = rs.getString(6);
